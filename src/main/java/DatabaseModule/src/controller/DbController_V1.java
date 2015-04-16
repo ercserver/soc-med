@@ -50,14 +50,12 @@ public class DbController_V1 implements IDbController {
     }
 
     @Override
-	//לתת סיבות דחיה לרופא
     public HashMap<String,String> getRejectCodes(){
         return DB_communicator.getRejectCodes();
     }
 
     @Override
-	//לקבל את הערך אינם של הנתון או להפך
-	//יש זכר נקבה
+
     public HashMap<Integer,HashMap<String,String>> getFromEnum(HashMap<String,String> cond){
         return DB_communicator.getFromEnum(cond);
     }
