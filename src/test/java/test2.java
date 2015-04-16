@@ -7,7 +7,8 @@ import registrationModule.src.model.RegVerify_V1;
 public class test2 {
     public static void main(String[] args) {
         IRegVerify_model v = new RegVerify_V1();
+        //maccbi
         v.VerifyDetail(1002);
-        // comment
+
     }
 }
