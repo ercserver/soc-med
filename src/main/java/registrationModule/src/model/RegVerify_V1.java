@@ -35,6 +35,7 @@ public class RegVerify_V1 implements IRegVerify_model {
    private boolean verifyDetailsDueToType(int cmid)
    {
        HashMap<String,String> member = new HashMap<String,String>();
+       //String c = "'" + new Integer(cmid).toString() + "'";
        member.put("InternalID",new Integer(cmid).toString());
        HashMap<String,String> memberDetails = model.getUserByParameter(member);
        System.out.println("hello");

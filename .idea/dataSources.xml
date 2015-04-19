@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+<<<<<<< Updated upstream
   <component name="DataSourceManagerImpl" format="xml" hash="3229290547">
     <data-source source="LOCAL" name="SQL Server - socmedserver@socmedserver.mssql.somee.com" uuid="ad7bbb7e-79b8-467a-bd12-ffac33dc6364">
       <driver-ref>sqlserver.ms</driver-ref>
+=======
+  <component name="DataSourceManagerImpl" format="xml" hash="1477023643">
+    <data-source source="LOCAL" name="SQL Server - socmedserver@socmedserver.mssql.somee.com" uuid="58d57f64-9279-4efb-a27d-a3e0f8a6b37e">
+      <driver-ref>sqlserver.ms</driver-ref>
+      <synchronize>true</synchronize>
+>>>>>>> Stashed changes
       <jdbc-driver>com.microsoft.sqlserver.jdbc.SQLServerDriver</jdbc-driver>
       <jdbc-url>jdbc:sqlserver://socmedserver.mssql.somee.com;databaseName=socmedserver</jdbc-url>
       <libraries />
