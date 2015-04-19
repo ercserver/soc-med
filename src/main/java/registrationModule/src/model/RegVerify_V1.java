@@ -39,36 +39,53 @@ public class RegVerify_V1 implements IRegVerify_model {
                new HashMap<Integer,HashMap<String,String>>();
        HashMap<String,String> member = new HashMap<String,String>();
        //String c = "'" + new Integer(cmid).toString() + "'";
-       member.put("InternalID",new Integer(cmid).toString());
+       member.put("P_CommunityMembers.InternalID",new Integer(cmid).toString());
        HashMap<String,String> memberDetails = model.getUserByParameter(member);
        data.put(cmid,memberDetails);
        System.out.println("hello");
 //       String status =  memberDetails.get("status");//need to change
   //     int s = Integer.parseInt(status);
-/*
+
        int s = 0;
        switch (s) {
-           //for Ill
+           //for Guardian
            case 0:
-               //Ill(data);
+
+               Guardian(data);
+           //for Ill
+           case 1:
+               Ill(data);
                break;
            //for doctor
-           case 1:
-               break;
-           //for Guardian
            case 2:
+               HashMap<String,String> doctorsAuthorizer =
+                       model.getEmailOfDoctorsAuthorizer(memberDetails.get("state"));
+               doctor(data,doctorsAuthorizer);
                break;
            default:
                break;
        }
-       */
        return true;
    }
 
+    private void doctor(HashMap<Integer, HashMap<String, String>> memberDetails,
+                        HashMap<String, String> doctorsAuthorizer) {
+
+        CommToUsers_V1 commToUsers = commToUsersFact.createComm(memberDetails,1 );
+        commToUsers.SendResponse();
+    }
+
+    private void Guardian(HashMap<Integer,HashMap<String,String>> memberDetails) {
+        //get doctor
+        CommToUsers_V1 commToUsers = commToUsersFact.createComm(memberDetails,1 );
+        commToUsers.SendResponse();
+    }
+
     private void Ill(HashMap<Integer,HashMap<String,String>> memberDetails)
     {
+        //need filter memberDetails
         CommToUsers_V1 commToUsers = commToUsersFact.createComm(memberDetails,1 );
-
+        commToUsers.SendResponse();
     }
 
     public String resendMail(String mail,int cmid){

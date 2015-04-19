@@ -142,7 +142,7 @@ public class DbComm_V1 implements IDbComm_model {
         return getRowsFromTable(conds, "RegistrationFields");
     }
 
-    public HashMap<String,String> getUserByParameter(HashMap<String,String> whereConditions)
+    public HashMap<String,String> getUserByParameter(HashMap<String, String> whereConditions)
     {
         String conditions = "";
         int numOfConditions = whereConditions.size();

@@ -8,6 +8,7 @@ import CommunicationModule.src.model.CommToMail_V1;
 import CommunicationModule.src.model.CommToUsersFactory_V1;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by NAOR on 06/04/2015.
@@ -23,12 +24,12 @@ public class CommController_V1 implements ICommController {
     }
     //C'tor - initialize with the chosen implementations for the interfaces
     //use this C'tor when only communication to users is needed
-    CommController_V1(ArrayList<ArrayList<String>> data, int userType) {
+    CommController_V1(HashMap<Integer,HashMap<String,String>>  data, int userType) {
         setCommToUsers(data, userType);
     }
     //C'tor - initialize with the chosen implementations for the interfaces
     //use this C'tor when both emails and communications to users are needed
-    CommController_V1(ArrayList<ArrayList<String>> data, int userType,String emailAdress,String emailMessage, String sub) {
+    CommController_V1(HashMap<Integer,HashMap<String,String>>  data, int userType,String emailAdress,String emailMessage, String sub) {
         setCommToUsers(data,userType);
         setCommToMail(emailAdress, emailMessage, sub);
     }
@@ -58,7 +59,7 @@ public class CommController_V1 implements ICommController {
     public void setCommToMail(String emailAdress,String emailMessage, String sub){
         commToMail = new CommToMail_V1(emailAdress,emailMessage, sub);
     }
-    public void setCommToUsers(ArrayList<ArrayList<String>> data, int userType){
+    public void setCommToUsers(HashMap<Integer,HashMap<String,String>>  data, int userType){
         commToUsers = new CommToUsersFactory_V1().createComm(data,userType);
     }
 }
