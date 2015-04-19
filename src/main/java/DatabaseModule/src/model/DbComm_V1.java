@@ -158,7 +158,6 @@ public class DbComm_V1 implements IDbComm_model {
         ResultSet rs = null;
         try
         {
-            connect();
             statement = connection.createStatement();
             rs = statement.executeQuery("SELECT DISTINCT * FROM " + "P_CommunityMembers INNER JOIN "
                     + "P_Patients ON P_CommunityMembers.InternalID=P_Patients.CommunityMemberID "
@@ -182,15 +181,30 @@ public class DbComm_V1 implements IDbComm_model {
                 HashMap<String,String> user = new HashMap<String,String>();;
                 do
                 {
-                    if (rs.isLast())
+                    user.clear();
+                    //if (rs.isLast())
+                    //{
+                    iter = columnNames.iterator();
+                    for (int i = 0; i < columnCount; i++)
                     {
-                        iter = columnNames.iterator();
-                        for (int i = 0; i < columnCount; i++)
+                        String column = iter.next();
+                        if(!user.containsKey(column))
                         {
-                            String column = iter.next();
-                            user.put(column, rs.getObject(column).toString());
+                            if (rs.getObject(column) != null)
+                                user.put(column, rs.getObject(column).toString());
+                            else
+                                user.put(column, "null");
+                        }
+                        else
+                        {
+                            if (rs.getObject(column) != null)
+                                user.put(column + Integer.toString(i),
+                                        rs.getObject(column).toString());
+                            else
+                                user.put(column + Integer.toString(i), "null");
                         }
                     }
+                    //}
                 }while (rs.next());
                 return user;
             }
@@ -200,7 +214,6 @@ public class DbComm_V1 implements IDbComm_model {
         // Releases the resources of this method
         finally
         {
-            releaseResources(statement, connection);
             if (rs != null)
             {
                 try

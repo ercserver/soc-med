@@ -1,6 +1,7 @@
 package registrationModule.src.model;
 
 import CommunicationModule.src.model.CommToUsersFactory_V1;
+import CommunicationModule.src.model.CommToUsers_V1;
 import DatabaseModule.src.api.IDbComm_model;
 import DatabaseModule.src.model.DbComm_V1;
 import registrationModule.src.api.IRegVerify_model;
@@ -34,10 +35,13 @@ public class RegVerify_V1 implements IRegVerify_model {
     }
    private boolean verifyDetailsDueToType(int cmid)
    {
+       HashMap<Integer,HashMap<String,String>> data =
+               new HashMap<Integer,HashMap<String,String>>();
        HashMap<String,String> member = new HashMap<String,String>();
        //String c = "'" + new Integer(cmid).toString() + "'";
        member.put("InternalID",new Integer(cmid).toString());
        HashMap<String,String> memberDetails = model.getUserByParameter(member);
+       data.put(cmid,memberDetails);
        System.out.println("hello");
 //       String status =  memberDetails.get("status");//need to change
   //     int s = Integer.parseInt(status);
@@ -46,7 +50,7 @@ public class RegVerify_V1 implements IRegVerify_model {
        switch (s) {
            //for Ill
            case 0:
-               //Ill(memberDetails);
+               //Ill(data);
                break;
            //for doctor
            case 1:
@@ -61,9 +65,9 @@ public class RegVerify_V1 implements IRegVerify_model {
        return true;
    }
 
-    private void Ill(HashMap<String,String> memberDetails)
+    private void Ill(HashMap<Integer,HashMap<String,String>> memberDetails)
     {
-        //CommToUsers_V1 commToUsers = commToUsersFact.createComm(memberDetails,1 );
+        CommToUsers_V1 commToUsers = commToUsersFact.createComm(memberDetails,1 );
 
     }
 
@@ -76,14 +80,6 @@ public class RegVerify_V1 implements IRegVerify_model {
 
     }//state1 common to all
 
-    /**
-     * Created by User on 16/04/2015.
-     */
-    public static class t {
-        public static void main(String[] args) {
-            System.out.println("hello");
-            //RegVerify_V1 v = new RegVerify_V1();
-            //v.VerifyDetail(1002);
-        }
-    }
+
+
 }

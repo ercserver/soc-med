@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by NAOR on 06/04/2015.
@@ -16,7 +17,7 @@ public abstract class CommToUsers_V1 implements ICommToUsers_model {
     JSONObject objToSend = null;
 
     //C'tor - building up the JSON response to be sent when instantiated
-    public CommToUsers_V1(ArrayList<ArrayList<String>> data){
+    public CommToUsers_V1(HashMap<Integer,HashMap<String,String>> data){
         objToSend = new JSONResponseCreator().establishResponse(data);
     }
 }
