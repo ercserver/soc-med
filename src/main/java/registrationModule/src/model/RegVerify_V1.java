@@ -45,7 +45,7 @@ public class RegVerify_V1 implements IRegVerify_model {
        System.out.println("hello");
 //       String status =  memberDetails.get("status");//need to change
   //     int s = Integer.parseInt(status);
-
+/*
        int s = 0;
        switch (s) {
            //for Guardian
@@ -65,6 +65,7 @@ public class RegVerify_V1 implements IRegVerify_model {
            default:
                break;
        }
+       */
        return true;
    }
 
