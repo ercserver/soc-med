@@ -43,7 +43,7 @@ public class RegVerify_V1 implements IRegVerify_model {
        HashMap<String,String> memberDetails = model.getUserByParameter(member);
        data.put(cmid,memberDetails);
        System.out.println("hello");
-//       String status =  memberDetails.get("status");//need to change
+//       String status =  memberDetails.get("StatusName");//need to change
   //     int s = Integer.parseInt(status);
 /*
        int s = 0;
@@ -71,14 +71,22 @@ public class RegVerify_V1 implements IRegVerify_model {
 
     private void doctor(HashMap<Integer, HashMap<String, String>> memberDetails,
                         HashMap<String, String> doctorsAuthorizer) {
-
         CommToUsers_V1 commToUsers = commToUsersFact.createComm(memberDetails,1 );
         commToUsers.SendResponse();
     }
 
-    private void Guardian(HashMap<Integer,HashMap<String,String>> memberDetails) {
+    private void Guardian(HashMap<String,String> memberDetails) {
         //get doctor
-        CommToUsers_V1 commToUsers = commToUsersFact.createComm(memberDetails,1 );
+        HashMap<Integer,HashMap<String,String>> data =
+                new HashMap<Integer,HashMap<String,String>>();
+        //find spesipic doctor for patient
+        String cmidDoctor   = memberDetails.get("DoctorID");
+        HashMap<String,String> member = new HashMap<String,String>();
+        member.put("P_CommunityMembers.InternalID", cmidDoctor);
+        HashMap<String,String> doctor = model.getUserByParameter(member);
+
+        data.put(Integer.parseInt(memberDetails.get("InternalID")),memberDetails);
+        CommToUsers_V1 commToUsers = commToUsersFact.createComm(data,1 );
         commToUsers.SendResponse();
     }
 

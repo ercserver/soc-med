@@ -158,6 +158,7 @@ public class DbComm_V1 implements IDbComm_model {
         ResultSet rs = null;
         try
         {
+            connect();
             statement = connection.createStatement();
             rs = statement.executeQuery("SELECT DISTINCT * FROM " + "P_CommunityMembers INNER JOIN "
                     + "P_Patients ON P_CommunityMembers.InternalID=P_Patients.CommunityMemberID "
@@ -214,6 +215,7 @@ public class DbComm_V1 implements IDbComm_model {
         // Releases the resources of this method
         finally
         {
+            releaseResources(statement, connection);
             if (rs != null)
             {
                 try
