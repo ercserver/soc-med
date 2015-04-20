@@ -50,7 +50,6 @@ public class RegVerify_V1 implements IRegVerify_model {
        switch (s) {
            //for Guardian
            case 2:
-
                Guardian(data);
            //for Ill
            case 0:
