@@ -1,6 +1,9 @@
 package DatabaseModule.src.controller;
 
+import CommunicationModule.src.api.ICommToUsersFactory;
+import CommunicationModule.src.model.CommToUsersFactory_V1;
 import DatabaseModule.src.api.IDbComm_model;
+
 import DatabaseModule.src.api.IDbController;
 import DatabaseModule.src.api.IDbInit_model;
 import DatabaseModule.src.model.DbComm_V1;
@@ -13,9 +16,13 @@ import java.util.HashMap;
  * Created by NAOR on 06/04/2015.
  */
 public class DbController_V1 implements IDbController {
+    private final int dbInitVersion = 1;
+    private final int dbCommVersion = 1;
+
     //holding the implementations chosen for the interface (composition)
-    private IDbInit_model DB_initializer = new DbInit_V1();
-    private IDbComm_model DB_communicator = new DbComm_V1();
+    private IDbInit_model DB_initializer = determineDbInitVersion();
+    private IDbComm_model DB_communicator = determineDbCommVersion();
+
 
     @Override
     public void initializeAndConnect() {
@@ -115,5 +122,29 @@ public class DbController_V1 implements IDbController {
     @Override
     public void updateStatus(int cmid, String oldStatus, String newStatus) {
         DB_communicator.updateStatus(cmid,oldStatus,newStatus);
+    }
+
+    private IDbInit_model determineDbInitVersion(){
+        switch (dbInitVersion) {
+            //determine version of CommToUsers to use
+            case 1: {
+                return new DbInit_V1();
+            }
+            default: {
+                return null;
+            }
+        }
+    }
+
+    private IDbComm_model determineDbCommVersion(){
+        switch (dbCommVersion) {
+            //determine version of CommToUsers to use
+            case 1: {
+                return new DbComm_V1();
+            }
+            default: {
+                return null;
+            }
+        }
     }
 }
