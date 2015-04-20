@@ -49,15 +49,15 @@ public class RegVerify_V1 implements IRegVerify_model {
        int s = 0;
        switch (s) {
            //for Guardian
-           case 0:
+           case 2:
 
                Guardian(data);
            //for Ill
-           case 1:
+           case 0:
                Ill(data);
                break;
            //for doctor
-           case 2:
+           case 1:
                HashMap<String,String> doctorsAuthorizer =
                        model.getEmailOfDoctorsAuthorizer(memberDetails.get("state"));
                doctor(data,doctorsAuthorizer);
