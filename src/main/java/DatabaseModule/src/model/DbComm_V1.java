@@ -1,7 +1,10 @@
 package DatabaseModule.src.model;
 
+
 import DatabaseModule.src.api.IDbComm_model;
 import com.sun.deploy.util.StringUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.sql.*;
 import java.util.*;
@@ -12,17 +15,13 @@ import java.util.*;
 public class DbComm_V1 implements IDbComm_model {
 
     final String JDBC_DRIVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
-    final String DB_URL;//databaseName=ercserver-socmed";
+    final String DB_URL = "jdbc:sqlserver://socmedserver.mssql.somee.com;";//databaseName=ercserver-socmed";
     final String DBName = "socmedserver";
     final private String USERNAME = "saaccount";
     final private String PASS = "saaccount";
     private Connection connection = null;
     private Statement statement = null;
     private String SCHEMA = "Ohad";//*
-
-    public DbComm_V1() {
-        DB_URL = "jdbc:sqlserver://socmedserver.mssql.somee.com;";
-    }
 
     private  void connect() throws SQLException
     {
@@ -66,7 +65,7 @@ public class DbComm_V1 implements IDbComm_model {
         }
     }
 
-    private HashMap<Integer,HashMap<String,String>>
+    public HashMap<Integer,HashMap<String,String>>
     getRowsFromTable(HashMap<String,String> whereConditions, String tableName)
     {
         String conditions = "";
@@ -142,7 +141,7 @@ public class DbComm_V1 implements IDbComm_model {
         return getRowsFromTable(conds, "RegistrationFields");
     }
 
-    public HashMap<String,String> getUserByParameter(HashMap<String, String> whereConditions)
+    public HashMap<String,String> getUserByParameter(HashMap<String,String> whereConditions)
     {
         String conditions = "";
         int numOfConditions = whereConditions.size();
@@ -189,20 +188,12 @@ public class DbComm_V1 implements IDbComm_model {
                     for (int i = 0; i < columnCount; i++)
                     {
                         String column = iter.next();
-                        if(!user.containsKey(column))
+                        if((!user.containsKey(column)) && (column != "DateFrom") && (column != "DateTo"))
                         {
                             if (rs.getObject(column) != null)
                                 user.put(column, rs.getObject(column).toString());
                             else
                                 user.put(column, "null");
-                        }
-                        else
-                        {
-                            if (rs.getObject(column) != null)
-                                user.put(column + Integer.toString(i),
-                                        rs.getObject(column).toString());
-                            else
-                                user.put(column + Integer.toString(i), "null");
                         }
                     }
                     //}
@@ -227,7 +218,8 @@ public class DbComm_V1 implements IDbComm_model {
         }
     }
 
-    public void updateUserDetails(HashMap<String,String> updates) {
+    public void updateUserDetails(HashMap<String,String> updates)
+    {
         int CMID = Integer.parseInt(updates.get("CMID"));
         updates.remove("CMID");
         String Supdates = "";
@@ -236,20 +228,22 @@ public class DbComm_V1 implements IDbComm_model {
         Iterator<String> iter = keys.iterator();
         String key = iter.next();
         Supdates = key + "=" + updates.get(key);
-        for (int i = 1; i < numOfUpdates; i++) {
+        for (int i = 1; i < numOfUpdates; i++)
+        {
             key = iter.next();
             Supdates += ", " + key + "=" + updates.get(key);
         }
-        try {
+        try
+        {
             connect();
             statement = connection.createStatement();
-            statement.execute("UPDATE " + "P_CommunityMembers SET " +
+            statement.execute("UPDATE " +  "P_CommunityMembers SET " +
                     updates + " WHERE InternalID=" + Integer.toString(CMID));
         }
         // There was a fault with the connection to the server or with SQL
-        catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
+        catch (SQLException e) {e.printStackTrace();}
+        finally
+        {
             releaseResources(statement, connection);
         }
     }
@@ -376,7 +370,7 @@ public class DbComm_V1 implements IDbComm_model {
 
     private HashMap<Integer,HashMap<String,String>> selectFromTable
             (String tableName, List<String> columns, HashMap<String,String> whereConds){
-        ResultSet rs = null;
+
         // Create the select clause
         String selectString;
         if (columns == null) { //Select *
@@ -403,7 +397,7 @@ public class DbComm_V1 implements IDbComm_model {
             // Update the query string
             sql += " WHERE " + whereString;
         }
-
+        ResultSet rs = null;
         // System.out.println(sql);
         try {
             //connect();
@@ -572,4 +566,3 @@ public class DbComm_V1 implements IDbComm_model {
         }
     }
 }
-

@@ -1,13 +1,18 @@
 package DatabaseModule.src.model;
 
 import DatabaseModule.src.api.IDbInit_model;
+import com.sun.deploy.util.StringUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.sql.*;
+import java.util.*;
+
 
 /**
  * Created by NAOR on 06/04/2015.
  */
-public class DbInit_V1 implements IDbInit_model{
+public class DbInit_V1 implements IDbInit_model {
     static final String JDBC_DRIVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
     static final String DB_URL = "jdbc:sqlserver://socmedserver.mssql.somee.com;";//databaseName=ercserver-socmed";
     static final String DBName = "socmedserver";
@@ -148,7 +153,7 @@ public class DbInit_V1 implements IDbInit_model{
             //connection.commit();
 
             statement.addBatch("CREATE Table P_CommunityMembers("
-                    +"InternalID INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
+                    +"CommunityMemberID INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
                     +"ExternalID VARCHAR(25) NOT NULL,"
                     +"ExternalIDType INT NOT NULL," // --Enum = {IdCard, Passport,...}
                     +"FirstName VARCHAR(50) NOT NULL,"

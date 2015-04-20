@@ -1,13 +1,9 @@
 package DatabaseModule.src.controller;
 
-import CommunicationModule.src.api.ICommToUsersFactory;
-import CommunicationModule.src.model.CommToUsersFactory_V1;
-import DatabaseModule.src.api.IDbComm_model;
 
-import DatabaseModule.src.api.IDbController;
-import DatabaseModule.src.api.IDbInit_model;
-import DatabaseModule.src.model.DbComm_V1;
-import DatabaseModule.src.model.DbInit_V1;
+import DatabaseModule.src.api.*;
+import DatabaseModule.src.model.*;
+
 
 
 import java.util.HashMap;
@@ -122,6 +118,11 @@ public class DbController_V1 implements IDbController {
     @Override
     public void updateStatus(int cmid, String oldStatus, String newStatus) {
         DB_communicator.updateStatus(cmid,oldStatus,newStatus);
+    }
+
+    @Override
+    public HashMap<Integer, HashMap<String, String>> getRowsFromTable(HashMap<String, String> whereConditions, String tableName) {
+        return DB_communicator.getRowsFromTable(whereConditions, tableName);
     }
 
     private IDbInit_model determineDbInitVersion(){
