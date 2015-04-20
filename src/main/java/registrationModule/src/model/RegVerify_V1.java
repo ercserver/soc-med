@@ -8,9 +8,11 @@ import DatabaseModule.src.api.IDbComm_model;
 import DatabaseModule.src.api.IDbController;
 import DatabaseModule.src.controller.DbController_V1;
 
+import org.json.JSONObject;
 import registrationModule.src.api.IRegVerify_model;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by NAOR on 06/04/2015.
@@ -32,10 +34,11 @@ public class RegVerify_V1 implements IRegVerify_model {
 
     public boolean VerifyDetail(int cmid){
         HashMap<String,String> member = new HashMap<String,String>();
-        changeStatusToVerifyDetail(cmid);
+        //changeStatusToVerifyDetail(cmid);
         member.put("P_CommunityMembers.InternalID",new Integer(cmid).toString());
         HashMap<String,String> responseToDoctor = dbController.getUserByParameter(member);
         responseToDoctor.put("RequestID", "verifyPatient");
+        filterDataForVerification(responseToDoctor);
         verifyDetailsDueToType(cmid,responseToDoctor);
         return true;
     }
@@ -49,9 +52,6 @@ public class RegVerify_V1 implements IRegVerify_model {
         HashMap<Integer,HashMap<String,String>> responseToPatient =
                 new HashMap<Integer,HashMap<String,String>>();
         responseToPatient.put(1,dataToPatient);
-
-
-        //filterDataForVerification(userType, memberDetails);
         commController.setCommToUsers(responseToPatient,1);
         commController.SendResponse();
     }
@@ -133,17 +133,48 @@ public class RegVerify_V1 implements IRegVerify_model {
         //need filter memberDetails
         HashMap<Integer,HashMap<String,String>> data =
                 new HashMap<Integer,HashMap<String,String>>();
-        data.put(Integer.parseInt(memberDetails.get("InternalID")),
-                memberDetails);
+        HashMap<String,String> filter = filterDataForVerification(memberDetails);
+        data.put(1,filter);
 
-        //filterDataForVerification(userType, memberDetails);
+
         commController.setCommToUsers(data,1);
         commController.SendResponse();
     }
-    private HashMap<String,String> filterDataForVerification(int userType,
-                                                             HashMap<String,String> data)
+    private HashMap<String,String> filterDataForVerification(HashMap<String, String> data)
     {
-        return null;
+        HashMap<String, String> filter = new  HashMap<String, String>();
+        HashMap<String,String> whereConditions =  new HashMap<String, String>();
+        whereConditions.put("MedicalConditionID", data.get("MedicalConditionID"));
+
+        String medicalConditionDescription = dbController.getRowsFromTable(whereConditions,"medicalConditions").get(1)
+                .get("MedicalConditionDescription");
+
+        filter.put("MedicalConditionDescription", medicalConditionDescription);
+
+
+
+
+        HashMap<String,String> whereConditions2 =  new HashMap<String, String>();
+        whereConditions.put("MedicationNum", data.get("MedicationNum"));
+
+        String medicationName = dbController.getRowsFromTable(whereConditions2,"Medications").get(1)
+                .get("MedicationName");
+
+        filter.put("MedicationName", medicationName);
+
+
+
+        for (String key : data.keySet()) {
+            if (key == "FirstName" || key == "LastName" || key == "Street" ||
+                    key ==  "HomePhoneNumber" || key == "Email"
+             || key == "HouseNumber" || key == "ContactPhone" ||
+                    key == "ZipCode" || key == "BirthDate" || key == "City" ||
+                    key == "MobilePhoneNumber" || key == "State"
+                    || key == "Gender"  || key == "Dosage")
+                filter.put(key,data.get(key));
+
+        }
+        return filter;
     }
     public String resendMail(String mail,int cmid){
         return null;

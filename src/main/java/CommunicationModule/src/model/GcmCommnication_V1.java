@@ -1,8 +1,6 @@
 package CommunicationModule.src.model;
 
-import CommunicationModule.src.model.CommToUsers_V1;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -15,6 +13,6 @@ public class GcmCommnication_V1 extends CommToUsers_V1 {
     }
     @Override
     public void SendResponse () {
-        //TODO
+
     }
 }
