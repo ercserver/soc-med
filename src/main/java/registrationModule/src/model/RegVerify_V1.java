@@ -31,44 +31,55 @@ public class RegVerify_V1 implements IRegVerify_model {
     }
 
     public boolean VerifyDetail(int cmid){
-        //need to change to enum
-       // dbController.updateStatus(cmid, "'verifying email'",
-        //        "'verifying details'");
-        verifyDetailsDueToType(cmid);
+        HashMap<String,String> member = new HashMap<String,String>();
+        changeStatusToVerifyDetail(cmid);
+        member.put("P_CommunityMembers.InternalID",new Integer(cmid).toString());
+        HashMap<String,String> responseToDoctor = dbController.getUserByParameter(member);
+        responseToDoctor.put("RequestID", "verifyPatient");
+        verifyDetailsDueToType(cmid,responseToDoctor);
         return true;
     }
-   private boolean verifyDetailsDueToType(int cmid)
+
+    private void changeStatusToVerifyDetail(int cmid) {
+        dbController.updateStatus(cmid, "'verifying email'","'verifying details'");
+        HashMap<String,String> dataToPatient = new HashMap<String, String>();
+        dataToPatient.put("RequestID", "wait");
+        dataToPatient.put("SendToCmid", new Integer(cmid).toString());
+        //need filter memberDetails
+        HashMap<Integer,HashMap<String,String>> responseToPatient =
+                new HashMap<Integer,HashMap<String,String>>();
+        responseToPatient.put(1,dataToPatient);
+
+
+        //filterDataForVerification(userType, memberDetails);
+        commController.setCommToUsers(responseToPatient,1);
+        commController.SendResponse();
+    }
+
+    private boolean verifyDetailsDueToType(int cmid,HashMap<String,String> responseToDoctor)
    {
-       HashMap<Integer,HashMap<String,String>> data =
-               new HashMap<Integer,HashMap<String,String>>();
-       HashMap<String,String> member = new HashMap<String,String>();
-       //String c = "'" + new Integer(cmid).toString() + "'";
-       member.put("P_CommunityMembers.InternalID",new Integer(cmid).toString());
-       HashMap<String,String> memberDetails = dbController.getUserByParameter(member);
-       data.put(cmid,memberDetails);
-       System.out.println("hello");
-//     String status =  memberDetails.get("'StatusName'");//need to change
-  //   int s = Integer.parseInt(status);
-/*
-       int s = 0;
+       String status =  responseToDoctor.get("'StatusName'");//need to change
+       int s = Integer.parseInt(status);
+
+       //int s = 0;
        switch (s) {
            //for Guardian
            case 2:
-               Guardian(data);
+               Guardian(responseToDoctor);
            //for Ill
            case 0:
-               Ill(data);
+               Ill(responseToDoctor);
                break;
            //for doctor
            case 1:
                HashMap<String,String> doctorsAuthorizer =
-                       dbController.getEmailOfDoctorsAuthorizer(memberDetails.get("state"));
-               doctor(data,doctorsAuthorizer);
+                       dbController.getEmailOfDoctorsAuthorizer(responseToDoctor.get("state"));
+               doctor(responseToDoctor,doctorsAuthorizer);
                break;
            default:
                break;
        }
-*/
+
        return true;
    }
 
@@ -108,6 +119,9 @@ public class RegVerify_V1 implements IRegVerify_model {
         String doctorCmid = (dbController.getRowsFromTable(whereConditions,"P_Doctors")).get(1).get("CommunityMemberID");
 
         memberDetails.put("SendToCmid", doctorCmid);
+
+
+
         data.put(Integer.parseInt(memberDetails.get("InternalID")),memberDetails);
         commController.setCommToUsers(data, 1);
 
