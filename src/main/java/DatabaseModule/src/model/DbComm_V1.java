@@ -547,6 +547,7 @@ public class DbComm_V1 implements IDbComm_model {
             s = getRowsFromTable(cond, "P_Statuses");
             val = s.values();
             statusNum = val.iterator().next().get("StatusNum");
+            connect();
             statement = connection.createStatement();
             statement.execute("INSERT INTO P_StatusLog (StatusNum,CommunityMemberID) VALUES (" +
                     statusNum + "," + Integer.toString(cmid) + ")");
