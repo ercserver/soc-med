@@ -15,6 +15,7 @@ public class test2 {
 
         IRegVerify_model v = new RegVerify_V1();
         v.VerifyDetail(1002);
+        //maccbi
         // comment
         //Yalla Beitar
     }
