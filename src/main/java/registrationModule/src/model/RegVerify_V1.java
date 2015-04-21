@@ -35,17 +35,18 @@ public class RegVerify_V1 implements IRegVerify_model {
     public boolean VerifyDetail(int cmid){
         HashMap<String,String> member = new HashMap<String,String>();
         changeStatusToVerifyDetail(cmid);
-        member.put("P_CommunityMembers.InternalID",new Integer(cmid).toString());
+        /*member.put("P_CommunityMembers.InternalID",new Integer(cmid).toString());
         HashMap<String,String> responseToDoctor = dbController.getUserByParameter(member);
         responseToDoctor.put("RequestID", "verifyPatient");
         filterDataForVerification(responseToDoctor);
-        verifyDetailsDueToType(cmid,responseToDoctor);
+        verifyDetailsDueToType(cmid,responseToDoctor);*/
         return true;
     }
 
     private void changeStatusToVerifyDetail(int cmid) {
-        dbController.updateStatus(cmid,"'wait'" /*"'verifying email'"*/,"'verifying details'");
-        /*HashMap<String,String> dataToPatient = new HashMap<String, String>();
+        dbController.updateStatus(cmid,"'wait'","'verifying details'");
+        /*dbController.updateStatus(cmid,"'verifying email'","'verifying details'");
+        HashMap<String,String> dataToPatient = new HashMap<String, String>();
         dataToPatient.put("RequestID", "wait");
         dataToPatient.put("SendToCmid", new Integer(cmid).toString());
         //need filter memberDetails
