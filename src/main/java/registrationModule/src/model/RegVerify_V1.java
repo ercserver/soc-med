@@ -34,7 +34,7 @@ public class RegVerify_V1 implements IRegVerify_model {
 
     public boolean VerifyDetail(int cmid){
         HashMap<String,String> member = new HashMap<String,String>();
-        //changeStatusToVerifyDetail(cmid);
+        changeStatusToVerifyDetail(cmid);
         member.put("P_CommunityMembers.InternalID",new Integer(cmid).toString());
         HashMap<String,String> responseToDoctor = dbController.getUserByParameter(member);
         responseToDoctor.put("RequestID", "verifyPatient");
@@ -44,8 +44,8 @@ public class RegVerify_V1 implements IRegVerify_model {
     }
 
     private void changeStatusToVerifyDetail(int cmid) {
-        dbController.updateStatus(cmid, "'verifying email'","'verifying details'");
-        HashMap<String,String> dataToPatient = new HashMap<String, String>();
+        dbController.updateStatus(cmid,"'wait'" /*"'verifying email'"*/,"'verifying details'");
+        /*HashMap<String,String> dataToPatient = new HashMap<String, String>();
         dataToPatient.put("RequestID", "wait");
         dataToPatient.put("SendToCmid", new Integer(cmid).toString());
         //need filter memberDetails
@@ -53,7 +53,7 @@ public class RegVerify_V1 implements IRegVerify_model {
                 new HashMap<Integer,HashMap<String,String>>();
         responseToPatient.put(1,dataToPatient);
         commController.setCommToUsers(responseToPatient,1);
-        commController.SendResponse();
+        commController.SendResponse();*/
     }
 
     private boolean verifyDetailsDueToType(int cmid,HashMap<String,String> responseToDoctor)

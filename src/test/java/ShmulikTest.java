@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * Created by User on 16/04/2015.
  */
-public class test2 {
+public class ShmulikTest {
     public static void main(String[] args) {
 
         IRegVerify_model v = new RegVerify_V1();
