@@ -531,12 +531,12 @@ public class DbComm_V1 implements IDbComm_model {
         ResultSet rs = null;
         try
         {
-            connect();
             HashMap<String,String> cond = new HashMap<String,String>();
             cond.put("StatusName", oldStatus);
             HashMap<Integer,HashMap<String,String>> s = getRowsFromTable(cond, "P_Statuses");
             Collection<HashMap<String,String>> val = s.values();
             String statusNum = val.iterator().next().get("StatusNum");
+            connect();
             statement = connection.createStatement();
             statement.execute("UPDATE P_StatusLog SET DateTo='" +
                     new java.sql.Date(Calendar.getInstance().getTime().getTime()) + "' WHERE"
