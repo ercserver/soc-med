@@ -218,7 +218,7 @@ public class RegVerify_V1 implements IRegVerify_model {
 
     public void proccesOfOkMember(int cmid)
     {
-
+        dbController.updateStatus(cmid,"'verifying details'","'active'");
     }
 
     private ICommController determineCommControllerVersion(){
