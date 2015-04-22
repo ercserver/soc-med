@@ -46,11 +46,10 @@ public class RegVerify_V1 implements IRegVerify_model {
         dbController.updateStatus(cmid,"'wait'","'verifying details'");
         /*dbController.updateStatus(cmid,"'verifying email'","'verifying details'");
         HashMap<String,String> dataToPatient = new HashMap<String, String>();
-        dataToPatient.put("RequestID", "wait");
-        dataToPatient.put("SendToCmid", new Integer(cmid).toString());
-        //need filter memberDetails
+
         HashMap<Integer,HashMap<String,String>> responseToPatient =
                 new HashMap<Integer,HashMap<String,String>>();
+        responseToPatient = sendResponeTOApp(dataToPatient,"wait",cmid);
         responseToPatient.put(1,dataToPatient);
         commController.setCommToUsers(responseToPatient,1);
         commController.SendResponse();*/
@@ -108,23 +107,20 @@ public class RegVerify_V1 implements IRegVerify_model {
 
     private void Guardian(HashMap<String,String> memberDetails) {
         //get doctor
+        String doctorCmid = getDoctorCmid(memberDetails);
         HashMap<Integer,HashMap<String,String>> data =
                 new HashMap<Integer,HashMap<String,String>>();
-        //find spesipic doctor for patient
-        HashMap<String,String> whereConditions =  new HashMap<String, String>();
-        whereConditions.put("DoctorID",memberDetails.get("DoctorID"));
-
-
-        String doctorCmid = (dbController.getRowsFromTable(whereConditions,"P_Doctors")).get(1).get("CommunityMemberID");
-
         memberDetails.put("SendToCmid", doctorCmid);
-
-
-
         data.put(Integer.parseInt(memberDetails.get("InternalID")),memberDetails);
         commController.setCommToUsers(data, 1);
-
         commController.SendResponse();
+    }
+
+    private String getDoctorCmid(HashMap<String, String> memberDetails) {
+        HashMap<String,String> whereConditions =  new HashMap<String, String>();
+        whereConditions.put("DoctorID",memberDetails.get("DoctorID"));
+        String doctorCmid = (dbController.getRowsFromTable(whereConditions,"P_Doctors")).get(1).get("CommunityMemberID");
+        return doctorCmid;
     }
 
     private void Ill(HashMap<String,String> memberDetails)
@@ -186,7 +182,11 @@ public class RegVerify_V1 implements IRegVerify_model {
         }
         else
         {
-            sendResponeTOApp(null,"rejectResend",cmid);
+            HashMap<Integer,HashMap<String,String>> responseToPatient =
+                    new HashMap<Integer,HashMap<String,String>>();
+            responseToPatient = sendResponeTOApp(null,"rejectResend",cmid);
+            commController.setCommToUsers(responseToPatient,1);
+            commController.SendResponse();
         }
     }
 
@@ -200,10 +200,14 @@ public class RegVerify_V1 implements IRegVerify_model {
         ICommController commController = determineCommControllerVersion();
         commController.setCommToMail(emailAddress, emailMessage, subject);
         commController.sendEmail();
-        sendResponeTOApp(details,"verifying email",cmid);
+        HashMap<Integer,HashMap<String,String>> responseToPatient =
+                new HashMap<Integer,HashMap<String,String>>();
+        responseToPatient = sendResponeTOApp(details,"verifying email",cmid);
+        commController.setCommToUsers(responseToPatient,1);
+        commController.SendResponse();
     }
 
-    private void sendResponeTOApp(HashMap<String, String> details, String code
+    private HashMap<Integer,HashMap<String,String>> sendResponeTOApp(HashMap<String, String> details, String code
             , int cmid) {
         HashMap<String,String> response = new HashMap<String, String>();
         response.put("RequestID", code);
@@ -211,8 +215,8 @@ public class RegVerify_V1 implements IRegVerify_model {
         HashMap<Integer,HashMap<String,String>> responseToPatient =
                 new HashMap<Integer,HashMap<String,String>>();
         responseToPatient.put(1,response);
-        commController.setCommToUsers(responseToPatient,1);
-        commController.SendResponse();
+        return responseToPatient;
+
     }
 
 
