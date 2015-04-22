@@ -177,19 +177,19 @@ public class RegVerify_V1 implements IRegVerify_model {
     }
 
     public void resendMail(int cmid){
-        //waitResend
+
         HashMap<String,String> member = new HashMap<String,String>();
         member.put("P_CommunityMembers.InternalID",new Integer(cmid).toString());
         HashMap<String,String> details = dbController.getUserByParameter(member);
-        //if (not exsist details.get("Email");)
-        if (true) {
+        if (details.get("StatusNum").equals("verifying email")) {
             emailNotExsist(cmid,details);
         }
         else
         {
-            rejectEmailExsist(cmid);
+            sendResponeTOApp(null,"rejectResend",cmid);
         }
     }
+
 
     private void emailNotExsist(int cmid, HashMap<String, String> details) {
         String firstName = details.get("FirstName");
@@ -200,13 +200,14 @@ public class RegVerify_V1 implements IRegVerify_model {
         ICommController commController = determineCommControllerVersion();
         commController.setCommToMail(emailAddress, emailMessage, subject);
         commController.sendEmail();
+        sendResponeTOApp(details,"verifying email",cmid);
     }
 
-    private void rejectEmailExsist(int cmid) {
+    private void sendResponeTOApp(HashMap<String, String> details, String code
+            , int cmid) {
         HashMap<String,String> response = new HashMap<String, String>();
-        response.put("RequestID", "rejectResend");
+        response.put("RequestID", code);
         response.put("SendToCmid", new Integer(cmid).toString());
-        //need filter memberDetails
         HashMap<Integer,HashMap<String,String>> responseToPatient =
                 new HashMap<Integer,HashMap<String,String>>();
         responseToPatient.put(1,response);
@@ -218,7 +219,7 @@ public class RegVerify_V1 implements IRegVerify_model {
     public void proccesOfOkMember(int cmid)
     {
 
-    }//state1 common to all
+    }
 
     private ICommController determineCommControllerVersion(){
         switch (commControllerVersion) {
