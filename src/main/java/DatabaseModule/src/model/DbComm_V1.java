@@ -466,6 +466,14 @@ public class DbComm_V1 implements IDbComm_model {
         return (res.size() != 0);
     }
 
+    public boolean isEmailMemberExists(int cmid) {
+        HashMap<String,String> where = new HashMap<String,String>();
+        where.put("InternalID", Integer.toString(cmid));
+        List<String> columns = Arrays.asList("InternalID");
+        HashMap<Integer,HashMap<String,String>> res =
+                selectFromTable("P_CommunityMembers", columns, where);
+        return (res.size() != 0);
+    }
     public int addNewCommunityMember(HashMap<String,String> details) {
         return 0;
     }

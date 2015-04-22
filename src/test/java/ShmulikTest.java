@@ -14,6 +14,7 @@ public class ShmulikTest {
     public static void main(String[] args) {
 
         IRegVerify_model v = new RegVerify_V1();
-        v.VerifyDetail(1002);
+        //v.VerifyDetail(1002);
+        v.resendMail(1002);
     }
 }

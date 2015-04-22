@@ -8,7 +8,7 @@ public interface IRegVerify_model {
     public boolean VerifyDetail(int cmid);
     //boolean verifyDetailsDueToType(int userType);
 
-    public String resendMail(String mail,int cmid);
+    public void resendMail(int cmid);
 
     public void proccesOfOkMember(int cmid);
 }

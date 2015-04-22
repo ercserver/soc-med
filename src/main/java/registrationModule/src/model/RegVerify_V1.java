@@ -22,7 +22,6 @@ public class RegVerify_V1 implements IRegVerify_model {
     private final int dbControllerVersion = 1;
     IDbController dbController = null;
     ICommController commController = null;
-
     //send the data
     //commToUsers.SendResponse();
 
@@ -103,7 +102,6 @@ public class RegVerify_V1 implements IRegVerify_model {
 
         ICommController commController = determineCommControllerVersion();
         commController.setCommToMail(emailAddress,emailMessage,subject);
-
         commController.sendEmail();
     }
 
@@ -177,9 +175,45 @@ public class RegVerify_V1 implements IRegVerify_model {
         }
         return filter;
     }
-    public String resendMail(String mail,int cmid){
-        return null;
+
+    public void resendMail(int cmid){
+        //waitResend
+        HashMap<String,String> member = new HashMap<String,String>();
+        member.put("P_CommunityMembers.InternalID",new Integer(cmid).toString());
+        HashMap<String,String> details = dbController.getUserByParameter(member);
+        //if (not exsist details.get("Email");)
+        if (true) {
+            emailNotExsist(cmid,details);
+        }
+        else
+        {
+            rejectEmailExsist(cmid);
+        }
     }
+
+    private void emailNotExsist(int cmid, HashMap<String, String> details) {
+        String firstName = details.get("FirstName");
+        String lastName = details.get("LastName");
+        String emailAddress = details.get("Email");
+        String emailMessage = "Dear " + firstName + "  " + lastName + ",\n";
+        String subject = "Connfirm your email for Socmed App";
+        ICommController commController = determineCommControllerVersion();
+        commController.setCommToMail(emailAddress, emailMessage, subject);
+        commController.sendEmail();
+    }
+
+    private void rejectEmailExsist(int cmid) {
+        HashMap<String,String> response = new HashMap<String, String>();
+        response.put("RequestID", "rejectResend");
+        response.put("SendToCmid", new Integer(cmid).toString());
+        //need filter memberDetails
+        HashMap<Integer,HashMap<String,String>> responseToPatient =
+                new HashMap<Integer,HashMap<String,String>>();
+        responseToPatient.put(1,response);
+        commController.setCommToUsers(responseToPatient,1);
+        commController.SendResponse();
+    }
+
 
     public void proccesOfOkMember(int cmid)
     {

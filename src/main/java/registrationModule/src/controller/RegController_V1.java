@@ -27,9 +27,9 @@ public class RegController_V1 implements IRegController {
     }
     //boolean verifyDetailsDueToType(int userType);
 
-    public String resendMail(String mail,int cmid)
+    public void resendMail(int cmid)
     {
-        return verification.resendMail(mail,cmid);
+        verification.resendMail(cmid);
     }
 
     public void proccesOfOkMember(int cmid)
