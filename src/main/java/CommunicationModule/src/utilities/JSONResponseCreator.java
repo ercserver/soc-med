@@ -9,9 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by NAOR on 06/04/2015.
- */
+
 public class JSONResponseCreator implements IResponseCreator {
     @Override
     public JSONArray establishResponse(HashMap<Integer,HashMap<String,String>> data) {

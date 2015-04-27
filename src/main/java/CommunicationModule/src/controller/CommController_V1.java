@@ -4,8 +4,7 @@ import CommunicationModule.src.api.*;
 import CommunicationModule.src.model.*;
 
 
-
-
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -31,15 +30,16 @@ public class CommController_V1 implements ICommController {
     }
     //C'tor - initialize with the chosen implementations for the interfaces
     //use this C'tor when only communication to users is needed
-    CommController_V1(HashMap<Integer, HashMap<String, String>> data, int userType) {
-        setCommToUsers(data, userType);
+    CommController_V1(HashMap<Integer, HashMap<String, String>> data,ArrayList<String> target ,int userType) {
+        setCommToUsers(data,target ,userType);
     }
     //C'tor - initialize with the chosen implementations for the interfaces
     //use this C'tor when both emails and communications to users are needed
     CommController_V1(HashMap<Integer, HashMap<String, String>> data,
+                      ArrayList<String> target,
                       int userType,String emailAdress,
                       String emailMessage,String subj) {
-        setCommToUsers(data,userType);
+        setCommToUsers(data,target,userType);
         setCommToMail(emailAdress, emailMessage,subj);
     }
 
@@ -69,9 +69,10 @@ public class CommController_V1 implements ICommController {
                               String subj){
         commToMail = determineCommToMailVersion(emailAdress,emailMessage,subj);
     }
-    public void setCommToUsers(HashMap<Integer, HashMap<String, String>> data, int userType){
+    public void setCommToUsers(HashMap<Integer, HashMap<String, String>> data,
+                               ArrayList<String> target,int userType){
         ICommToUsersFactory commToUsersFact = determineCommToUsersVersion();
-        commToUsersFact.createComm(data,userType);
+        commToUsersFact.createComm(data,target,userType);
     }
 
 

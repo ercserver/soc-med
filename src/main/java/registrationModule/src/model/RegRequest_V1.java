@@ -24,9 +24,9 @@ public class RegRequest_V1 implements IRegRequest_model {
         HashMap<Integer,HashMap<String,String>>  dataToSend = establishRequestParams(userType);
         //determine how to send the data
         CommToUsersFactory_V1 commToUsersFact = new CommToUsersFactory_V1();
-        CommToUsers_V1 commToUsers = commToUsersFact.createComm(dataToSend, determineCommunicationMethod(userType));
+        //CommToUsers_V1 commToUsers = commToUsersFact.createComm(dataToSend, determineCommunicationMethod(userType));
         //send the data
-        commToUsers.SendResponse();
+        //commToUsers.SendResponse();
     }
     //a helper method to determine the communication method
     private int determineCommunicationMethod(int userType){

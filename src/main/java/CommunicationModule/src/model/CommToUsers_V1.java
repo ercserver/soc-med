@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by NAOR on 06/04/2015.
@@ -16,10 +17,11 @@ import java.util.HashMap;
 public abstract class CommToUsers_V1 implements ICommToUsers_model {
 
     JSONArray objToSend = null;
-    String sendToCmid = null;
+    ArrayList<String> targets = null;
     //C'tor - building up the JSON response to be sent when instantiated
-    public CommToUsers_V1(HashMap<Integer,HashMap<String,String>> data){
-        sendToCmid = data.get(1).get("SendToCmid");
+    public CommToUsers_V1(HashMap<Integer,HashMap<String,String>> data,
+                          ArrayList<String> target){
+        targets = target;
         objToSend = new JSONResponseCreator().establishResponse(data);
     }
 }

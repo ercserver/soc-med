@@ -10,8 +10,9 @@ import java.util.HashMap;
  */
 public class HttpCommunication_V1 extends CommToUsers_V1 {
 
-    public HttpCommunication_V1(HashMap<Integer,HashMap<String,String>> data) {
-        super(data);
+    public HttpCommunication_V1(HashMap<Integer,HashMap<String,String>> data,
+                                ArrayList<String> target      ) {
+        super(data,target);
     }
     @Override
     public void SendResponse () {

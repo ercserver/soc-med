@@ -13,8 +13,16 @@ import java.util.*;
 public class ShmulikTest {
     public static void main(String[] args) {
 
-        IRegVerify_model v = new RegVerify_V1();
-        v.VerifyDetail(1002);
-        //v.resendMail(1002);
+        //IRegVerify_model v = new RegVerify_V1();
+        //v.VerifyDetail(1002);
+        ArrayList<String> a = new ArrayList<String>();
+        a.add("macbbi");
+        a.add("aspah");
+        a.add("noar");
+        String b = a.toString();
+        System.out.println(b);
+        ArrayList<String> c = new ArrayList<String>();
+        System.out.println(c);
+                       //v.resendMail(1002);
     }
 }

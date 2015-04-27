@@ -1,5 +1,6 @@
 package CommunicationModule.src.api;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -11,5 +12,6 @@ public interface ICommController extends ICommToUsers,ICommToMail{
     //set methods for the members
     public void setCommToMail(String emailAdress,String emailMessage,
                               String subj);
-    public void setCommToUsers(HashMap<Integer, HashMap<String, String>> data, int userType);
+    public void setCommToUsers(HashMap<Integer, HashMap<String, String>> data,
+                               ArrayList<String> target,int userType);
 }

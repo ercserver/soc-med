@@ -11,6 +11,7 @@ import DatabaseModule.src.controller.DbController_V1;
 import org.json.JSONObject;
 import registrationModule.src.api.IRegVerify_model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,7 +45,8 @@ public class RegVerify_V1 implements IRegVerify_model {
 
     private void changeStatusToVerifyDetail(int cmid) {
         dbController.updateStatus(cmid,"'wait'","'verifying details'");
-        /*dbController.updateStatus(cmid,"'verifying email'","'verifying details'");
+        //dbController.updateStatus(cmid,"'verifying email'","'verifying details'");
+        /*
         HashMap<String,String> dataToPatient = new HashMap<String, String>();
 
         HashMap<Integer,HashMap<String,String>> responseToPatient =
@@ -110,9 +112,13 @@ public class RegVerify_V1 implements IRegVerify_model {
         String doctorCmid = getDoctorCmid(memberDetails);
         HashMap<Integer,HashMap<String,String>> data =
                 new HashMap<Integer,HashMap<String,String>>();
-        memberDetails.put("SendToCmid", doctorCmid);
+
+        ArrayList<String> sendTo = new  ArrayList<String>();
+        sendTo.add(doctorCmid);
+
+        //memberDetails.put("SendToCmid", doctorCmid);
         data.put(Integer.parseInt(memberDetails.get("InternalID")),memberDetails);
-        commController.setCommToUsers(data, 1);
+        commController.setCommToUsers(data,sendTo,1);
         commController.SendResponse();
     }
 
@@ -130,9 +136,10 @@ public class RegVerify_V1 implements IRegVerify_model {
                 new HashMap<Integer,HashMap<String,String>>();
         HashMap<String,String> filter = filterDataForVerification(memberDetails);
         data.put(1,filter);
+        ArrayList<String> sendTo = new  ArrayList<String>();
+        sendTo.add(filter.get("InternalID"));
 
-
-        commController.setCommToUsers(data,1);
+        commController.setCommToUsers(data,sendTo,1);
         commController.SendResponse();
     }
     private HashMap<String,String> filterDataForVerification(HashMap<String, String> data)
@@ -185,7 +192,7 @@ public class RegVerify_V1 implements IRegVerify_model {
             HashMap<Integer,HashMap<String,String>> responseToPatient =
                     new HashMap<Integer,HashMap<String,String>>();
             responseToPatient = sendResponeTOApp(null,"rejectResend",cmid);
-            commController.setCommToUsers(responseToPatient,1);
+            commController.setCommToUsers(responseToPatient,new ArrayList<String>(),1);
             commController.SendResponse();
         }
     }
@@ -196,14 +203,19 @@ public class RegVerify_V1 implements IRegVerify_model {
         String lastName = details.get("LastName");
         String emailAddress = details.get("Email");
         String emailMessage = "Dear " + firstName + "  " + lastName + ",\n";
-        String subject = "Connfirm your email for Socmed App";
+        String subject = "Confirm your email for Socmed App";
         ICommController commController = determineCommControllerVersion();
         commController.setCommToMail(emailAddress, emailMessage, subject);
         commController.sendEmail();
         HashMap<Integer,HashMap<String,String>> responseToPatient =
                 new HashMap<Integer,HashMap<String,String>>();
         responseToPatient = sendResponeTOApp(details,"verifying email",cmid);
-        commController.setCommToUsers(responseToPatient,1);
+
+        ArrayList<String> sendTo = new  ArrayList<String>();
+        sendTo.add( new Integer(cmid).toString());
+
+
+        commController.setCommToUsers(responseToPatient,sendTo,1);
         commController.SendResponse();
     }
 
@@ -211,7 +223,6 @@ public class RegVerify_V1 implements IRegVerify_model {
             , int cmid) {
         HashMap<String,String> response = new HashMap<String, String>();
         response.put("RequestID", code);
-        response.put("SendToCmid", new Integer(cmid).toString());
         HashMap<Integer,HashMap<String,String>> responseToPatient =
                 new HashMap<Integer,HashMap<String,String>>();
         responseToPatient.put(1,response);
