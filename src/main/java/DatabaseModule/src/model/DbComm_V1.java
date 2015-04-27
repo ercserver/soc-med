@@ -566,7 +566,6 @@ public class DbComm_V1 implements IDbComm_model {
 
     public void updateStatus(int cmid, String oldStatus, String newStatus)
     {
-        ResultSet rs = null;
         try
         {
             HashMap<String,String> cond = new HashMap<String,String>();
@@ -595,14 +594,30 @@ public class DbComm_V1 implements IDbComm_model {
         finally
         {
             releaseResources(statement, connection);
-            if (rs != null)
-            {
-                try
-                {
-                    rs.close();
-                }
-                catch (Exception e) {e.printStackTrace();}
-            }
         }
+    }
+
+    public void insertRegID(String regId, int cmid)
+    {
+        try
+        {
+            if (!(connection != null && !connection.isClosed() && connection.isValid(1)))
+                connect();
+            statement = connection.createStatement();
+            statement.execute("INSERT INTO RegIDs (RegID,CommunityMemberID) VALUES (" +
+                    regId + "," + Integer.toString(cmid) + ")");
+        }
+        catch (SQLException e) {e.printStackTrace();}
+        finally
+        {
+            releaseResources(statement, connection);
+        }
+    }
+
+    public HashMap<Integer,HashMap<String,String>> getRegIDsOfUser(int cmid)
+    {
+        HashMap<String,String> conds = new HashMap<String,String>();
+        conds.put("CommunityMemberID", Integer.toString(cmid));
+        return getRowsFromTable(conds, "RegIDs");
     }
 }

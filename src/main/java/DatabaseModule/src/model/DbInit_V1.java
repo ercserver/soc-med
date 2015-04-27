@@ -293,6 +293,9 @@ public class DbInit_V1 implements IDbInit_model {
                     +"DateFrom Datetime DEFAULT current_timestamp,"
                     +"DateTo Datetime)");
             //connection.commit();
+            statement.addBatch("CREATE TABLE RegIDs ("
+                    +"RegID VARCHAR(100) NOT NULL PRIMARY KEY,"
+                    +"CommunityMemberID INT NOT NULL)");
 
             statement.executeBatch();
 
