@@ -8,7 +8,7 @@
         version="3.0">
     <servlet>
         <servlet-name>GCMBroadcast</servlet-name>
-        <servlet-class>com.avilyne.gcm.GCMBroadcast</servlet-class>
+        <servlet-class>CommunicationModule.src.model.GcmBroadcast</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>GCMBroadcast</servlet-name>

@@ -225,6 +225,7 @@ public class RegVerify_V1 implements IRegVerify_model {
         response.put("RequestID", code);
         HashMap<Integer,HashMap<String,String>> responseToPatient =
                 new HashMap<Integer,HashMap<String,String>>();
+
         responseToPatient.put(1,response);
         return responseToPatient;
 
@@ -234,6 +235,45 @@ public class RegVerify_V1 implements IRegVerify_model {
     public void proccesOfOkMember(int cmid)
     {
         dbController.updateStatus(cmid,"'verifying details'","'active'");
+        HashMap<Integer,HashMap<String,String>> responseToPatient =
+                new HashMap<Integer,HashMap<String,String>>();
+
+        ArrayList<String> sendTo = new  ArrayList<String>();
+        sendTo.add( new Integer(cmid).toString());
+
+        HashMap<String,String> response = new HashMap<String, String>();
+        response.put("RequestID", "Active");
+
+
+        getFrequency("LocationFrequency");
+        getFrequency("ConnectServerFrequency");
+        getFrequency("TimesToConectToServe");
+
+
+        HashMap<Integer,HashMap<String,String>> a
+                = dbController.getDefaultInEmergency(getState(cmid));
+
+        /*HashMap<String,String> member = new HashMap<String,String>();
+        member.put("P_CommunityMembers.InternalID",new Integer(cmid).toString());
+        HashMap<String,String> details = dbController.getUserByParameter(member);
+        */
+        //responseToPatient = sendResponeTOApp(details,"confirmPatient",cmid);
+
+        commController.setCommToUsers(responseToPatient, sendTo,1);
+        commController.SendResponse();
+    }
+
+    private HashMap<Integer,HashMap<String,String>> getFrequency(String code) {
+        HashMap<String,String> kindOfFrequency = new HashMap<String,String>();
+        kindOfFrequency.put("Name",code);
+        return dbController.getFrequency(kindOfFrequency);
+    }
+
+    private String getState(int cmid) {
+        HashMap<String,String> member = new HashMap<String,String>();
+        member.put("P_CommunityMembers.InternalID",new Integer(cmid).toString());
+        HashMap<String,String> details = dbController.getUserByParameter(member);
+        return details.get("State");
     }
 
     private ICommController determineCommControllerVersion(){
