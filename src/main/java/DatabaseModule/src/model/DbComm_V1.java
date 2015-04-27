@@ -110,7 +110,10 @@ public class DbComm_V1 implements IDbComm_model {
                     for (int i = 0; i < columnCount; i++)
                     {
                         String column = iter.next();
-                        line.put(column, rs.getObject(column).toString());
+                        if(rs.getObject(column) != null)
+                            line.put(column, rs.getObject(column).toString());
+                        else
+                            line.put(column, "null");
                     }
                     results.put(new Integer(j), line);
                     j++;
@@ -139,7 +142,28 @@ public class DbComm_V1 implements IDbComm_model {
     {
         HashMap<String,String> conds = new HashMap<String,String>();
         conds.put("UserType", Integer.toString(userType));
-        return getRowsFromTable(conds, "RegistrationFields");
+        HashMap<Integer,HashMap<String,String>> ret = getRowsFromTable(conds, "RegistrationFields");
+        for(int i = 1; i <= ret.size(); i++)
+        {
+            if(ret.get(i).get("GetPossibleValuesFrom") == "null")
+                continue;
+            String tableName = ret.get(i).get("GetPossibleValuesFrom");
+            JSONObject jo;
+            if(tableName.substring(0, 5) == "Enum.")
+            {
+                ArrayList<String> l = new ArrayList<String>();
+                l.add("EnumValue");
+                HashMap<String, String> conds1 = new HashMap<String, String>();
+                conds1.put("TableName", "'" + tableName.split(".")[1] + "'");
+                conds1.put("ColumnName", "'" + tableName.split(".")[2] + "'");
+                jo = new JSONObject(selectFromTable("Enum", l, conds1));
+            }
+            else
+                jo = new JSONObject(getRowsFromTable(null, tableName));
+            ret.get(i).remove("GetPossibleValuesFrom");
+            ret.get(i).put("GetPossibleValuesFrom", jo.toString());
+        }
+        return ret;
     }
 
     public HashMap<String,String> getUserByParameter(HashMap<String,String> whereConditions)

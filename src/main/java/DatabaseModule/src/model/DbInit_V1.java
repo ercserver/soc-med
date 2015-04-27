@@ -252,6 +252,8 @@ public class DbInit_V1 implements IDbInit_model {
                     +"UserType INT NOT NULL," // --Enum = {patient, doctor, guardian}
                     +"FieldsGroup INT NOT NULL," // --Enum = {personal, medical, professional, preferences}
                     +"NeedsVerification BIT NOT NUll DEFAULT 0,"
+                    +"GetPossibleValuesFrom VARCHAR(50),"
+                    +"InsertDataTo VARCHAR(200),"
                     +"RefreshTime INT)");
             //connection.commit();
 
