@@ -29,7 +29,7 @@ public class DbComm_V1 implements IDbComm_model {
         {
             Class.forName(JDBC_DRIVER);
             connection = DriverManager.getConnection(DB_URL, USERNAME, PASS);
-            connection.setAutoCommit(false);
+            connection.setAutoCommit(true);
             statement = connection.createStatement();
             //statement.addBatch("DROP DATABASE " + DBName);
             //statement.addBatch("CREATE database " + DBName);
@@ -553,9 +553,8 @@ public class DbComm_V1 implements IDbComm_model {
             if (!(connection != null && !connection.isClosed() && connection.isValid(1)))
                 connect();
             statement = connection.createStatement();
-            statement.execute("UPDATE P_StatusLog SET DateTo='" +
-                    new java.sql.Date(Calendar.getInstance().getTime().getTime()) + "' WHERE"
-                    + " StatusNum=" + statusNum + " AND CommunityMemberID="
+            statement.execute("UPDATE P_StatusLog SET DateTo=CURRENT_TIMESTAMP" +
+                    " WHERE" + " StatusNum=" + statusNum + " AND CommunityMemberID="
                     + Integer.toString(cmid));
             cond = new HashMap<String,String>();
             cond.put("StatusName", newStatus);
