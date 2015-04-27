@@ -19,7 +19,7 @@ public class DbComm_V1 implements IDbComm_model {
     final String DBName = "socmedserver";
     final private String USERNAME = "saaccount";
     final private String PASS = "saaccount";
-    private Connection connection = null;
+    private static Connection connection = null;
     private Statement statement = null;
     private String SCHEMA = "Ohad";//*
 
@@ -55,14 +55,14 @@ public class DbComm_V1 implements IDbComm_model {
             }
             catch (Exception e) {e.printStackTrace();}
         }
-        if (connection != null)
+        /*if (connection != null)
         {
             try
             {
                 connection.close();
             }
             catch (Exception e) {e.printStackTrace();}
-        }
+        }*/
     }
 
     public HashMap<Integer,HashMap<String,String>>
@@ -87,7 +87,8 @@ public class DbComm_V1 implements IDbComm_model {
         ResultSet rs = null;
         try
         {
-            connect();
+            if (!(connection != null && !connection.isClosed() && connection.isValid(1)))
+                connect();
             statement = connection.createStatement();
             rs = statement.executeQuery("SELECT DISTINCT * FROM " + tableName +
                     " WHERE " + conditions);
@@ -157,7 +158,8 @@ public class DbComm_V1 implements IDbComm_model {
         ResultSet rs = null;
         try
         {
-            connect();
+            if (!(connection != null && !connection.isClosed() && connection.isValid(1)))
+                connect();
             statement = connection.createStatement();
             rs = statement.executeQuery("SELECT DISTINCT * FROM " + "P_CommunityMembers INNER JOIN "
                     + "P_Patients ON P_CommunityMembers.InternalID=P_Patients.CommunityMemberID "
@@ -235,7 +237,8 @@ public class DbComm_V1 implements IDbComm_model {
         }
         try
         {
-            connect();
+            if (!(connection != null && !connection.isClosed() && connection.isValid(1)))
+                connect();
             statement = connection.createStatement();
             statement.execute("UPDATE " +  "P_CommunityMembers SET " +
                     updates + " WHERE InternalID=" + Integer.toString(CMID));
@@ -288,7 +291,8 @@ public class DbComm_V1 implements IDbComm_model {
         ResultSet rs1 = null;
         try
         {
-            connect();
+            if (!(connection != null && !connection.isClosed() && connection.isValid(1)))
+                connect();
             statement = connection.createStatement();
             rs = statement.executeQuery("SELECT DISTINCT * FROM " + "P_Doctors INNER JOIN "+
                     "P_Supervision ON P_Doctors.DoctorID=P_Supervision.DoctorID "
@@ -401,7 +405,8 @@ public class DbComm_V1 implements IDbComm_model {
         // System.out.println(sql);
         try {
             //connect();
-            connect();
+            if (!(connection != null && !connection.isClosed() && connection.isValid(1)))
+                connect();
             statement = connection.createStatement();
             rs = statement.executeQuery(sql);
 
@@ -443,7 +448,8 @@ public class DbComm_V1 implements IDbComm_model {
         String sql = String.format("UPDATE %s SET %s=%s WHERE %s", tableName, columnToUpdate, newValue.toString(), whereString);
         //System.out.println(sql);
         try {
-            connect();
+            if (!(connection != null && !connection.isClosed() && connection.isValid(1)))
+                connect();
             statement = connection.createStatement();
             statement.execute(sql);
 
@@ -544,7 +550,8 @@ public class DbComm_V1 implements IDbComm_model {
             HashMap<Integer,HashMap<String,String>> s = getRowsFromTable(cond, "P_Statuses");
             Collection<HashMap<String,String>> val = s.values();
             String statusNum = val.iterator().next().get("StatusNum");
-            connect();
+            if (!(connection != null && !connection.isClosed() && connection.isValid(1)))
+                connect();
             statement = connection.createStatement();
             statement.execute("UPDATE P_StatusLog SET DateTo='" +
                     new java.sql.Date(Calendar.getInstance().getTime().getTime()) + "' WHERE"
@@ -555,7 +562,8 @@ public class DbComm_V1 implements IDbComm_model {
             s = getRowsFromTable(cond, "P_Statuses");
             val = s.values();
             statusNum = val.iterator().next().get("StatusNum");
-            connect();
+            if (!(connection != null && !connection.isClosed() && connection.isValid(1)))
+                connect();
             statement = connection.createStatement();
             statement.execute("INSERT INTO P_StatusLog (StatusNum,CommunityMemberID) VALUES (" +
                     statusNum + "," + Integer.toString(cmid) + ")");
