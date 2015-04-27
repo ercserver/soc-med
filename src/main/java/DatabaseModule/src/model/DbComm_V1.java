@@ -261,8 +261,8 @@ public class DbComm_V1 implements IDbComm_model {
         HashMap<String,String> cond = new HashMap<String,String>();
         cond.put("State", "'" + state + "'");
         ArrayList<String> select = new ArrayList<String>();
-        select.add("DefaultE");
-        return selectFromTable("DefaultForEmergency", select, cond);
+        select.add("DefaultCaller");
+        return selectFromTable("DefaultCallerSettings", select, cond);
     }
 
     public HashMap<String,String> getRejectCodes()
@@ -513,7 +513,7 @@ public class DbComm_V1 implements IDbComm_model {
         HashMap<String,String> cond = new HashMap<String,String>();
         cond.put("EmailAddress", email);
         HashMap<Integer,HashMap<String,String>> res =
-                selectFromTable("DoctorAuthorizers", null, cond);
+                selectFromTable("MembersLoginDetails", null, cond);
         if (res.size() != 0){
             Collection<HashMap<String,String>> coll = res.values();
             return coll.iterator().next();
