@@ -10,6 +10,7 @@ import DatabaseModule.src.controller.DbController_V1;
 
 import org.json.JSONObject;
 import registrationModule.src.api.IRegVerify_model;
+import registrationModule.src.utilities.ModelsFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,17 +20,13 @@ import java.util.Map;
  * Created by NAOR on 06/04/2015.
  */
 public class RegVerify_V1 implements IRegVerify_model {
-    private final int commControllerVersion = 1;
-    private final int dbControllerVersion = 1;
+
     IDbController dbController = null;
-    ICommController commController = null;
-    //send the data
-    //commToUsers.SendResponse();
 
     public RegVerify_V1()
     {
-        commController = determineCommControllerVersion();
-        dbController = determineDbControllerVersion();
+        ModelsFactory models = new ModelsFactory();
+        dbController = models.determineDbControllerVersion();
     }
 
     public boolean VerifyDetail(int cmid){

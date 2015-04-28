@@ -13,5 +13,5 @@ public interface ICommController extends ICommToUsers,ICommToMail{
     public void setCommToMail(String emailAdress,String emailMessage,
                               String subj);
     public void setCommToUsers(HashMap<Integer, HashMap<String, String>> data,
-                               ArrayList<String> target,int userType);
+                               ArrayList<String> target,boolean initiatedComm);
 }

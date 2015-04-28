@@ -1,6 +1,5 @@
 package registrationModule.src.controller;
 
-
 import CommunicationModule.src.api.ICommController;
 import DatabaseModule.src.api.IDbController;
 
@@ -8,7 +7,7 @@ import registrationModule.src.api.IRegController;
 import registrationModule.src.api.IRegRequest_model;
 import registrationModule.src.api.IRegVerify_model;
 
-import registrationModule.src.utilities.ModelsHolder;
+import registrationModule.src.utilities.ModelsFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,7 +22,7 @@ public class RegController_V1 implements IRegController {
     private ICommController commController = null;
 
     public RegController_V1(){
-        ModelsHolder models = new ModelsHolder();
+        ModelsFactory models = new ModelsFactory();
         commController = models.determineCommControllerVersion();
         dbController = models.determineDbControllerVersion();
         registrator = models.determineRegRequestVersion();
@@ -34,15 +33,10 @@ public class RegController_V1 implements IRegController {
         //generate data to send
         HashMap<Integer,HashMap<String,String>> dataToSend = new HashMap<Integer,HashMap<String,String>>();
         HashMap<String,String> data = registrator.regDetailsRequest(request);
-        String regID = data.get("RegID");
-        ArrayList<String> sendTo = null;
-        if (null != regID){
-            sendTo = new ArrayList<String>();
-            sendTo.add(regID);
-        }
+        ArrayList<String> sendTo = sendTo(data);
         dataToSend.put(1,data);
         //determine how to send the data
-        commController.setCommToUsers(dataToSend,sendTo);
+        commController.setCommToUsers(dataToSend,sendTo,false);
 
         //send the data
         commController.SendResponse();
@@ -62,25 +56,47 @@ public class RegController_V1 implements IRegController {
             //Add the new community member (a new CmID is generated)
             String newCmid = Integer.toString(dbController.addNewCommunityMember(filledForm));
             //Separate according to user type and handle accordingly.... use the Verification Module for verification processes
-            VerifyDetail(filledForm, newCmid);
+            verifyFilledForm(filledForm, newCmid);
         }
+        ArrayList<String> sendTo = sendTo(filledForm);
+        dataToSend.put(1,filledForm);
         //determine how to send the data
-        commController.setCommToUsers(dataToSend);
+        commController.setCommToUsers(dataToSend,sendTo,false);
+
         //send the data
         commController.SendResponse();
     }
 
+    private void verifyFilledForm(HashMap<String, String> filledForm, String newCmid) {
+        /////////////
+    }
+
+    private ArrayList<String> sendTo(HashMap<String,String> data){
+        String regID = data.get("RegID");
+        ArrayList<String> sendTo = null;
+        if (null != regID){
+            sendTo = new ArrayList<String>();
+            sendTo.add(regID);
+        }
+        return sendTo;
+    }
     //public void IVerify(int userType){verification.IVerify(userType);}
     public boolean VerifyDetail(int cmid){
         return verification.VerifyDetail(cmid);
     }
 
-    public String resendMail(String mail,int cmid)
+    public void resendMail(int cmid)
     {
-        return verification.resendMail(mail,cmid);
+        verification.resendMail(cmid);
     }
+
+    public void responeDoctor(int cmid, String reason) {
+
+    }
+
     public void proccesOfOkMember(int cmid)
     {
         verification.proccesOfOkMember(cmid);
     }
 }
+

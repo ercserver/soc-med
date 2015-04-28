@@ -14,8 +14,9 @@ import java.util.List;
 /**
  * Created by NAOR on 06/04/2015.
  */
-public abstract class CommToUsers_V1 implements ICommToUsers_model {
+public class CommToUsers_V1 implements ICommToUsers_model {
 
+    private boolean initialedByServer = false;
     JSONArray objToSend = null;
     ArrayList<String> targets = null;
     //C'tor - building up the JSON response to be sent when instantiated
@@ -23,5 +24,8 @@ public abstract class CommToUsers_V1 implements ICommToUsers_model {
                           ArrayList<String> target){
         targets = target;
         objToSend = new JSONResponseCreator().establishResponse(data);
+    }
+    public JSONArray SendResponse () {
+        return objToSend;
     }
 }

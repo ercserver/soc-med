@@ -6,12 +6,12 @@ package registrationModule.src.api;
 public interface IRegVerify {
 
     //boolean verifyEmailWithCmid(String mail,int cmid);
-    public boolean VerifyDetail(int cmid);
+    boolean VerifyDetail(int cmid);
     //boolean verifyDetailsDueToType(int userType);
 
-    public void resendMail(int cmid);
+    void resendMail(int cmid);
 
     // if doctor reject we send reason in string reason
     //else we send null
-    public void responeDoctor(int cmid,String reason);
+    void responeDoctor(int cmid,String reason);
 }

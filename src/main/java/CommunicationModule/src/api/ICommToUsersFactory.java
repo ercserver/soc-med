@@ -12,5 +12,5 @@ import java.util.HashMap;
 public interface ICommToUsersFactory {
 
     ICommToUsers_model createComm(HashMap<Integer, HashMap<String, String>> data,
-                                  ArrayList<String> target);
+                                  ArrayList<String> target,boolean initiatedComm);
 }

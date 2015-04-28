@@ -2,7 +2,7 @@ package registrationModule.src.model;
 
 import DatabaseModule.src.api.IDbController;
 import registrationModule.src.api.IRegRequest_model;
-import registrationModule.src.utilities.ModelsHolder;
+import registrationModule.src.utilities.ModelsFactory;
 
 import java.util.HashMap;
 
@@ -15,7 +15,7 @@ public class RegRequest_V1 implements IRegRequest_model {
 
     public RegRequest_V1()
     {
-        ModelsHolder models = new ModelsHolder();
+        ModelsFactory models = new ModelsFactory();
         dbController = models.determineDbControllerVersion();
     }
 

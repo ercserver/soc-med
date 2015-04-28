@@ -24,27 +24,7 @@ public class CommController_V1 implements ICommController {
     public CommController_V1() {}
 
 
-    //C'tor - use this C'tor just to communicate to mail only
-    CommController_V1(String emailAdress,String emailMessage,String subj) {
-        setCommToMail(emailAdress, emailMessage,subj);
-    }
-    //C'tor - initialize with the chosen implementations for the interfaces
-    //use this C'tor when only communication to users is needed
-    CommController_V1(HashMap<Integer, HashMap<String, String>> data,ArrayList<String> target ,int userType) {
-        setCommToUsers(data,target ,userType);
-    }
-    //C'tor - initialize with the chosen implementations for the interfaces
-    //use this C'tor when both emails and communications to users are needed
-    CommController_V1(HashMap<Integer, HashMap<String, String>> data,
-                      ArrayList<String> target,
-                      int userType,String emailAdress,
-                      String emailMessage,String subj) {
-        setCommToUsers(data,target,userType);
-        setCommToMail(emailAdress, emailMessage,subj);
-    }
 
-
-    @Override
     public void SendResponse() {
         if(null != commToUsers) {
             commToUsers.SendResponse();
@@ -54,7 +34,7 @@ public class CommController_V1 implements ICommController {
         }
     }
 
-    @Override
+
     public void sendEmail()  {
         if (null != commToMail) {
             commToMail.sendEmail();
@@ -70,9 +50,9 @@ public class CommController_V1 implements ICommController {
         commToMail = determineCommToMailVersion(emailAdress,emailMessage,subj);
     }
     public void setCommToUsers(HashMap<Integer, HashMap<String, String>> data,
-                               ArrayList<String> target,int userType){
+                               ArrayList<String> target,boolean initiatedComm){
         ICommToUsersFactory commToUsersFact = determineCommToUsersVersion();
-        commToUsersFact.createComm(data,target,userType);
+        commToUsersFact.createComm(data,target,initiatedComm);
     }
 
 

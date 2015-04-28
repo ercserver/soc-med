@@ -12,14 +12,11 @@ import registrationModule.src.model.RegVerify_V1;
 /**
  * Created by NAOR on 22/04/2015.
  */
-public class ModelsHolder {
+public class ModelsFactory {
     private final int commControllerVersion = 1;
     private final int dbControllerVersion = 1;
     private final int regRequestVersion = 1;
     private final int regVerifyVersion = 1;
-
-
-    public ModelsHolder(){}
 
 
     public ICommController determineCommControllerVersion(){

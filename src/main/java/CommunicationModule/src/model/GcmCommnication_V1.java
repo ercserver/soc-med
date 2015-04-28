@@ -4,6 +4,7 @@ package CommunicationModule.src.model;
 import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.MulticastResult;
 import com.google.android.gcm.server.Sender;
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,8 +22,8 @@ public class GcmCommnication_V1 extends CommToUsers_V1 {
                               ArrayList<String> target) {
         super(data,target);
     }
-    @Override
-    public void SendResponse () {
+
+    public JSONArray SendResponse () {
         Sender sender = new Sender(SENDER_ID);
         Message message = new Message.Builder()
 
@@ -53,6 +54,7 @@ public class GcmCommnication_V1 extends CommToUsers_V1 {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
 
     }
 }

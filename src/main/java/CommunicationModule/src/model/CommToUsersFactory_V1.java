@@ -11,16 +11,21 @@ import java.util.HashMap;
  */
 
 public class CommToUsersFactory_V1 implements ICommToUsersFactory {
-    public CommToUsers_V1 createComm(HashMap<Integer,HashMap<String,String>> data,ArrayList<String> target) {
+    public CommToUsers_V1 createComm(HashMap<Integer,HashMap<String,String>> data,ArrayList<String> target,boolean initiatedComm) {
+        //If we communicate to EMS or Doctor website
         if (null == target)
         {
-            return new HttpCommunication_V1(data,target);
+            return new CommToUsers_V1(data,target);
         }
+        //If we initiate comm to GIS (or other server)
+        else if(initiatedComm) {
+            return new InitiatedHTTPCommunication_V1(data, target, target.get(0));
+        }
+        //If we communicate to Apps
         else
         {
             return new GcmCommnication_V1(data,target);
         }
-
         }
 
 }
