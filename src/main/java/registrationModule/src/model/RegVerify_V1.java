@@ -44,21 +44,24 @@ public class RegVerify_V1 implements IRegVerify_model {
     }
 
     private void changeStatusToVerifyDetail(int cmid) {
-        //dbController.updateStatus(cmid,"'wait'","'verifying details'");
-        dbController.updateStatus(cmid,"'verifying email'","'verifying details'");
+        HashMap<Integer,HashMap<String,String>> responseToPatient =
+                new  HashMap<Integer,HashMap<String,String>>();
+        //dbController.updateStatus(cmid,"'verifying details'","'verifying email'");
+       dbController.updateStatus(cmid,"'verifying email'","'verifying details'");
 
         HashMap<String,String> dataToPatient = new HashMap<String, String>();
 
-        HashMap<Integer,HashMap<String,String>> responseToPatient =
-                new HashMap<Integer,HashMap<String,String>>();
-        responseToPatient = sendResponeTOApp(dataToPatient,"wait",cmid);
+
+        dataToPatient.putAll(sendResponeTOApp(dataToPatient,"wait",cmid));
 
         ArrayList<String> sendTo = new  ArrayList<String>();
         sendTo.add(new Integer(cmid).toString());
 
         responseToPatient.put(1,dataToPatient);
+
         commController.setCommToUsers(responseToPatient,sendTo,1);
         commController.SendResponse();
+
     }
 
     private boolean verifyDetailsDueToType(int cmid,HashMap<String,String> responseToDoctor)
@@ -195,7 +198,7 @@ public class RegVerify_V1 implements IRegVerify_model {
         {
             HashMap<Integer,HashMap<String,String>> responseToPatient =
                     new HashMap<Integer,HashMap<String,String>>();
-            responseToPatient = sendResponeTOApp(null,"rejectResend",cmid);
+            responseToPatient.put(1,sendResponeTOApp(null,"rejectResend",cmid));
             commController.setCommToUsers(responseToPatient,new ArrayList<String>(),1);
             commController.SendResponse();
         }
@@ -213,7 +216,8 @@ public class RegVerify_V1 implements IRegVerify_model {
         commController.sendEmail();
         HashMap<Integer,HashMap<String,String>> responseToPatient =
                 new HashMap<Integer,HashMap<String,String>>();
-        responseToPatient = sendResponeTOApp(details,"verifying email",cmid);
+
+        responseToPatient.put(1,sendResponeTOApp(details,"verifying email",cmid));
 
         ArrayList<String> sendTo = new  ArrayList<String>();
         sendTo.add( new Integer(cmid).toString());
@@ -223,15 +227,16 @@ public class RegVerify_V1 implements IRegVerify_model {
         commController.SendResponse();
     }
 
-    private HashMap<Integer,HashMap<String,String>> sendResponeTOApp(HashMap<String, String> details, String code
+    private HashMap<String,String> sendResponeTOApp(HashMap<String, String> details, String code
             , int cmid) {
         HashMap<String,String> response = new HashMap<String, String>();
         response.put("RequestID", code);
-        HashMap<Integer,HashMap<String,String>> responseToPatient =
+        /*HashMap<Integer,HashMap<String,String>> responseToPatient =
                 new HashMap<Integer,HashMap<String,String>>();
 
         responseToPatient.put(1,response);
-        return responseToPatient;
+        */
+        return response;
 
     }
 
