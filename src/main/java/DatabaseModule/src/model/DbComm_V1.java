@@ -110,7 +110,10 @@ public class DbComm_V1 implements IDbComm_model {
                     for (int i = 0; i < columnCount; i++)
                     {
                         String column = iter.next();
-                        line.put(column, rs.getObject(column).toString());
+                        if(rs.getObject(column) != null)
+                            line.put(column, rs.getObject(column).toString());
+                        else
+                            line.put(column, "null");
                     }
                     results.put(new Integer(j), line);
                     j++;
@@ -139,7 +142,28 @@ public class DbComm_V1 implements IDbComm_model {
     {
         HashMap<String,String> conds = new HashMap<String,String>();
         conds.put("UserType", Integer.toString(userType));
-        return getRowsFromTable(conds, "RegistrationFields");
+        HashMap<Integer,HashMap<String,String>> ret = getRowsFromTable(conds, "RegistrationFields");
+        for(int i = 1; i <= ret.size(); i++)
+        {
+            if(ret.get(i).get("GetPossibleValuesFrom") == "null")
+                continue;
+            String tableName = ret.get(i).get("GetPossibleValuesFrom");
+            JSONObject jo;
+            if(tableName.substring(0, 5) == "Enum.")
+            {
+                ArrayList<String> l = new ArrayList<String>();
+                l.add("EnumValue");
+                HashMap<String, String> conds1 = new HashMap<String, String>();
+                conds1.put("TableName", "'" + tableName.split(".")[1] + "'");
+                conds1.put("ColumnName", "'" + tableName.split(".")[2] + "'");
+                jo = new JSONObject(selectFromTable("Enum", l, conds1));
+            }
+            else
+                jo = new JSONObject(getRowsFromTable(null, tableName));
+            ret.get(i).remove("GetPossibleValuesFrom");
+            ret.get(i).put("GetPossibleValuesFrom", jo.toString());
+        }
+        return ret;
     }
 
     public HashMap<String,String> getUserByParameter(HashMap<String,String> whereConditions)
@@ -261,8 +285,8 @@ public class DbComm_V1 implements IDbComm_model {
         HashMap<String,String> cond = new HashMap<String,String>();
         cond.put("State", "'" + state + "'");
         ArrayList<String> select = new ArrayList<String>();
-        select.add("DefaultE");
-        return selectFromTable("DefaultForEmergency", select, cond);
+        select.add("DefaultCaller");
+        return selectFromTable("DefaultCallerSettings", select, cond);
     }
 
     public HashMap<String,String> getRejectCodes()
@@ -513,7 +537,7 @@ public class DbComm_V1 implements IDbComm_model {
         HashMap<String,String> cond = new HashMap<String,String>();
         cond.put("EmailAddress", email);
         HashMap<Integer,HashMap<String,String>> res =
-                selectFromTable("DoctorAuthorizers", null, cond);
+                selectFromTable("MembersLoginDetails", null, cond);
         if (res.size() != 0){
             Collection<HashMap<String,String>> coll = res.values();
             return coll.iterator().next();
@@ -542,7 +566,6 @@ public class DbComm_V1 implements IDbComm_model {
 
     public void updateStatus(int cmid, String oldStatus, String newStatus)
     {
-        ResultSet rs = null;
         try
         {
             HashMap<String,String> cond = new HashMap<String,String>();
@@ -571,14 +594,30 @@ public class DbComm_V1 implements IDbComm_model {
         finally
         {
             releaseResources(statement, connection);
-            if (rs != null)
-            {
-                try
-                {
-                    rs.close();
-                }
-                catch (Exception e) {e.printStackTrace();}
-            }
         }
+    }
+
+    public void insertRegID(String regId, int cmid)
+    {
+        try
+        {
+            if (!(connection != null && !connection.isClosed() && connection.isValid(1)))
+                connect();
+            statement = connection.createStatement();
+            statement.execute("INSERT INTO RegIDs (RegID,CommunityMemberID) VALUES (" +
+                    regId + "," + Integer.toString(cmid) + ")");
+        }
+        catch (SQLException e) {e.printStackTrace();}
+        finally
+        {
+            releaseResources(statement, connection);
+        }
+    }
+
+    public HashMap<Integer,HashMap<String,String>> getRegIDsOfUser(int cmid)
+    {
+        HashMap<String,String> conds = new HashMap<String,String>();
+        conds.put("CommunityMemberID", Integer.toString(cmid));
+        return getRowsFromTable(conds, "RegIDs");
     }
 }
