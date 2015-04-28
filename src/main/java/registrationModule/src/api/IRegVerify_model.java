@@ -17,4 +17,6 @@ public interface IRegVerify_model {
     Object responeDoctor(int cmid,String reason,String regId);
 
     ArrayList<String> generateMailForVerification(HashMap<String, String> details);
+
+    Object signIn(HashMap<String,String> details);
 }

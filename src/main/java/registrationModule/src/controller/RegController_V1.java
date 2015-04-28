@@ -126,5 +126,10 @@ public class RegController_V1 implements IRegController {
         String pas = data.get("Password");
         return pas.equals(password);
     }
+
+    public Object signIn(HashMap<String,String> details)
+    {
+        return verification.signIn(details);
+    }
 }
 
