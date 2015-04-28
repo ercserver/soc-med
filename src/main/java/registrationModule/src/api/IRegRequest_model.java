@@ -1,8 +1,14 @@
 package registrationModule.src.api;
 
+import java.util.HashMap;
+
 /**
  * Created by NAOR on 06/04/2015.
  */
 public interface IRegRequest_model {
-    public void regRequest(int userType);
+
+
+    HashMap<String,String> regDetailsRequest(HashMap<String,String> request);
+
+    boolean doesUserExist(HashMap<String, String> filledForm);
 }
