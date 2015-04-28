@@ -1,10 +1,9 @@
 package registrationModule.src.model;
 
-import CommunicationModule.src.model.CommToUsersFactory_V1;
-import CommunicationModule.src.model.CommToUsers_V1;
+import DatabaseModule.src.api.IDbController;
 import registrationModule.src.api.IRegRequest_model;
+import registrationModule.src.utilities.ModelsHolder;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -12,43 +11,37 @@ import java.util.HashMap;
  */
 public class RegRequest_V1 implements IRegRequest_model {
 
+    private IDbController dbController = null;
 
-
-    private void sendRegData(HashMap<String,String> data){
-        //TODO
+    public RegRequest_V1()
+    {
+        ModelsHolder models = new ModelsHolder();
+        dbController = models.determineDbControllerVersion();
     }
 
-    @Override
-    public void regRequest(int userType) {
+    public boolean doesUserExist(HashMap<String, String> filledForm) {
+        //search for an active user with that email - if found return true, else return false.
+        HashMap<String,String> whereConditions = new HashMap<String, String>();
+        whereConditions.put("E-mail", filledForm.get("E-mail"));
+        HashMap<String,String> result = dbController.getUserByParameter(whereConditions);
+
+        return((null != result) && (result.get("Status").equals("Active")));
+    }
+
+    public HashMap<String,String> regDetailsRequest(HashMap<String,String> request) {
+
+        String regID = request.get("regID");
+        int userType = Integer.parseInt(request.get("userType"));
+
         //generate the data to be sent
-        HashMap<Integer,HashMap<String,String>>  dataToSend = establishRequestParams(userType);
-        //determine how to send the data
-        CommToUsersFactory_V1 commToUsersFact = new CommToUsersFactory_V1();
-        //CommToUsers_V1 commToUsers = commToUsersFact.createComm(dataToSend, determineCommunicationMethod(userType));
-        //send the data
-        //commToUsers.SendResponse();
-    }
-    //a helper method to determine the communication method
-    private int determineCommunicationMethod(int userType){
-        switch(userType){
-            // 1,2 and 3 indicate the Doctor, Apotropus and Patient - Communicate through Gsm
-            case 1:
-            case 2:
-            case 3:{
-                return 1;
-            }
-            //4 indicates EMS
-            case 4:{
-                return 2;
-            }
-            default:{
-                return -1;
-            }
-        }
+        return establishRequestParams(userType,regID);
     }
 
-    private HashMap<Integer,HashMap<String,String>>  establishRequestParams(int userType){
-        //TODO - Communicate the DB to retrieve the data - need to implement a method on the database to retrieve registration data by user type
-        return null;
+    private HashMap<String,String>  establishRequestParams(int userType,String regID){
+        //Communicate the DB to retrieve the fields to be filled by that type of user
+        HashMap<String,String> response = dbController.getRegistrationFields(userType).get(1);
+        //Add the regID to the response
+        response.put("SendToRegID",regID);
+        return response;
     }
 }

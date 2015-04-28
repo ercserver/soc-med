@@ -3,7 +3,6 @@ package CommunicationModule.src.model;
 import CommunicationModule.src.api.*;
 
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
