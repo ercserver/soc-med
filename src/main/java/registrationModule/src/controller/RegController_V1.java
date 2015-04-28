@@ -1,39 +1,78 @@
 package registrationModule.src.controller;
 
 
+import CommunicationModule.src.api.ICommController;
+import DatabaseModule.src.api.IDbController;
+
 import registrationModule.src.api.IRegController;
 import registrationModule.src.api.IRegRequest_model;
 import registrationModule.src.api.IRegVerify_model;
-import registrationModule.src.model.RegRequest_V1;
-import registrationModule.src.model.RegVerify_V1;
 
-import java.util.ArrayList;
+import registrationModule.src.utilities.ModelsHolder;
+
+import java.util.HashMap;
 
 /**
  * Created by NAOR on 06/04/2015.
  */
 public class RegController_V1 implements IRegController {
-    IRegRequest_model registrator = new RegRequest_V1();
-    IRegVerify_model verification = new RegVerify_V1();
+    private IRegRequest_model registrator = null;
+    private IRegVerify_model verification = null;
+    private IDbController dbController = null;
+    private ICommController commController = null;
 
-    @Override
-    public void regRequest(int userType) {
-        registrator.regRequest(userType);
+    public RegController_V1(){
+        ModelsHolder models = new ModelsHolder();
+        commController = models.determineCommControllerVersion();
+        dbController = models.determineDbControllerVersion();
+        registrator = models.determineRegRequestVersion();
+        verification = models.determineRegVerifyVersion();
     }
-    @Override
+
+    public void getRegDetails(HashMap<String,String> request) {
+        //generate data to send
+        HashMap<Integer,HashMap<String,String>> dataToSend = new HashMap<Integer,HashMap<String,String>>();
+        HashMap<String,String> data = registrator.regDetailsRequest(request);
+        dataToSend.put(1,data);
+        //determine how to send the data
+        commController.setCommToUsers(dataToSend);
+        //send the data
+        commController.SendResponse();
+    }
+
+    public void handleReg(HashMap<String, String> filledForm) {
+        HashMap<Integer,HashMap<String,String>> dataToSend = new HashMap<Integer,HashMap<String,String>>();
+        //if the user exists (registration model decides how to determine that)
+        if(registrator.doesUserExist(filledForm)){
+            //add errormessage and response coode to the data to be sent back
+            dataToSend.get(1).put("ErrorMessage","An active user with this mail already exists");
+            //(what code is it?)
+            dataToSend.get(1).put("ResponseCode","XXXXXXXX");
+        }
+        //User does not exist
+        else {
+            //Add the new community member (a new CmID is generated)
+            String newCmid = Integer.toString(dbController.addNewCommunityMember(filledForm));
+            //Separate according to user type and handle accordingly.... use the Verification Module for verification processes
+            VerifyDetail(filledForm, newCmid);
+        }
+        //determine how to send the data
+        commController.setCommToUsers(dataToSend);
+        //send the data
+        commController.SendResponse();
+    }
+
     //public void IVerify(int userType){verification.IVerify(userType);}
     public boolean VerifyDetail(int cmid){
         return verification.VerifyDetail(cmid);
     }
-    //boolean verifyDetailsDueToType(int userType);
 
-    public void resendMail(int cmid)
+    public String resendMail(String mail,int cmid)
     {
-        verification.resendMail(cmid);
+        return verification.resendMail(mail,cmid);
     }
-
-    public void responeDoctor(int cmid,String reason)
+    public void proccesOfOkMember(int cmid)
     {
-        verification.responeDoctor(cmid,reason);
+        verification.proccesOfOkMember(cmid);
     }
 }
