@@ -22,7 +22,7 @@ public class RegController_V1 implements IRegController {
     private IDbController dbController = null;
     private ICommController commController = null;
 
-    public RegController_V1(){
+    public RegController_V1() {
         ModelsFactory models = new ModelsFactory();
         commController = models.determineCommControllerVersion();
         dbController = models.determineDbControllerVersion();
@@ -30,27 +30,27 @@ public class RegController_V1 implements IRegController {
         verification = models.determineRegVerifyVersion();
     }
 
-    public Object getRegDetails(HashMap<String,String> request) {
+    public Object getRegDetails(HashMap<String, String> request) {
         //generate data to send
-        HashMap<Integer,HashMap<String,String>> dataToSend = new HashMap<Integer,HashMap<String,String>>();
-        HashMap<String,String> data = registrator.regDetailsRequest(request);
+        HashMap<Integer, HashMap<String, String>> dataToSend = new HashMap<Integer, HashMap<String, String>>();
+        HashMap<String, String> data = registrator.regDetailsRequest(request);
         ArrayList<String> sendTo = sendTo(data);
-        dataToSend.put(1,data);
+        dataToSend.put(1, data);
         //determine how to send the data
-        commController.setCommToUsers(dataToSend,sendTo,false);
+        commController.setCommToUsers(dataToSend, sendTo, false);
 
         //send the data
         return commController.sendResponse();
     }
 
     public Object handleReg(HashMap<String, String> filledForm) {
-        HashMap<Integer,HashMap<String,String>> dataToSend = new HashMap<Integer,HashMap<String,String>>();
+        HashMap<Integer, HashMap<String, String>> dataToSend = new HashMap<Integer, HashMap<String, String>>();
         //if the user exists (registration model decides how to determine that)
-        if(registrator.doesUserExist(filledForm)){
+        if (registrator.doesUserExist(filledForm)) {
             //add errormessage and response coode to the data to be sent back
-            dataToSend.get(1).put("ErrorMessage","An active user with this mail already exists");
+            dataToSend.get(1).put("ErrorMessage", "An active user with this mail already exists");
             //(what code is it?)
-            dataToSend.get(1).put("ResponseCode","XXXXXXXX");
+            dataToSend.get(1).put("ResponseCode", "XXXXXXXX");
         }
         //User does not exist
         else {
@@ -60,9 +60,9 @@ public class RegController_V1 implements IRegController {
             verifyFilledForm(filledForm, newCmid);
         }
         ArrayList<String> sendTo = sendTo(filledForm);
-        dataToSend.put(1,filledForm);
+        dataToSend.put(1, filledForm);
         //determine how to send the data
-        commController.setCommToUsers(dataToSend,sendTo,false);
+        commController.setCommToUsers(dataToSend, sendTo, false);
 
         //send the data
         return commController.sendResponse();
@@ -73,30 +73,48 @@ public class RegController_V1 implements IRegController {
         //ArrayList<String> generateVerEmail = verification.generateMailForVerification(filledForm);
     }
 
-    private ArrayList<String> sendTo(HashMap<String,String> data){
+    private ArrayList<String> sendTo(HashMap<String, String> data) {
         String regID = data.get("RegID");
         ArrayList<String> sendTo = null;
-        if (null != regID){
+        if (null != regID) {
             sendTo = new ArrayList<String>();
             sendTo.add(regID);
         }
         return sendTo;
     }
+
     //public void IVerify(int userType){verification.IVerify(userType);}
-    public Object VerifyDetail(int cmid){
-        return verification.VerifyDetail(cmid);
+    public Object verifyDetail(HashMap<String, String> data) {
+        int cmid = Integer.parseInt(data.get("CommunityMemberID"));
+        String password = data.get("Password");
+        String regid = data.get("RegID");
+        if (checkCmidAndPassword(password, cmid))
+            return verification.VerifyDetail(cmid);
+        else {
+            //need to send error code
+            return null;
+        }
+
     }
 
-    public Object resendMail(int cmid)
-    {
+
+
+
+    public Object resendMail(int cmid) {
         return verification.resendMail(cmid);
     }
 
-    public Object responeDoctor(int cmid,String reason)
-    {
-        return verification.responeDoctor(cmid,reason);
+    public Object responeDoctor(int cmid, String reason) {
+        return verification.responeDoctor(cmid, reason);
     }
 
 
+    private boolean checkCmidAndPassword(String password, int cmid) {
+        HashMap<String,String> member = new HashMap<String,String>();
+        member.put("CommunityMemberID",new Integer(cmid).toString());
+        HashMap<String,String> data = dbController.getUserByParameter(member);
+        String pas = data.get("Password");
+        return pas.equals(password);
+    }
 }
 
