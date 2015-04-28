@@ -25,5 +25,8 @@
         <module name="ers-proj" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="ers-proj" target="1.5" />
+    </bytecodeTargetLevel>
   </component>
 </project>
