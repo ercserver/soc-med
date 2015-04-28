@@ -34,13 +34,20 @@ public class RegVerify_V1 implements IRegVerify_model {
 
     public boolean VerifyDetail(int cmid){
         HashMap<String,String> member = new HashMap<String,String>();
-        changeStatusToVerifyDetail(cmid);
-        /*member.put("P_CommunityMembers.InternalID",new Integer(cmid).toString());
+        if (!statusIsEqualTo("verifying details")) {
+            changeStatusToVerifyDetail(cmid);
+        }
+        member.put("P_CommunityMembers.InternalID",new Integer(cmid).toString());
         HashMap<String,String> responseToDoctor = dbController.getUserByParameter(member);
         responseToDoctor.put("RequestID", "verifyPatient");
         filterDataForVerification(responseToDoctor);
-        verifyDetailsDueToType(cmid,responseToDoctor);*/
+        verifyDetailsDueToType(cmid,responseToDoctor);
         return true;
+    }
+
+    private boolean statusIsEqualTo(String s) {
+
+        //return false;
     }
 
     private void changeStatusToVerifyDetail(int cmid) {
@@ -52,7 +59,7 @@ public class RegVerify_V1 implements IRegVerify_model {
         HashMap<String,String> dataToPatient = new HashMap<String, String>();
 
 
-        dataToPatient.putAll(sendResponeTOApp(dataToPatient,"wait",cmid));
+        dataToPatient.putAll(sendResponeTOApp(dataToPatient, "wait", cmid));
 
         ArrayList<String> sendTo = new  ArrayList<String>();
         sendTo.add(new Integer(cmid).toString());
@@ -198,7 +205,7 @@ public class RegVerify_V1 implements IRegVerify_model {
         {
             HashMap<Integer,HashMap<String,String>> responseToPatient =
                     new HashMap<Integer,HashMap<String,String>>();
-            responseToPatient.put(1,sendResponeTOApp(null,"rejectResend",cmid));
+            responseToPatient.put(1, sendResponeTOApp(null, "rejectResend", cmid));
             commController.setCommToUsers(responseToPatient,new ArrayList<String>(),1);
             commController.SendResponse();
         }
@@ -217,7 +224,7 @@ public class RegVerify_V1 implements IRegVerify_model {
         HashMap<Integer,HashMap<String,String>> responseToPatient =
                 new HashMap<Integer,HashMap<String,String>>();
 
-        responseToPatient.put(1,sendResponeTOApp(details,"verifying email",cmid));
+        responseToPatient.put(1, sendResponeTOApp(details, "verifying email", cmid));
 
         ArrayList<String> sendTo = new  ArrayList<String>();
         sendTo.add( new Integer(cmid).toString());

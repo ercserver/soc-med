@@ -10,6 +10,7 @@ import registrationModule.src.api.IRegVerify_model;
 
 import registrationModule.src.utilities.ModelsHolder;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -34,6 +35,9 @@ public class RegController_V1 implements IRegController {
         HashMap<Integer,HashMap<String,String>> dataToSend = new HashMap<Integer,HashMap<String,String>>();
         HashMap<String,String> data = registrator.regDetailsRequest(request);
         dataToSend.put(1,data);
+
+        ArrayList<String> sendTo = new  ArrayList<String>();
+        sendTo.add( new Integer(cmid).toString());
         //determine how to send the data
         commController.setCommToUsers(dataToSend);
         //send the data
