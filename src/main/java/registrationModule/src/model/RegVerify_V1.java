@@ -29,7 +29,7 @@ public class RegVerify_V1 implements IRegVerify_model {
         dbController = models.determineDbControllerVersion();
     }
 
-    public boolean VerifyDetail(int cmid){
+    public Object VerifyDetail(int cmid){
         HashMap<String,String> member = new HashMap<String,String>();
         if (!statusIsEqualTo("verifying details")) {
             changeStatusToVerifyDetail(cmid);
@@ -128,9 +128,9 @@ public class RegVerify_V1 implements IRegVerify_model {
         sendTo.add(doctorCmid);
 
         //memberDetails.put("SendToCmid", doctorCmid);
-        data.put(Integer.parseInt(memberDetails.get("InternalID")),memberDetails);
+        data.put(Integer.parseInt(memberDetails.get("InternalID")), memberDetails);
         commController.setCommToUsers(data, sendTo, 1);
-        commController.SendResponse();
+        commController.sendResponse();
     }
 
     private String getDoctorCmid(HashMap<String, String> memberDetails) {
@@ -190,7 +190,7 @@ public class RegVerify_V1 implements IRegVerify_model {
         return filter;
     }
 
-    public void resendMail(int cmid){
+    public Object resendMail(int cmid){
 
         HashMap<String,String> member = new HashMap<String,String>();
         member.put("P_CommunityMembers.InternalID", new Integer(cmid).toString());
@@ -204,7 +204,7 @@ public class RegVerify_V1 implements IRegVerify_model {
                     new HashMap<Integer,HashMap<String,String>>();
             responseToPatient.put(1, sendResponeTOApp(null, "rejectResend", cmid));
             commController.setCommToUsers(responseToPatient,new ArrayList<String>(),1);
-            commController.SendResponse();
+            commController.sendResponse();
         }
     }
 

@@ -25,12 +25,13 @@ public class CommController_V1 implements ICommController {
 
 
 
-    public void SendResponse() {
+    public Object sendResponse() {
         if(null != commToUsers) {
-            commToUsers.SendResponse();
+            return commToUsers.sendResponse();
         }
         else{
             //throw some kind of alert?
+            return null;
         }
     }
 
