@@ -8,13 +8,13 @@ import java.util.HashMap;
  */
 public interface IRegVerify_model {
 
-    Object VerifyDetail(int cmid);
+    Object verifyDetail(int cmid,String regId);
 
-    Object resendMail(int cmid);
+    Object resendMail(int cmid,String regId);
 
     // if doctor reject we send reason in string reason
     //else we send null
-    Object responeDoctor(int cmid,String reason);
+    Object responeDoctor(int cmid,String reason,String regId);
 
     ArrayList<String> generateMailForVerification(HashMap<String, String> details);
 }

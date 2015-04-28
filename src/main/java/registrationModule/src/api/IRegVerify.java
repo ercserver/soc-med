@@ -11,7 +11,7 @@ public interface IRegVerify {
     Object verifyDetail(HashMap<String, String> data);
     //boolean verifyDetailsDueToType(int userType);
 
-    Object resendMail(int cmid);
+    Object resendMail(HashMap<String, String> data);
 
     // if doctor reject we send reason in string reason
     //else we send null

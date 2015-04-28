@@ -11,6 +11,7 @@ import registrationModule.src.utilities.ModelsFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by NAOR on 06/04/2015.dd
@@ -84,11 +85,12 @@ public class RegController_V1 implements IRegController {
 
     //public void IVerify(int userType){verification.IVerify(userType);}
     public Object verifyDetail(HashMap<String, String> data) {
+
         int cmid = Integer.parseInt(data.get("CommunityMemberID"));
         String password = data.get("Password");
         String regid = data.get("RegID");
         if (checkCmidAndPassword(password, cmid))
-            return verification.VerifyDetail(cmid);
+            return verification.verifyDetail(cmid, regid);
         else {
             //need to send error code
             return null;
@@ -98,13 +100,22 @@ public class RegController_V1 implements IRegController {
 
 
 
-
-    public Object resendMail(int cmid) {
-        return verification.resendMail(cmid);
+    public Object resendMail(HashMap<String, String> data) {
+        int cmid = Integer.parseInt(data.get("CommunityMemberID"));
+        String password = data.get("Password");
+        String regid = data.get("RegID");
+        if (checkCmidAndPassword(password, cmid)) {
+            return verification.resendMail(cmid,regid);
+        }
+        else
+        {
+            //need to send error code
+            return null;
+        }
     }
 
-    public Object responeDoctor(int cmid, String reason) {
-        return verification.responeDoctor(cmid, reason);
+    public Object responeDoctor(int cmid, String reason,String regId) {
+        return verification.responeDoctor(cmid, reason,regId);
     }
 
 
