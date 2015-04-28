@@ -1,14 +1,8 @@
 package registrationModule.src.model;
 
 import CommunicationModule.src.api.ICommController;
-import CommunicationModule.src.controller.CommController_V1;
-import CommunicationModule.src.model.CommToUsersFactory_V1;
-import CommunicationModule.src.model.CommToUsers_V1;
-import DatabaseModule.src.api.IDbComm_model;
 import DatabaseModule.src.api.IDbController;
-import DatabaseModule.src.controller.DbController_V1;
 
-import org.json.JSONObject;
 import registrationModule.src.api.IRegVerify_model;
 import registrationModule.src.utilities.ModelsFactory;
 
@@ -29,7 +23,7 @@ public class RegVerify_V1 implements IRegVerify_model {
         dbController = models.determineDbControllerVersion();
     }
 
-    public boolean VerifyDetail(int cmid){
+    public Object VerifyDetail(int cmid){
         HashMap<String,String> member = new HashMap<String,String>();
         if (!statusIsEqualTo("verifying details")) {
             changeStatusToVerifyDetail(cmid);
