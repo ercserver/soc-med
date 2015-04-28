@@ -9,5 +9,5 @@ import java.util.HashMap;
 public interface IRegRequest {
     //Perhaps we should enum in the database for the possible user types?
 
-    void getRegDetails(HashMap<String,String> request);
+    Object getRegDetails(HashMap<String,String> request);
 }

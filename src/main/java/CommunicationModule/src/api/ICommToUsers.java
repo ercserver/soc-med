@@ -5,5 +5,5 @@ package CommunicationModule.src.api;
  */
 public interface ICommToUsers {
 
-    void SendResponse ();
+    Object sendResponse();
 }

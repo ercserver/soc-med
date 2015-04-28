@@ -129,13 +129,13 @@ public class RegVerify_V1 implements IRegVerify_model {
 
         //memberDetails.put("SendToCmid", doctorCmid);
         data.put(Integer.parseInt(memberDetails.get("InternalID")),memberDetails);
-        commController.setCommToUsers(data,sendTo,1);
+        commController.setCommToUsers(data, sendTo, 1);
         commController.SendResponse();
     }
 
     private String getDoctorCmid(HashMap<String, String> memberDetails) {
         HashMap<String,String> whereConditions =  new HashMap<String, String>();
-        whereConditions.put("DoctorID",memberDetails.get("DoctorID"));
+        whereConditions.put("DoctorID", memberDetails.get("DoctorID"));
         String doctorCmid = (dbController.getRowsFromTable(whereConditions,"P_Doctors")).get(1).get("CommunityMemberID");
         return doctorCmid;
     }
@@ -150,7 +150,7 @@ public class RegVerify_V1 implements IRegVerify_model {
         ArrayList<String> sendTo = new  ArrayList<String>();
         sendTo.add(filter.get("InternalID"));
 
-        commController.setCommToUsers(data,sendTo,1);
+        commController.setCommToUsers(data, sendTo, 1);
         commController.SendResponse();
     }
     private HashMap<String,String> filterDataForVerification(HashMap<String, String> data)
@@ -193,7 +193,7 @@ public class RegVerify_V1 implements IRegVerify_model {
     public void resendMail(int cmid){
 
         HashMap<String,String> member = new HashMap<String,String>();
-        member.put("P_CommunityMembers.InternalID",new Integer(cmid).toString());
+        member.put("P_CommunityMembers.InternalID", new Integer(cmid).toString());
         HashMap<String,String> details = dbController.getUserByParameter(member);
         if (details.get("StatusNum").equals("verifying email")) {
             emailNotExsist(cmid,details);
@@ -209,13 +209,28 @@ public class RegVerify_V1 implements IRegVerify_model {
     }
 
 
+    public ArrayList<String> generateMailForVerification(HashMap<String, String> details){
+        String firstName = details.get("FirstName");
+        String lastName = details.get("LastName");
+        String emailAddress = details.get("Email");
+        String emailMessage = "Dear " + firstName + "  " + lastName + ",\n";
+        String subject = "Confirm your email for Socmed App";
+
+        ArrayList<String> emailDetails = new ArrayList<String>();
+        emailDetails.add(emailAddress);
+        emailDetails.add(emailMessage);
+        emailDetails.add(subject);
+
+        return emailDetails;
+    }
+
     private void emailNotExsist(int cmid, HashMap<String, String> details) {
         String firstName = details.get("FirstName");
         String lastName = details.get("LastName");
         String emailAddress = details.get("Email");
         String emailMessage = "Dear " + firstName + "  " + lastName + ",\n";
         String subject = "Confirm your email for Socmed App";
-        ICommController commController = determineCommControllerVersion();
+
         commController.setCommToMail(emailAddress, emailMessage, subject);
         commController.sendEmail();
         HashMap<Integer,HashMap<String,String>> responseToPatient =
@@ -227,8 +242,8 @@ public class RegVerify_V1 implements IRegVerify_model {
         sendTo.add( new Integer(cmid).toString());
 
 
-        commController.setCommToUsers(responseToPatient,sendTo,1);
-        commController.SendResponse();
+        commController.setCommToUsers(responseToPatient, sendTo, 1);
+        commController.sendResponse();
     }
 
     private HashMap<String,String> sendResponeTOApp(HashMap<String, String> details, String code
@@ -246,7 +261,7 @@ public class RegVerify_V1 implements IRegVerify_model {
 
 
 
-    public void responeDoctor(int cmid,String reason)
+    public Object responeDoctor(int cmid,String reason)
     {
         if (reason == null)
             proccesOfOkMember(cmid);
@@ -262,7 +277,7 @@ public class RegVerify_V1 implements IRegVerify_model {
                 new HashMap<Integer,HashMap<String,String>>();
 
         ArrayList<String> sendTo = new  ArrayList<String>();
-        sendTo.add( new Integer(cmid).toString());
+        sendTo.add(new Integer(cmid).toString());
 
         HashMap<String,String> response = new HashMap<String, String>();
         response.put("RequestID", "Reject");

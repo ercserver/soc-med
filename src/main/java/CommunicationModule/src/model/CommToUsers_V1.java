@@ -25,7 +25,7 @@ public class CommToUsers_V1 implements ICommToUsers_model {
         targets = target;
         objToSend = new JSONResponseCreator().establishResponse(data);
     }
-    public JSONArray SendResponse () {
+    public JSONArray sendResponse () {
         return objToSend;
     }
 }

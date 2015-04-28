@@ -23,7 +23,7 @@ public class GcmCommnication_V1 extends CommToUsers_V1 {
         super(data,target);
     }
 
-    public JSONArray SendResponse () {
+    public JSONArray sendResponse () {
         Sender sender = new Sender(SENDER_ID);
         Message message = new Message.Builder()
 

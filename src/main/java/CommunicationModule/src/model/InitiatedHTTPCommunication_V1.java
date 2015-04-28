@@ -19,7 +19,7 @@ public class InitiatedHTTPCommunication_V1 extends CommToUsers_V1 {
         communicateToURL = communicateTo;
     }
 
-    public JSONArray SendResponse () {
+    public JSONArray sendResponse () {
 
 
 

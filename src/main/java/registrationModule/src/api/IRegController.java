@@ -7,6 +7,6 @@ import java.util.HashMap;
  */
 public interface IRegController extends IRegRequest,IRegVerify {
 
-    void handleReg(HashMap<String, String> filledForm);
+    Object handleReg(HashMap<String, String> filledForm);
 
 }

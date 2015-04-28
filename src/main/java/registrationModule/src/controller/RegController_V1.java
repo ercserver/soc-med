@@ -3,6 +3,7 @@ package registrationModule.src.controller;
 import CommunicationModule.src.api.ICommController;
 import DatabaseModule.src.api.IDbController;
 
+import org.json.JSONArray;
 import registrationModule.src.api.IRegController;
 import registrationModule.src.api.IRegRequest_model;
 import registrationModule.src.api.IRegVerify_model;
@@ -29,7 +30,7 @@ public class RegController_V1 implements IRegController {
         verification = models.determineRegVerifyVersion();
     }
 
-    public void getRegDetails(HashMap<String,String> request) {
+    public Object getRegDetails(HashMap<String,String> request) {
         //generate data to send
         HashMap<Integer,HashMap<String,String>> dataToSend = new HashMap<Integer,HashMap<String,String>>();
         HashMap<String,String> data = registrator.regDetailsRequest(request);
@@ -39,10 +40,10 @@ public class RegController_V1 implements IRegController {
         commController.setCommToUsers(dataToSend,sendTo,false);
 
         //send the data
-        commController.SendResponse();
+        return commController.sendResponse();
     }
 
-    public void handleReg(HashMap<String, String> filledForm) {
+    public Object handleReg(HashMap<String, String> filledForm) {
         HashMap<Integer,HashMap<String,String>> dataToSend = new HashMap<Integer,HashMap<String,String>>();
         //if the user exists (registration model decides how to determine that)
         if(registrator.doesUserExist(filledForm)){
@@ -64,11 +65,12 @@ public class RegController_V1 implements IRegController {
         commController.setCommToUsers(dataToSend,sendTo,false);
 
         //send the data
-        commController.SendResponse();
+        return commController.sendResponse();
     }
 
     private void verifyFilledForm(HashMap<String, String> filledForm, String newCmid) {
-        /////////////
+
+        //ArrayList<String> generateVerEmail = verification.generateMailForVerification(filledForm);
     }
 
     private ArrayList<String> sendTo(HashMap<String,String> data){
@@ -81,18 +83,18 @@ public class RegController_V1 implements IRegController {
         return sendTo;
     }
     //public void IVerify(int userType){verification.IVerify(userType);}
-    public boolean VerifyDetail(int cmid){
+    public Object VerifyDetail(int cmid){
         return verification.VerifyDetail(cmid);
     }
 
-    public void resendMail(int cmid)
+    public Object resendMail(int cmid)
     {
-        verification.resendMail(cmid);
+        return verification.resendMail(cmid);
     }
 
-    public void responeDoctor(int cmid,String reason)
+    public Object responeDoctor(int cmid,String reason)
     {
-        verification.responeDoctor(cmid,reason);
+        return verification.responeDoctor(cmid,reason);
     }
 
 
