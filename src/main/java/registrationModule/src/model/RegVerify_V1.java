@@ -44,17 +44,21 @@ public class RegVerify_V1 implements IRegVerify_model {
     }
 
     private void changeStatusToVerifyDetail(int cmid) {
-        dbController.updateStatus(cmid,"'wait'","'verifying details'");
-        //dbController.updateStatus(cmid,"'verifying email'","'verifying details'");
-        /*
+        //dbController.updateStatus(cmid,"'wait'","'verifying details'");
+        dbController.updateStatus(cmid,"'verifying email'","'verifying details'");
+
         HashMap<String,String> dataToPatient = new HashMap<String, String>();
 
         HashMap<Integer,HashMap<String,String>> responseToPatient =
                 new HashMap<Integer,HashMap<String,String>>();
         responseToPatient = sendResponeTOApp(dataToPatient,"wait",cmid);
+
+        ArrayList<String> sendTo = new  ArrayList<String>();
+        sendTo.add(new Integer(cmid).toString());
+
         responseToPatient.put(1,dataToPatient);
-        commController.setCommToUsers(responseToPatient,1);
-        commController.SendResponse();*/
+        commController.setCommToUsers(responseToPatient,sendTo,1);
+        commController.SendResponse();
     }
 
     private boolean verifyDetailsDueToType(int cmid,HashMap<String,String> responseToDoctor)
@@ -232,7 +236,36 @@ public class RegVerify_V1 implements IRegVerify_model {
     }
 
 
-    public void proccesOfOkMember(int cmid)
+
+    public void responeDoctor(int cmid,String reason)
+    {
+        if (reason == null)
+            proccesOfOkMember(cmid);
+        else
+        {
+            sendRejectMessage(cmid,reason);
+        }
+    }
+
+    private void sendRejectMessage(int cmid, String Reason) {
+        dbController.updateStatus(cmid,"'verifying details'","'active'");
+        HashMap<Integer,HashMap<String,String>> responseToPatient =
+                new HashMap<Integer,HashMap<String,String>>();
+
+        ArrayList<String> sendTo = new  ArrayList<String>();
+        sendTo.add( new Integer(cmid).toString());
+
+        HashMap<String,String> response = new HashMap<String, String>();
+        response.put("RequestID", "Reject");
+        response.put("Reason", Reason);
+        responseToPatient.put(1,response);
+
+        commController.setCommToUsers(responseToPatient, sendTo,1);
+        commController.SendResponse();
+    }
+
+
+    private void proccesOfOkMember(int cmid)
     {
         dbController.updateStatus(cmid,"'verifying details'","'active'");
         HashMap<Integer,HashMap<String,String>> responseToPatient =
@@ -245,28 +278,38 @@ public class RegVerify_V1 implements IRegVerify_model {
         response.put("RequestID", "Active");
 
 
-        getFrequency("LocationFrequency");
-        getFrequency("ConnectServerFrequency");
-        getFrequency("TimesToConectToServe");
+        response.putAll(getFrequency("LocationFrequency"));
+        response.putAll(getFrequency("ConnectServerFrequency"));
+        response.putAll(getFrequency("TimesToConectToServe"));
 
+        response.putAll(getDefaultInEmergency(getState(cmid)));
 
-        HashMap<Integer,HashMap<String,String>> a
-                = dbController.getDefaultInEmergency(getState(cmid));
-
-        /*HashMap<String,String> member = new HashMap<String,String>();
-        member.put("P_CommunityMembers.InternalID",new Integer(cmid).toString());
-        HashMap<String,String> details = dbController.getUserByParameter(member);
-        */
-        //responseToPatient = sendResponeTOApp(details,"confirmPatient",cmid);
+        responseToPatient.put(1,response);
 
         commController.setCommToUsers(responseToPatient, sendTo,1);
         commController.SendResponse();
     }
 
-    private HashMap<Integer,HashMap<String,String>> getFrequency(String code) {
+    private HashMap<String, String> getDefaultInEmergency(String state) {
+        HashMap<Integer,HashMap<String,String>> defult
+                = dbController.getDefaultInEmergency(state);
+        for (Map.Entry<Integer,HashMap<String,String>> objs : defult.entrySet()){
+            HashMap<String,String> obj = objs.getValue();
+            return obj;
+        }
+        return null;
+    }
+
+    private HashMap<String,String> getFrequency(String code) {
         HashMap<String,String> kindOfFrequency = new HashMap<String,String>();
         kindOfFrequency.put("Name",code);
-        return dbController.getFrequency(kindOfFrequency);
+        HashMap<Integer,HashMap<String,String>> freq
+                = dbController.getFrequency(kindOfFrequency);
+        for (Map.Entry<Integer,HashMap<String,String>> objs : freq.entrySet()){
+            HashMap<String,String> obj = objs.getValue();
+            return obj;
+        }
+        return null;
     }
 
     private String getState(int cmid) {

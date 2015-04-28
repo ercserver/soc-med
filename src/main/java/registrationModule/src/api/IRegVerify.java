@@ -11,5 +11,7 @@ public interface IRegVerify {
 
     public void resendMail(int cmid);
 
-    public void proccesOfOkMember(int cmid);
+    // if doctor reject we send reason in string reason
+    //else we send null
+    public void responeDoctor(int cmid,String reason);
 }
