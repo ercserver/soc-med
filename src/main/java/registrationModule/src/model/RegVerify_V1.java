@@ -328,27 +328,5 @@ public class RegVerify_V1 implements IRegVerify_model {
         return details.get("State");
     }
 
-    private ICommController determineCommControllerVersion(){
-        switch (commControllerVersion) {
-            //Communicate the DB to retrieve the data
-            case 1: {
-                return new CommController_V1();
-            }
-            default: {
-                return null;
-            }
-        }
-    }
-    private IDbController determineDbControllerVersion(){
-        switch (dbControllerVersion) {
-            //Communicate the DB to retrieve the data
-            case 1: {
-                return new DbController_V1();
-            }
-            default: {
-                return null;
-            }
-        }
-    }
 
 }
