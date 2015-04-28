@@ -34,12 +34,16 @@ public class RegController_V1 implements IRegController {
         //generate data to send
         HashMap<Integer,HashMap<String,String>> dataToSend = new HashMap<Integer,HashMap<String,String>>();
         HashMap<String,String> data = registrator.regDetailsRequest(request);
+        String regID = data.get("RegID");
+        ArrayList<String> sendTo = null;
+        if (null != regID){
+            sendTo = new ArrayList<String>();
+            sendTo.add(regID);
+        }
         dataToSend.put(1,data);
-
-        ArrayList<String> sendTo = new  ArrayList<String>();
-        sendTo.add( new Integer(cmid).toString());
         //determine how to send the data
-        commController.setCommToUsers(dataToSend);
+        commController.setCommToUsers(dataToSend,sendTo);
+
         //send the data
         commController.SendResponse();
     }
