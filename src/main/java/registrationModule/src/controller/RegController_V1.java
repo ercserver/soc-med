@@ -32,8 +32,8 @@ public class RegController_V1 implements IRegController {
         verification.resendMail(cmid);
     }
 
-    public void proccesOfOkMember(int cmid)
+    public void responeDoctor(int cmid,String reason)
     {
-        verification.proccesOfOkMember(cmid);
+        verification.responeDoctor(cmid,reason);
     }
 }
