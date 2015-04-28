@@ -11,17 +11,16 @@ import java.util.HashMap;
  */
 
 public class CommToUsersFactory_V1 implements ICommToUsersFactory {
-    public CommToUsers_V1 createComm(HashMap<Integer,HashMap<String,String>> data,ArrayList<String> target ,int type) {
-        switch (type) {
-            case 1: {
-                return new GcmCommnication_V1(data,target);
-            }
-            case 2: {
-                return new HttpCommunication_V1(data,target);
-            }
-            default:{
-                return null;
-            }
+    public CommToUsers_V1 createComm(HashMap<Integer,HashMap<String,String>> data,ArrayList<String> target) {
+        if (null == target)
+        {
+            return new HttpCommunication_V1(data,target);
         }
-    }
+        else
+        {
+            return new GcmCommnication_V1(data,target);
+        }
+
+        }
+
 }
