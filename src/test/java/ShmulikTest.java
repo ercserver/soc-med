@@ -1,12 +1,6 @@
 import registrationModule.src.api.IRegVerify_model;
 import registrationModule.src.model.RegVerify_V1;
 
-import DatabaseModule.src.api.IDbComm_model;
-import com.sun.deploy.util.StringUtils;
-
-import java.sql.*;
-import java.util.*;
-
 /**
  * Created by User on 16/04/2015.
  */

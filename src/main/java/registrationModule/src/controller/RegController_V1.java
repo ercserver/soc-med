@@ -3,7 +3,6 @@ package registrationModule.src.controller;
 import CommunicationModule.src.api.ICommController;
 import DatabaseModule.src.api.IDbController;
 
-import org.json.JSONArray;
 import registrationModule.src.api.IRegController;
 import registrationModule.src.api.IRegRequest_model;
 import registrationModule.src.api.IRegVerify_model;

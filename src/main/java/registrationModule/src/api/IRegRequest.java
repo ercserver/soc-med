@@ -8,6 +8,6 @@ import java.util.HashMap;
 
 public interface IRegRequest {
     //Perhaps we should enum in the database for the possible user types?
-
+    Object handleReg(HashMap<String, String> filledForm);
     Object getRegDetails(HashMap<String,String> request);
 }

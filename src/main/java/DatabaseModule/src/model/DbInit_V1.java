@@ -1,12 +1,8 @@
 package DatabaseModule.src.model;
 
 import DatabaseModule.src.api.IDbInit_model;
-import com.sun.deploy.util.StringUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.sql.*;
-import java.util.*;
 
 
 /**
