@@ -27,7 +27,6 @@ public class CommToMail_V1 implements ICommToMail_model {
         subject = sub;
     }
 
-    @Override
     public void sendEmail() {
 
         Properties props = new Properties();
