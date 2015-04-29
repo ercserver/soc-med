@@ -1,6 +1,8 @@
 package registrationModule.src.model;
 
 import CommunicationModule.src.api.ICommController;
+import CommunicationModule.src.model.CommToUsersFactory_V1;
+import CommunicationModule.src.model.CommToUsers_V1;
 import DatabaseModule.src.api.IDbController;
 
 import registrationModule.src.api.IRegVerify_model;
@@ -360,6 +362,33 @@ public class RegVerify_V1 implements IRegVerify_model {
         return details.get("State");
     }
 
-
+    public Object signIn(HashMap<String,String> details)
+    {
+        HashMap<String,String> conds = new HashMap<String,String>();
+        conds.put("CommunityMemberID", details.get("CommunityMemberID"));
+        conds.put("Password", "'" + details.get("Password") + "'");
+        conds.put("EmailAddress", "'" + details.get("EmailAddress") + "'");
+        HashMap<String,String> user = dbController.getUserByParameter(conds);
+        HashMap<Integer,HashMap<String,String>> response = new HashMap<Integer,HashMap<String,String>>();
+        HashMap<String,String> res = new HashMap<String,String>();
+        if (user == null)
+            res.put("RequestCode", "reject");
+        else
+            res.put("RequestCode", "accept");
+        response.put(1, res);
+        CommToUsers_V1 comm;
+        // Sign in of doctor/ems
+        if(details.get("SendToRegid") == "0")
+        {
+            comm = new CommToUsersFactory_V1().createComm(response, null, false);
+        }
+        else
+        {
+            ArrayList<String> target = new ArrayList<String>();
+            target.add(details.get("SendToRegid"));
+            comm = new CommToUsersFactory_V1().createComm(response, target, false);
+        }
+        return comm.sendResponse();
+    }
 }
 */

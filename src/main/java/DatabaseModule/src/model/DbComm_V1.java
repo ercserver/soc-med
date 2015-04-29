@@ -503,6 +503,7 @@ public class DbComm_V1 implements IDbComm_model {
                 selectFromTable("P_CommunityMembers", columns, where);
         return (res.size() != 0);
     }
+
     public int addNewCommunityMember(HashMap<String,String> details) {
         return 0;
     }
