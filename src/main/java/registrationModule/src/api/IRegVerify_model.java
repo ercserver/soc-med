@@ -25,4 +25,6 @@ public interface IRegVerify_model {
             String code);
 
     /***********for func responeDoctor********************/
+
+    HashMap<Integer,HashMap<String,String>>verifySignIn(HashMap<String,String> details);
 }
