@@ -569,17 +569,23 @@ public class DbComm_V1 implements IDbComm_model {
         try
         {
             HashMap<String,String> cond = new HashMap<String,String>();
-            cond.put("StatusName", oldStatus);
-            HashMap<Integer,HashMap<String,String>> s = getRowsFromTable(cond, "P_Statuses");
-            Collection<HashMap<String,String>> val = s.values();
-            String statusNum = val.iterator().next().get("StatusNum");
-            if (!(connection != null && !connection.isClosed() && connection.isValid(1)))
-                connect();
-            statement = connection.createStatement();
-            statement.execute("UPDATE P_StatusLog SET DateTo=CURRENT_TIMESTAMP" +
-                    " WHERE" + " StatusNum=" + statusNum + " AND CommunityMemberID="
-                    + Integer.toString(cmid));
-            cond = new HashMap<String,String>();
+            HashMap<Integer, HashMap<String, String>> s;
+            Collection<HashMap<String, String>> val;
+            String statusNum;
+            if(oldStatus != null)
+            {
+                cond.put("StatusName", oldStatus);
+                s = getRowsFromTable(cond, "P_Statuses");
+                val = s.values();
+                statusNum = val.iterator().next().get("StatusNum");
+                if (!(connection != null && !connection.isClosed() && connection.isValid(1)))
+                    connect();
+                statement = connection.createStatement();
+                statement.execute("UPDATE P_StatusLog SET DateTo=CURRENT_TIMESTAMP" +
+                        " WHERE" + " StatusNum=" + statusNum + " AND CommunityMemberID="
+                        + Integer.toString(cmid));
+            }
+            cond.clear();
             cond.put("StatusName", newStatus);
             s = getRowsFromTable(cond, "P_Statuses");
             val = s.values();
