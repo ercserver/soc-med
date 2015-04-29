@@ -4,7 +4,7 @@ import CommunicationModule.src.model.CommToUsersFactory_V1;
 import CommunicationModule.src.model.CommToUsers_V1;
 import DatabaseModule.src.api.IDbController;
 import registrationModule.src.api.IRegVerify_model;
-import registrationModule.src.utilities.ModelsFactory;
+import Utilities.ModelsFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
