@@ -155,7 +155,7 @@ public class RegController_V1 implements IRegController {
         return !regid.equals("0");
     }
 
-
+    //need to do
     public Object responeDoctor(HashMap<String, String> data) {
 
         int cmid = Integer.parseInt(data.get("CommunityMemberID"));
@@ -163,6 +163,7 @@ public class RegController_V1 implements IRegController {
         String password = data.get("Password");
         String regid = data.get("RegID");
         if (checkCmidAndPassword(password, cmid)) {
+
         }   //verification.responeDoctor(cmid, reason,regid);
         return null;
     }
@@ -175,10 +176,11 @@ public class RegController_V1 implements IRegController {
         String pas = data.get("Password");
         return pas.equals(password);
     }
-
+/*
     public Object signIn(HashMap<String,String> details)
     {
         return verification.signIn(details);
     }
+ */
 }
 
