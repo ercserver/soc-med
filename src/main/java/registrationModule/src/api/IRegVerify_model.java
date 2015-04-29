@@ -26,5 +26,5 @@ public interface IRegVerify_model {
 
     /***********for func responeDoctor********************/
 
-    HashMap<Integer,HashMap<String,String>>verifySignIn(HashMap<String,String> details);
+    HashMap<Integer,HashMap<String,String>> verifySignIn(HashMap<String,String> details);
 }
