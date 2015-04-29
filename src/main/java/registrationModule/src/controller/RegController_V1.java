@@ -7,7 +7,7 @@ import registrationModule.src.api.IRegController;
 import registrationModule.src.api.IRegRequest_model;
 import registrationModule.src.api.IRegVerify_model;
 
-import registrationModule.src.utilities.ModelsFactory;
+import Utilities.ModelsFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
