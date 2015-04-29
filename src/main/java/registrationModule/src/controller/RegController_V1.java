@@ -83,39 +83,88 @@ public class RegController_V1 implements IRegController {
         return sendTo;
     }
 
-    //public void IVerify(int userType){verification.IVerify(userType);}
+    //do
     public Object verifyDetail(HashMap<String, String> data) {
-
         int cmid = Integer.parseInt(data.get("CommunityMemberID"));
         String password = data.get("Password");
         String regid = data.get("RegID");
-        if (checkCmidAndPassword(password, cmid))
-            return verification.verifyDetail(cmid, regid);
-        else {
-            //need to send error code
-            return null;
+        String code = data.get("RequestID");
+        ArrayList<String> target = new ArrayList<String>();
+        target.add(regid);
+        if (checkCmidAndPassword(password, cmid)) {
+            changeStatusToVerifyDetailAndSendToApp(cmid,code, target,data);
+            HashMap<String,String> dataFilter = verification.getPatientAndFillterDataToSendDoctor(cmid);
+            ArrayList<String> mail = verification.iFIsADoctorBuildMail(cmid, code, dataFilter);
+            if (null != mail )
+            {
+                String emailAddress = mail.get(0);
+                String emailMessage = mail.get(1);
+                String subject =   mail.get(2);
+                sendMail(emailAddress,emailMessage,
+                        subject);
+            }
         }
-
+        return null;
     }
 
+    private void sendMail(String emailAddress, String emailMessage, String subject) {
+        commController.setCommToMail(emailAddress, emailMessage, subject);
+        commController.sendEmail();
+    }
+
+    private void changeStatusToVerifyDetailAndSendToApp(int cmid, String code,
+                                                        ArrayList<String> target,
+                                                        HashMap<String, String> data) {
+        if(verification.ifTypeISPatientOrGuardian(code)) {
+            commController.setCommToUsers(verification.changeStatusToVerifyDetailAndSendToApp(cmid,data),
+                    target, false);
+            commController.sendResponse();
+        }
+    }
 
 
     public Object resendMail(HashMap<String, String> data) {
         int cmid = Integer.parseInt(data.get("CommunityMemberID"));
         String password = data.get("Password");
         String regid = data.get("RegID");
+        ArrayList<String> target = new ArrayList<String>();
+        target.add(regid);
         if (checkCmidAndPassword(password, cmid)) {
-            return verification.resendMail(cmid,regid);
+            HashMap<String,String> details = verification.getUserByCmid(cmid);
+            if (details.get("StatusNum").equals("verifying email")) {
+                ArrayList<String> mail =  verification.generateMailForVerificationEmail(details);
+                String emailAddress = mail.get(0);
+                String emailMessage = mail.get(1);
+                String subject =   mail.get(2);
+                sendMail(emailAddress,emailMessage,
+                        subject);
+            }
+            else
+            {
+                if(ifTypeISPatientOrGuardian(regid)) {
+                    commController.setCommToUsers(verification.BuildResponeWithOnlyRequestID(
+                            data,"rejectResend"),target,false);
+                    commController.sendResponse();
+                }
+            }
         }
-        else
-        {
-            //need to send error code
-            return null;
-        }
+        return null;
     }
 
-    public Object responeDoctor(int cmid, String reason,String regId) {
-        return verification.responeDoctor(cmid, reason,regId);
+    private boolean ifTypeISPatientOrGuardian(String regid) {
+        return !regid.equals("0");
+    }
+
+
+    public Object responeDoctor(HashMap<String, String> data) {
+
+        int cmid = Integer.parseInt(data.get("CommunityMemberID"));
+        String reason = data.get("Reason");
+        String password = data.get("Password");
+        String regid = data.get("RegID");
+        if (checkCmidAndPassword(password, cmid)) {
+        }   //verification.responeDoctor(cmid, reason,regid);
+        return null;
     }
 
 

@@ -9,10 +9,11 @@ import registrationModule.src.utilities.ModelsFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
+/*
 /**
  * Created by NAOR on 06/04/2015.
  */
+/*
 public class RegVerify_V1 implements IRegVerify_model {
 
     IDbController dbController = null;
@@ -23,23 +24,18 @@ public class RegVerify_V1 implements IRegVerify_model {
         dbController = models.determineDbControllerVersion();
     }
 
-    public Object VerifyDetail(int cmid){
+    public Object verifyDetail(int cmid){
         HashMap<String,String> member = new HashMap<String,String>();
         if (!statusIsEqualTo("verifying details")) {
             changeStatusToVerifyDetail(cmid);
         }
-        member.put("P_CommunityMembers.InternalID",new Integer(cmid).toString());
+        member.put("CommunityMemberID",new Integer(cmid).toString());
         HashMap<String,String> responseToDoctor = dbController.getUserByParameter(member);
         responseToDoctor.put("RequestID", "verifyPatient");
         filterDataForVerification(responseToDoctor);
-        verifyDetailsDueToType(cmid,responseToDoctor);
-        return true;
-    }
+        return verifyDetailsDueToType(cmid,responseToDoctor);
+      }
 
-    private boolean statusIsEqualTo(String s) {
-
-        //return false;
-    }
 
     private void changeStatusToVerifyDetail(int cmid) {
         HashMap<Integer,HashMap<String,String>> responseToPatient =
@@ -80,7 +76,8 @@ public class RegVerify_V1 implements IRegVerify_model {
            case 1:
                HashMap<String,String> doctorsAuthorizer =
                        dbController.getEmailOfDoctorsAuthorizer(responseToDoctor.get("state"));
-               doctor(responseToDoctor,doctorsAuthorizer);
+               return generateMailForVerificationDoctor(responseToDoctor,
+                       doctorsAuthorizer);
                break;
            default:
                break;
@@ -89,6 +86,30 @@ public class RegVerify_V1 implements IRegVerify_model {
        return true;
    }
 
+    public ArrayList<String> generateMailForVerificationDoctor(HashMap<String, String> memberDetails,
+                                                               HashMap<String, String> doctorsAuthorizer){
+        String firstName = memberDetails.get("FirstName");
+        String lastName = memberDetails.get("LastName");
+        String licenseNumber = memberDetails.get("LicenseNumber");
+
+        String emailAddress = doctorsAuthorizer.get("Email");
+        String emailMessage  = "Dear authorizer,\n" +
+                "Please confirm/reject the following doctor be a valid doctor:\n" +
+                "First Name: " + firstName + ".\n" +
+                "Last Name: " + lastName + ".\n" +
+                "Licence Number: " + licenseNumber + ".\n\n" +
+                "Thank you,\n" +
+                "Socmed administration team.";
+        String subject = "Doctor Authorization for Socmed App";
+
+        ArrayList<String> emailDetails = new ArrayList<String>();
+        emailDetails.add(emailAddress);
+        emailDetails.add(emailMessage);
+        emailDetails.add(subject);
+
+        return emailDetails;
+    }
+/*
     private void doctor(HashMap<String, String> memberDetails,
                         HashMap<String, String> doctorsAuthorizer) {
 
@@ -105,13 +126,9 @@ public class RegVerify_V1 implements IRegVerify_model {
                 "Thank you,\n" +
                 "Socmed administration team.";
         String subject = "Doctor Authorization for Socmed App";
-
-        ICommController commController = determineCommControllerVersion();
-        commController.setCommToMail(emailAddress,emailMessage,subject);
-        commController.sendEmail();
     }
-
-
+*/
+/*
     private void Guardian(HashMap<String,String> memberDetails) {
         //get doctor
         String doctorCmid = getDoctorCmid(memberDetails);
@@ -122,7 +139,7 @@ public class RegVerify_V1 implements IRegVerify_model {
         sendTo.add(doctorCmid);
 
         //memberDetails.put("SendToCmid", doctorCmid);
-        data.put(Integer.parseInt(memberDetails.get("InternalID")), memberDetails);
+        data.put(Integer.parseInt(memberDetails.get("CommunityMemberID")), memberDetails);
         commController.setCommToUsers(data, sendTo, 1);
         commController.sendResponse();
     }
@@ -142,7 +159,7 @@ public class RegVerify_V1 implements IRegVerify_model {
         HashMap<String,String> filter = filterDataForVerification(memberDetails);
         data.put(1,filter);
         ArrayList<String> sendTo = new  ArrayList<String>();
-        sendTo.add(filter.get("InternalID"));
+        sendTo.add(filter.get("CommunityMemberID"));
 
         commController.setCommToUsers(data, sendTo, 1);
         commController.SendResponse();
@@ -187,7 +204,7 @@ public class RegVerify_V1 implements IRegVerify_model {
     public Object resendMail(int cmid){
 
         HashMap<String,String> member = new HashMap<String,String>();
-        member.put("P_CommunityMembers.InternalID", new Integer(cmid).toString());
+        member.put("CommunityMemberID", new Integer(cmid).toString());
         HashMap<String,String> details = dbController.getUserByParameter(member);
         if (details.get("StatusNum").equals("verifying email")) {
             emailNotExsist(cmid,details);
@@ -203,7 +220,12 @@ public class RegVerify_V1 implements IRegVerify_model {
     }
 
 
-    public ArrayList<String> generateMailForVerification(HashMap<String, String> details){
+
+
+
+
+
+    public ArrayList<String> generateMailForVerificationEmail(HashMap<String, String> details){
         String firstName = details.get("FirstName");
         String lastName = details.get("LastName");
         String emailAddress = details.get("Email");
@@ -249,12 +271,13 @@ public class RegVerify_V1 implements IRegVerify_model {
 
         responseToPatient.put(1,response);
         */
+/*
         return response;
 
     }
 
-
-
+*/
+/*
     public Object responeDoctor(int cmid,String reason)
     {
         if (reason == null)
@@ -332,10 +355,11 @@ public class RegVerify_V1 implements IRegVerify_model {
 
     private String getState(int cmid) {
         HashMap<String,String> member = new HashMap<String,String>();
-        member.put("P_CommunityMembers.InternalID",new Integer(cmid).toString());
+        member.put("CommunityMemberID",new Integer(cmid).toString());
         HashMap<String,String> details = dbController.getUserByParameter(member);
         return details.get("State");
     }
 
 
 }
+*/

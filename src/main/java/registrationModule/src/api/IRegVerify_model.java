@@ -8,13 +8,21 @@ import java.util.HashMap;
  */
 public interface IRegVerify_model {
 
-    Object verifyDetail(int cmid,String regId);
+    /***********for func verifyDetail*********************/
+    HashMap<Integer,HashMap<String,String>> changeStatusToVerifyDetailAndSendToApp(int cmid,
+                                                                                   HashMap<String, String> data);
+    HashMap<String,String> getPatientAndFillterDataToSendDoctor(int cmid);
 
-    Object resendMail(int cmid,String regId);
+    ArrayList<String> iFIsADoctorBuildMail(int cmid, String code,HashMap<String,String> data);
+    boolean ifTypeISPatientOrGuardian(String code);
 
-    // if doctor reject we send reason in string reason
-    //else we send null
-    Object responeDoctor(int cmid,String reason,String regId);
+    /***********for func resendMail********************/
 
-    ArrayList<String> generateMailForVerification(HashMap<String, String> details);
+    HashMap<String, String> getUserByCmid(int cmid);
+    ArrayList<String> generateMailForVerificationEmail(HashMap<String, String> details);
+    public HashMap<Integer,HashMap<String,String>> BuildResponeWithOnlyRequestID(
+            HashMap<String, String> details,
+            String code);
+
+    /***********for func responeDoctor********************/
 }
