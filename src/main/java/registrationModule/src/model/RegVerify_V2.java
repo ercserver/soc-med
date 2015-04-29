@@ -176,6 +176,8 @@ public class RegVerify_V2 implements IRegVerify_model {
         return emailDetails;
     }
 
+    /***********for func responeDoctor********************/
+
 
 }
 
