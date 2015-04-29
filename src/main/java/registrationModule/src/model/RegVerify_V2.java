@@ -180,35 +180,6 @@ public class RegVerify_V2 implements IRegVerify_model {
 
     /***********for func responeDoctor********************/
 
-    public Object signIn(HashMap<String,String> details)
-    {
-        HashMap<String,String> conds = new HashMap<String,String>();
-        conds.put("CommunityMemberID", details.get("CommunityMemberID"));
-        conds.put("Password", "'" + details.get("Password") + "'");
-        conds.put("EmailAddress", "'" + details.get("EmailAddress") + "'");
-        HashMap<String,String> user = dbController.getUserByParameter(conds);
-        HashMap<Integer,HashMap<String,String>> response = new HashMap<Integer,HashMap<String,String>>();
-        HashMap<String,String> res = new HashMap<String,String>();
-        if (user == null)
-            res.put("RequestID", "reject");
-        else
-            res.put("RequestID", "accept");
-        response.put(1, res);
-        CommToUsers_V1 comm;
-        // Sign in of doctor/ems
-        if(details.get("RegID") == "0")
-        {
-            comm = new CommToUsersFactory_V1().createComm(response, null, false);
-        }
-        else
-        {
-            ArrayList<String> target = new ArrayList<String>();
-            target.add(details.get("RegID"));
-            comm = new CommToUsersFactory_V1().createComm(response, target, false);
-        }
-        return comm.sendResponse();
-    }
-
 
 }
 
