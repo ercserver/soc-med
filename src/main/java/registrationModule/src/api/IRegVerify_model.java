@@ -28,4 +28,9 @@ public interface IRegVerify_model {
     /***********for func responeDoctor********************/
     public HashMap<Integer,HashMap<String,String>> buildRejectMessage(int cmid, String Reason);
     public HashMap<Integer,HashMap<String,String>> proccesOfOkMember(int cmid);
+
+    /***********for func SignIn********************/
+    HashMap<Integer,HashMap<String,String>>verifySignIn(HashMap<String,String> details);
+
+
 }
