@@ -223,14 +223,18 @@ public class RegController_V1 implements IRegController {
     public Object responeToDoctorIfHeAccept(HashMap<String,String> details)
     {
         String email = details.get("EmailAddress");
+        //reject
         if (verification.checkIfDoctorIsaccept(email) == 0)
         {
-
+            int cmid = Integer.parseInt(details.get("CommunityMemberID"));
+            dbController.deleteUser(cmid);
         }
+        //accept
         if (verification.checkIfDoctorIsaccept(email) == 1)
         {
 
         }
+        //in other status
         else
         {
             // is equal to 2
