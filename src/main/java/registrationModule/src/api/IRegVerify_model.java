@@ -9,6 +9,7 @@ import java.util.HashMap;
 public interface IRegVerify_model {
 
     /***********for func verifyDetail*********************/
+
     HashMap<Integer,HashMap<String,String>> changeStatusToVerifyDetailAndSendToApp(int cmid,
                                                                                    HashMap<String, String> data);
     HashMap<String,String> getPatientAndFillterDataToSendDoctor(int cmid);
@@ -25,4 +26,6 @@ public interface IRegVerify_model {
             String code);
 
     /***********for func responeDoctor********************/
+    public HashMap<Integer,HashMap<String,String>> buildRejectMessage(int cmid, String Reason);
+    public HashMap<Integer,HashMap<String,String>> proccesOfOkMember(int cmid);
 }

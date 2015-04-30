@@ -88,13 +88,13 @@ public class RegController_V1 implements IRegController {
         int cmid = Integer.parseInt(data.get("CommunityMemberID"));
         String password = data.get("Password");
         String regid = data.get("RegID");
-        String code = data.get("RequestID");
+        //String code = data.get("RequestID");
         ArrayList<String> target = new ArrayList<String>();
         target.add(regid);
         if (checkCmidAndPassword(password, cmid)) {
-            changeStatusToVerifyDetailAndSendToApp(cmid,code, target,data);
+            changeStatusToVerifyDetailAndSendToApp(cmid,regid, target,data);
             HashMap<String,String> dataFilter = verification.getPatientAndFillterDataToSendDoctor(cmid);
-            ArrayList<String> mail = verification.iFIsADoctorBuildMail(cmid, code, dataFilter);
+            ArrayList<String> mail = verification.iFIsADoctorBuildMail(cmid, regid, dataFilter);
             if (null != mail )
             {
                 String emailAddress = mail.get(0);
@@ -111,6 +111,7 @@ public class RegController_V1 implements IRegController {
         commController.setCommToMail(emailAddress, emailMessage, subject);
         commController.sendEmail();
     }
+
 
     private void changeStatusToVerifyDetailAndSendToApp(int cmid, String code,
                                                         ArrayList<String> target,
@@ -157,13 +158,37 @@ public class RegController_V1 implements IRegController {
 
     //need to do
     public Object responeDoctor(HashMap<String, String> data) {
-
+        HashMap<Integer,HashMap<String,String>> response =
+                new HashMap<Integer,HashMap<String,String>>();
         int cmid = Integer.parseInt(data.get("CommunityMemberID"));
         String reason = data.get("Reason");
         String password = data.get("Password");
         String regid = data.get("RegID");
+        ArrayList<String> target = new ArrayList<String>();
+        target.add(regid);
         if (checkCmidAndPassword(password, cmid)) {
-
+            if (reason == null) {
+                dbController.updateStatus(cmid, "'verifying details'", "'active'");
+                if (verification.ifTypeISPatientOrGuardian(regid)) {
+                    response =  verification.proccesOfOkMember(cmid);
+                    commController.setCommToUsers(response, target, false);
+                    commController.sendResponse();
+                }
+            }
+            else
+            {
+                //if is a doctor
+                if (!verification.ifTypeISPatientOrGuardian(regid))
+                {
+                    dbController.updateStatus(cmid, "'verifying details'", "'reject by authentication'");
+                    return null;
+                }
+                else {
+                    response = verification.buildRejectMessage(cmid, reason);
+                    commController.setCommToUsers(response, target, false);
+                    commController.sendResponse();
+                }
+            }
         }   //verification.responeDoctor(cmid, reason,regid);
         return null;
     }

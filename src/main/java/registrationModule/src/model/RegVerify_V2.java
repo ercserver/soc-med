@@ -6,6 +6,7 @@ import registrationModule.src.utilities.ModelsFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by User on 29/04/2015.
@@ -122,7 +123,7 @@ public class RegVerify_V2 implements IRegVerify_model {
 
         for (String key : data.keySet()) {
             if (key == "FirstName" || key == "LastName" || key == "Street" ||
-                    key ==  "HomePhoneNumber" || key == "Email"
+                    key ==  "HomePhoneNumber" || key == "EmailAddress"
                     || key == "HouseNumber" || key == "ContactPhone" ||
                     key == "ZipCode" || key == "BirthDate" || key == "City" ||
                     key == "MobilePhoneNumber" || key == "State"
@@ -164,7 +165,7 @@ public class RegVerify_V2 implements IRegVerify_model {
     public ArrayList<String> generateMailForVerificationEmail(HashMap<String, String> details){
         String firstName = details.get("FirstName");
         String lastName = details.get("LastName");
-        String emailAddress = details.get("Email");
+        String emailAddress = details.get("EmailAddress");
         String emailMessage = "Dear " + firstName + "  " + lastName + ",\n";
         String subject = "Confirm your email for Socmed App";
 
@@ -177,6 +178,67 @@ public class RegVerify_V2 implements IRegVerify_model {
     }
 
     /***********for func responeDoctor********************/
+    public HashMap<Integer,HashMap<String,String>> buildRejectMessage(int cmid, String Reason) {
+        dbController.updateStatus(cmid,"'verifying details'","'active'");
+        HashMap<Integer,HashMap<String,String>> responseToPatient =
+                new HashMap<Integer,HashMap<String,String>>();
+        HashMap<String,String> response = new HashMap<String, String>();
+        response.put("RequestID", "Reject");
+        response.put("Reason", Reason);
+        responseToPatient.put(1,response);
+        return responseToPatient;
+    }
+
+    public HashMap<Integer,HashMap<String,String>> proccesOfOkMember(int cmid)
+    {
+        HashMap<Integer,HashMap<String,String>> responseToPatient =
+                new HashMap<Integer,HashMap<String,String>>();
+
+        HashMap<String,String> response = new HashMap<String, String>();
+        response.put("RequestID", "Active");
+
+
+        response.putAll(getFrequency("LocationFrequency"));
+        response.putAll(getFrequency("ConnectServerFrequency"));
+        response.putAll(getFrequency("TimesToConectToServe"));
+
+        response.putAll(getDefaultInEmergency(getState(cmid)));
+
+        responseToPatient.put(1,response);
+        return responseToPatient;
+    }
+
+
+    private String getState(int cmid) {
+        HashMap<String,String> member = new HashMap<String,String>();
+        member.put("CommunityMemberID",new Integer(cmid).toString());
+        HashMap<String,String> details = dbController.getUserByParameter(member);
+        return details.get("State");
+    }
+
+    private HashMap<String, String> getDefaultInEmergency(String state) {
+        HashMap<Integer,HashMap<String,String>> defult
+                = dbController.getDefaultInEmergency(state);
+        for (Map.Entry<Integer,HashMap<String,String>> objs : defult.entrySet()){
+            HashMap<String,String> obj = objs.getValue();
+            return obj;
+        }
+        return null;
+    }
+
+    private HashMap<String,String> getFrequency(String code) {
+        HashMap<String,String> kindOfFrequency = new HashMap<String,String>();
+        kindOfFrequency.put("Name",code);
+        HashMap<Integer,HashMap<String,String>> freq
+                = dbController.getFrequency(kindOfFrequency);
+        for (Map.Entry<Integer,HashMap<String,String>> objs : freq.entrySet()){
+            HashMap<String,String> obj = objs.getValue();
+            return obj;
+        }
+        return null;
+    }
+
+
 
 
 }

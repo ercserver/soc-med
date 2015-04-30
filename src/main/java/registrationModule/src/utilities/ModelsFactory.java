@@ -7,7 +7,7 @@ import DatabaseModule.src.controller.DbController_V1;
 import registrationModule.src.api.IRegRequest_model;
 import registrationModule.src.api.IRegVerify_model;
 import registrationModule.src.model.RegRequest_V1;
-import registrationModule.src.model.RegVerify_V1;
+import registrationModule.src.model.RegVerify_V2;
 
 /**
  * Created by NAOR on 22/04/2015.
@@ -56,7 +56,7 @@ public class ModelsFactory {
         switch (dbControllerVersion) {
             //Communicate the DB to retrieve the data
             case 1: {
-                return new RegVerify_V1();
+                return new RegVerify_V2();
             }
             default: {
                 return null;

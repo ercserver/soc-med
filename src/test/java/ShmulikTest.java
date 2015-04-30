@@ -1,14 +1,20 @@
 import registrationModule.src.api.IRegVerify_model;
-import registrationModule.src.model.RegVerify_V1;
+import registrationModule.src.controller.RegController_V1;
+import registrationModule.src.model.RegVerify_V2;
+
+import java.util.HashMap;
 
 /**
  * Created by User on 16/04/2015.
  */
 public class ShmulikTest {
     public static void main(String[] args) {
-
-        IRegVerify_model v = new RegVerify_V1();
-        v.VerifyDetail(1002);
+        HashMap<String,String> h = new HashMap<String,String>();
+        h.put("CommunityMemberID","1002");
+        h.put("Password","1234");
+        h.put("RegID","0");//h.put("RegID","adasdfasfas");
+        RegController_V1 v = new RegController_V1();
+        v.verifyDetail(h);
         //v.resendMail(1002);
     }
 }
