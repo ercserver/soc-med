@@ -199,7 +199,7 @@ public class RegController_V1 implements IRegController {
         member.put("P_CommunityMembers.CommunityMemberID",new Integer(cmid).toString());
         HashMap<String,String> data = dbController.getUserByParameter(member);
         String email = data.get("EmailAddress");
-        data = dbController.getLoginDetails(email);
+        data = dbController.getLoginDetails("'" +email + "'");
         String pas = data.get("Password");
         return pas.equals(password);
     }
