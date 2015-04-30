@@ -1,8 +1,6 @@
 package registrationModule.src.model;
 
 import CommunicationModule.src.api.ICommController;
-import CommunicationModule.src.model.CommToUsersFactory_V1;
-import CommunicationModule.src.model.CommToUsers_V1;
 import DatabaseModule.src.api.IDbController;
 
 import registrationModule.src.api.IRegVerify_model;
@@ -11,11 +9,10 @@ import registrationModule.src.utilities.ModelsFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-/*
+
 /**
  * Created by NAOR on 06/04/2015.
  */
-/*
 public class RegVerify_V1 implements IRegVerify_model {
 
     IDbController dbController = null;
@@ -26,18 +23,23 @@ public class RegVerify_V1 implements IRegVerify_model {
         dbController = models.determineDbControllerVersion();
     }
 
-    public Object verifyDetail(int cmid){
+    public Object VerifyDetail(int cmid){
         HashMap<String,String> member = new HashMap<String,String>();
         if (!statusIsEqualTo("verifying details")) {
             changeStatusToVerifyDetail(cmid);
         }
-        member.put("CommunityMemberID",new Integer(cmid).toString());
+        member.put("P_CommunityMembers.InternalID",new Integer(cmid).toString());
         HashMap<String,String> responseToDoctor = dbController.getUserByParameter(member);
         responseToDoctor.put("RequestID", "verifyPatient");
         filterDataForVerification(responseToDoctor);
-        return verifyDetailsDueToType(cmid,responseToDoctor);
-      }
+        verifyDetailsDueToType(cmid,responseToDoctor);
+        return true;
+    }
 
+    private boolean statusIsEqualTo(String s) {
+
+        //return false;
+    }
 
     private void changeStatusToVerifyDetail(int cmid) {
         HashMap<Integer,HashMap<String,String>> responseToPatient =
@@ -78,8 +80,7 @@ public class RegVerify_V1 implements IRegVerify_model {
            case 1:
                HashMap<String,String> doctorsAuthorizer =
                        dbController.getEmailOfDoctorsAuthorizer(responseToDoctor.get("state"));
-               return generateMailForVerificationDoctor(responseToDoctor,
-                       doctorsAuthorizer);
+               doctor(responseToDoctor,doctorsAuthorizer);
                break;
            default:
                break;
@@ -88,30 +89,6 @@ public class RegVerify_V1 implements IRegVerify_model {
        return true;
    }
 
-    public ArrayList<String> generateMailForVerificationDoctor(HashMap<String, String> memberDetails,
-                                                               HashMap<String, String> doctorsAuthorizer){
-        String firstName = memberDetails.get("FirstName");
-        String lastName = memberDetails.get("LastName");
-        String licenseNumber = memberDetails.get("LicenseNumber");
-
-        String emailAddress = doctorsAuthorizer.get("Email");
-        String emailMessage  = "Dear authorizer,\n" +
-                "Please confirm/reject the following doctor be a valid doctor:\n" +
-                "First Name: " + firstName + ".\n" +
-                "Last Name: " + lastName + ".\n" +
-                "Licence Number: " + licenseNumber + ".\n\n" +
-                "Thank you,\n" +
-                "Socmed administration team.";
-        String subject = "Doctor Authorization for Socmed App";
-
-        ArrayList<String> emailDetails = new ArrayList<String>();
-        emailDetails.add(emailAddress);
-        emailDetails.add(emailMessage);
-        emailDetails.add(subject);
-
-        return emailDetails;
-    }
-/*
     private void doctor(HashMap<String, String> memberDetails,
                         HashMap<String, String> doctorsAuthorizer) {
 
@@ -128,9 +105,13 @@ public class RegVerify_V1 implements IRegVerify_model {
                 "Thank you,\n" +
                 "Socmed administration team.";
         String subject = "Doctor Authorization for Socmed App";
+
+        ICommController commController = determineCommControllerVersion();
+        commController.setCommToMail(emailAddress,emailMessage,subject);
+        commController.sendEmail();
     }
-*/
-/*
+
+
     private void Guardian(HashMap<String,String> memberDetails) {
         //get doctor
         String doctorCmid = getDoctorCmid(memberDetails);
@@ -141,9 +122,9 @@ public class RegVerify_V1 implements IRegVerify_model {
         sendTo.add(doctorCmid);
 
         //memberDetails.put("SendToCmid", doctorCmid);
-        data.put(Integer.parseInt(memberDetails.get("CommunityMemberID")), memberDetails);
+        data.put(Integer.parseInt(memberDetails.get("InternalID")),memberDetails);
         commController.setCommToUsers(data, sendTo, 1);
-        commController.sendResponse();
+        commController.SendResponse();
     }
 
     private String getDoctorCmid(HashMap<String, String> memberDetails) {
@@ -161,7 +142,7 @@ public class RegVerify_V1 implements IRegVerify_model {
         HashMap<String,String> filter = filterDataForVerification(memberDetails);
         data.put(1,filter);
         ArrayList<String> sendTo = new  ArrayList<String>();
-        sendTo.add(filter.get("CommunityMemberID"));
+        sendTo.add(filter.get("InternalID"));
 
         commController.setCommToUsers(data, sendTo, 1);
         commController.SendResponse();
@@ -203,10 +184,10 @@ public class RegVerify_V1 implements IRegVerify_model {
         return filter;
     }
 
-    public Object resendMail(int cmid){
+    public void resendMail(int cmid){
 
         HashMap<String,String> member = new HashMap<String,String>();
-        member.put("CommunityMemberID", new Integer(cmid).toString());
+        member.put("P_CommunityMembers.InternalID", new Integer(cmid).toString());
         HashMap<String,String> details = dbController.getUserByParameter(member);
         if (details.get("StatusNum").equals("verifying email")) {
             emailNotExsist(cmid,details);
@@ -217,17 +198,12 @@ public class RegVerify_V1 implements IRegVerify_model {
                     new HashMap<Integer,HashMap<String,String>>();
             responseToPatient.put(1, sendResponeTOApp(null, "rejectResend", cmid));
             commController.setCommToUsers(responseToPatient,new ArrayList<String>(),1);
-            commController.sendResponse();
+            commController.SendResponse();
         }
     }
 
 
-
-
-
-
-
-    public ArrayList<String> generateMailForVerificationEmail(HashMap<String, String> details){
+    public ArrayList<String> generateMailForVerification(HashMap<String, String> details){
         String firstName = details.get("FirstName");
         String lastName = details.get("LastName");
         String emailAddress = details.get("Email");
@@ -273,13 +249,12 @@ public class RegVerify_V1 implements IRegVerify_model {
 
         responseToPatient.put(1,response);
         */
-/*
         return response;
 
     }
 
-*/
-/*
+
+
     public Object responeDoctor(int cmid,String reason)
     {
         if (reason == null)
@@ -357,38 +332,10 @@ public class RegVerify_V1 implements IRegVerify_model {
 
     private String getState(int cmid) {
         HashMap<String,String> member = new HashMap<String,String>();
-        member.put("CommunityMemberID",new Integer(cmid).toString());
+        member.put("P_CommunityMembers.InternalID",new Integer(cmid).toString());
         HashMap<String,String> details = dbController.getUserByParameter(member);
         return details.get("State");
     }
 
-    public Object signIn(HashMap<String,String> details)
-    {
-        HashMap<String,String> conds = new HashMap<String,String>();
-        conds.put("CommunityMemberID", details.get("CommunityMemberID"));
-        conds.put("Password", "'" + details.get("Password") + "'");
-        conds.put("EmailAddress", "'" + details.get("EmailAddress") + "'");
-        HashMap<String,String> user = dbController.getUserByParameter(conds);
-        HashMap<Integer,HashMap<String,String>> response = new HashMap<Integer,HashMap<String,String>>();
-        HashMap<String,String> res = new HashMap<String,String>();
-        if (user == null)
-            res.put("RequestCode", "reject");
-        else
-            res.put("RequestCode", "accept");
-        response.put(1, res);
-        CommToUsers_V1 comm;
-        // Sign in of doctor/ems
-        if(details.get("SendToRegid") == "0")
-        {
-            comm = new CommToUsersFactory_V1().createComm(response, null, false);
-        }
-        else
-        {
-            ArrayList<String> target = new ArrayList<String>();
-            target.add(details.get("SendToRegid"));
-            comm = new CommToUsersFactory_V1().createComm(response, target, false);
-        }
-        return comm.sendResponse();
-    }
+
 }
-*/

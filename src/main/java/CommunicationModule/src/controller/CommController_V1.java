@@ -13,12 +13,12 @@ import java.util.HashMap;
 public class CommController_V1 implements ICommController {
     //version to use - change this to change version - edit decision methos in accordance
     private final int commToUsersVersion = 1;
-    private final int commToMailVersion = 1;
+    private final int commOfficialVersion = 1;
 
 
     //holding the implementations chosen for the interface (composition)
     private ICommToUsers_model commToUsers = null;
-    private ICommToMail_model commToMail = null;
+    private ICommOfficial_model commOfficial = null;
 
     //Default C'tor
     public CommController_V1() {}
@@ -36,9 +36,9 @@ public class CommController_V1 implements ICommController {
     }
 
 
-    public void sendEmail()  {
-        if (null != commToMail) {
-            commToMail.sendEmail();
+    public void sendMessage()  {
+        if (null != commOfficial) {
+            commOfficial.sendMessage();
         }
         else{
             //throw some kind of alert?
@@ -46,9 +46,9 @@ public class CommController_V1 implements ICommController {
     }
 
     //set methods for the members
-    public void setCommToMail(String emailAdress,String emailMessage,
-                              String subj){
-        commToMail = determineCommToMailVersion(emailAdress,emailMessage,subj);
+    public void setCommOfficial(HashMap<String,String> data,int type){
+        ICommOfficialFactory commOfficialFact = determineCommOfficialVersion();
+        commOfficial = commOfficialFact.createComm(data,type);
     }
     public void setCommToUsers(HashMap<Integer, HashMap<String, String>> data,
                                ArrayList<String> target,boolean initiatedComm){
@@ -59,7 +59,7 @@ public class CommController_V1 implements ICommController {
 
     private ICommToUsersFactory determineCommToUsersVersion(){
         switch (commToUsersVersion) {
-            //determine version of CommToUsers to use
+            //determine version of CommToUsers
             case 1: {
                 return new CommToUsersFactory_V1();
             }
@@ -69,13 +69,11 @@ public class CommController_V1 implements ICommController {
         }
     }
 
-    private ICommToMail_model determineCommToMailVersion(String emailAdress,
-                                                         String emailMessage,
-                                                         String subject){
-        switch (commToMailVersion) {
+    private ICommOfficialFactory determineCommOfficialVersion(){
+        switch (commOfficialVersion) {
             //determine version of CommToMail to use
             case 1: {
-                return new CommToMail_V1(emailAdress,emailMessage,subject);
+                return new CommOfficialFactory_V1();
             }
             default: {
                 return null;

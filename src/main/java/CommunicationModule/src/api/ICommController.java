@@ -6,12 +6,11 @@ import java.util.HashMap;
 /**
  * Created by NAOR on 06/04/2015.
  */
-public interface ICommController extends ICommToUsers,ICommToMail{
+public interface ICommController extends ICommToUsers,ICommOfficial{
     //ISP (Interface Segregation Principle)
 
     //set methods for the members
-    public void setCommToMail(String emailAdress,String emailMessage,
-                              String subj);
-    public void setCommToUsers(HashMap<Integer, HashMap<String, String>> data,
+    void setCommOfficial(HashMap<String,String> data,int type);
+    void setCommToUsers(HashMap<Integer, HashMap<String, String>> data,
                                ArrayList<String> target,boolean initiatedComm);
 }

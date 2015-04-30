@@ -10,5 +10,5 @@ public interface IRegRequest_model {
 
     HashMap<String,String> regDetailsRequest(HashMap<String,String> request);
 
-    boolean doesUserExist(HashMap<String, String> filledForm);
+    String doesUserExist(HashMap<String, String> filledForm);
 }

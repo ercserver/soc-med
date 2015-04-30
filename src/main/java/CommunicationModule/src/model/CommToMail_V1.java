@@ -1,9 +1,6 @@
 package CommunicationModule.src.model;
 
-import CommunicationModule.src.api.ICommToMail_model;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.*;
@@ -11,23 +8,21 @@ import javax.mail.internet.*;
 /**
  * Created by NAOR on 06/04/2015.
  */
-public class CommToMail_V1 implements ICommToMail_model {
+public class CommToMail_V1 extends CommOfficial_V1  {
 
     String emailAddress = null;
-    String msgToSend = null;
-    String subject = null;
+
     private final String username = "ercserver@gmail.com";
     private final String password = "serverpassword123";
     private final String host = "smtp.gmail.com";
 
     //C'tor
-    public CommToMail_V1(String eml, String msg, String sub){
-        emailAddress = eml;
-        msgToSend = msg;
-        subject = sub;
+    public CommToMail_V1(HashMap<String,String> data){
+        super(data);
+        emailAddress = data.get("Email");
     }
 
-    public void sendEmail() {
+    public void sendMessage() {
 
         Properties props = new Properties();
         props.put("mail.transport.protocol", "smtp");

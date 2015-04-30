@@ -10,6 +10,7 @@ import java.util.HashMap;
  * Created by NAOR on 06/04/2015.
  */
 public class RegRequest_V1 implements IRegRequest_model {
+    private static final String userExistsMessage = "An active user with this mail already exists";
 
     private IDbController dbController = null;
 
@@ -19,14 +20,18 @@ public class RegRequest_V1 implements IRegRequest_model {
         dbController = models.determineDbControllerVersion();
     }
 
-    public boolean doesUserExist(HashMap<String, String> filledForm) {
-        //search for an active user with that email - if found return true, else return false.
+    public String doesUserExist(HashMap<String, String> filledForm) {
+        //search for an active user with that email - if not found return null, else return "userExistsMessage".
         HashMap<String,String> whereConditions = new HashMap<String, String>();
-        whereConditions.put("E-mail", filledForm.get("E-mail"));
+        whereConditions.put("P_CommunityMember.EmailAddress", filledForm.get("EmailAddress"));
         HashMap<String,String> result = dbController.getUserByParameter(whereConditions);
-
-        return((null != result) && (result.get("Status").equals("Active")));
+        String message = null;
+        if((null == result) || (result.get("Status").equals("Active"))){
+            return null;
+        }
+        return userExistsMessage;
     }
+
 
     public HashMap<String,String> regDetailsRequest(HashMap<String,String> request) {
 
