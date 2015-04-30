@@ -11,14 +11,13 @@ import java.util.HashMap;
  */
 public class ShmulikTest {
     public static void main(String[] args) {
-        /*HashMap<String,String> h = new HashMap<String,String>();
+        HashMap<String,String> h = new HashMap<String,String>();
         h.put("CommunityMemberID","1002");
         h.put("Password","1234");
         h.put("RegID","0");//h.put("RegID","adasdfasfas");
         RegController_V1 v = new RegController_V1();
-        v.verifyDetail(h);*/
-        DbComm_V1 d = new DbComm_V1();
-        d.deleteUser(1004);
+        v.verifyDetail(h);
+
         //v.resendMail(1002);
     }
 }

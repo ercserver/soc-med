@@ -198,6 +198,8 @@ public class RegController_V1 implements IRegController {
         HashMap<String,String> member = new HashMap<String,String>();
         member.put("CommunityMemberID",new Integer(cmid).toString());
         HashMap<String,String> data = dbController.getUserByParameter(member);
+        String email = data.get("EmailAddress");
+        data = dbController.getLoginDetails(email);
         String pas = data.get("Password");
         return pas.equals(password);
     }
