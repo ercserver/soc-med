@@ -215,7 +215,7 @@ public class DbInit_V1 implements IDbInit_model {
 
             statement.addBatch("CREATE TABLE P_TypeLog ("
                     +"TypeHistoryNum INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
-                    +"MemberTypeNum INT NOT NULL," // --Enum={patient, doctor, guardian}
+                    +"UserType INT NOT NULL," // --Enum={patient, doctor, guardian, ems}
                     +"CommunityMemberID INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(CommunityMemberID),"
                     +"DateFrom Datetime NOT NULL DEFAULT current_timestamp,"
                     +"DateTo Datetime)");
@@ -247,7 +247,7 @@ public class DbInit_V1 implements IDbInit_model {
                     +"Type INT NOT NULL," // --Enum = {string, int, float}
                     +"UserType INT NOT NULL," // --Enum = {patient, doctor, guardian}
                     +"FieldsGroup INT NOT NULL," // --Enum = {personal, medical, professional, preferences}
-                    +"NeedsVerification BIT NOT NUll DEFAULT 0,"
+                    +"NeedsVerification BIT NOT NUll DEFAULT 0," // 0-no, 1-yes
                     +"IsRequired BIT NOT NUll DEFAULT 0,"//0-yes, 1-no
                     +"MaxLength INT NOT NUll DEFAULT 0,"
                     +"GetPossibleValuesFrom VARCHAR(50),"
@@ -302,8 +302,8 @@ public class DbInit_V1 implements IDbInit_model {
             createMedicalPersonnelDBOrganizationTypes();
             createMedicalPersonnelDBSpecifalization();
             createMedicalPesonnelDBOrganizations();
-            createMedicalPersonnelDBCertification();
             createMedicalPesonnelDBMedicalPersonnel();
+            createMedicalPersonnelDBCertification();
             createMedicalPesonnelDBPositions();
             createMedicalPesonnelDBAffiliation();
             createBuisnessLogicDBDecisionGivenAmbulaneETA();
@@ -426,6 +426,9 @@ public class DbInit_V1 implements IDbInit_model {
                 statement.executeUpdate("CREATE TABLE MP_Certification " +
                         "(CertificationInternalID INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
                         " CertificationExternalID INTEGER not NULL, " +
+                        " MedicalPersonnelID INTEGER not NULL FOREIGN KEY REFERENCES MP_MedicalPersonnel(MedicalPersonnelID), " +
+                        " DateFrom DATE not NULL DEFAULT current_timestamp, " +
+                        " DateTo DATE , " +
                         " SpecializationID INTEGER not NULL FOREIGN KEY REFERENCES MP_Specialization(SpecializationID))");
             }
         }
@@ -509,8 +512,8 @@ public class DbInit_V1 implements IDbInit_model {
                         " OrganizationID INTEGER not NULL FOREIGN KEY REFERENCES MP_Organizations(OrganizationID), " +
                         " MedicalPersonnelID INTEGER not NULL FOREIGN KEY REFERENCES MP_MedicalPersonnel(MedicalPersonnelID), " +
                         " PositionNum INTEGER not NULL FOREIGN KEY REFERENCES MP_Positions(PositionNum), " +
-                        " DateFrom DATE not NULL, " +
-                        " DateTo DATE not NULL)");
+                        " DateFrom DATETime not NULL DEFAULT current_timestamp, " +
+                        " DateTo DATETime)");
             }
         }
         // There was a fault with the connection to the server or with SQL
@@ -575,18 +578,18 @@ public class DbInit_V1 implements IDbInit_model {
             if(!rs.next())
             {
                 statement.executeUpdate("CREATE TABLE MP_Organizations " +
-                        "(OrganizationID INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
-                        " OrganizationDescription VARCHAR(50) not NULL, " +
-                        " OrganizationTypeNum INTEGER not NULL FOREIGN KEY REFERENCES MP_OrganizationTypes(OrganizationTypeNum), " +
-                        " State VARCHAR(50) not NULL, " +
-                        " City VARCHAR(50) not NULL, " +
-                        " Street VARCHAR(50) not NULL, " +
-                        " house INTEGER not NULL, " +
-                        " PhoneNumber VARCHAR(50) not NULL, " +
-                        " FaxNumber VARCHAR(50) not NULL, " +
-                        " EmailAddressOfOrganization VARCHAR(100) not NULL, " +
-                        " WebSite VARCHAR(100) not NULL, " +
-                        " Remarks VARCHAR(100))");
+                        "(OrganizationID INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY," +
+                        "OrganizationDescription VARCHAR(50) not NULL," +
+                        "OrganizationTypeNum INTEGER not NULL FOREIGN KEY REFERENCES MP_OrganizationTypes(OrganizationTypeNum)," +
+                        "OrgState VARCHAR(50) not NULL," +
+                        "OrgCity VARCHAR(50) not NULL," +
+                        "OrgStreet VARCHAR(50) not NULL," +
+                        "Orghouse INTEGER not NULL," +
+                        "OrgPhoneNumber VARCHAR(50) not NULL," +
+                        "FaxNumber VARCHAR(50) not NULL," +
+                        "EmailAddressOfOrganization VARCHAR(100) not NULL,n" +
+                        "WebSite VARCHAR(100) not NULL," +
+                        "Remarks VARCHAR(100))");
             }
         }
         // There was a fault with the connection to the server or with SQL

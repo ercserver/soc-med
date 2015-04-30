@@ -184,16 +184,41 @@ public class DbComm_V1 implements IDbComm_model {
             if (!(connection != null && !connection.isClosed() && connection.isValid(1)))
                 connect();
             statement = connection.createStatement();
-            rs = statement.executeQuery("SELECT DISTINCT * FROM " + "P_CommunityMembers INNER JOIN "
-                    + "P_Patients ON P_CommunityMembers.InternalID=P_Patients.CommunityMemberID "
-                    + "INNER JOIN P_EmergencyContact ON P_Patients.CommunityMemberID=P_EmergencyContact.CommunityMemberID "
-                    + "INNER JOIN MembersLoginDetails ON P_EmergencyContact.CommunityMemberID=MembersLoginDetails.CommunityMemberID "
-                    + "INNER JOIN P_Supervision ON P_Patients.PatientID=P_Supervision.PatientID "
-                    + "INNER JOIN P_Prescriptions ON P_Supervision.PatientID=P_Prescriptions.PatientID "
-                    + "INNER JOIN P_Diagnosis ON P_Prescriptions.PatientID=P_Diagnosis.PatientID "
-                    + "INNER JOIN P_StatusLog ON MembersLoginDetails.CommunityMemberID=P_StatusLog.CommunityMemberID "
-                    + "INNER JOIN P_Statuses ON P_StatusLog.StatusNum=P_Statuses.StatusNum " +
-                    "WHERE " + conditions + " ORDER BY " + "P_StatusLog.DateFrom");
+            rs = statement.executeQuery("SELECT DISTINCT * FROM P_CommunityMembers " +
+                    "WHERE " + conditions);
+            if(!rs.next())
+                return null;
+            String cmid = rs.getObject("CommunityMemberID").toString();
+            int userType = getUserType(cmid);
+            statement = connection.createStatement();
+            // Patient user
+            if(userType == 0)
+                rs = statement.executeQuery("SELECT DISTINCT * FROM " + "P_CommunityMembers INNER JOIN "
+                        + "P_Patients ON P_CommunityMembers.CommunityMemberID=P_Patients.CommunityMemberID "
+                        + "INNER JOIN P_EmergencyContact ON P_Patients.CommunityMemberID=P_EmergencyContact.CommunityMemberID "
+                        + "INNER JOIN MembersLoginDetails ON P_EmergencyContact.CommunityMemberID=MembersLoginDetails.CommunityMemberID "
+                        + "INNER JOIN P_Supervision ON P_Patients.PatientID=P_Supervision.PatientID "
+                        + "INNER JOIN P_Prescriptions ON P_Supervision.PatientID=P_Prescriptions.PatientID "
+                        + "INNER JOIN P_Diagnosis ON P_Prescriptions.PatientID=P_Diagnosis.PatientID "
+                        + "INNER JOIN P_StatusLog ON MembersLoginDetails.CommunityMemberID=P_StatusLog.CommunityMemberID "
+                        + "INNER JOIN P_Statuses ON P_StatusLog.StatusNum=P_Statuses.StatusNum " +
+                        "WHERE " + conditions + " ORDER BY " + "P_StatusLog.DateFrom");
+            // Doctor or ems user
+            else
+                rs = statement.executeQuery("SELECT DISTINCT * FROM " + "P_CommunityMembers INNER JOIN "
+                        + "P_Doctors ON P_CommunityMembers.CommunityMemberID=P_Doctors.CommunityMemberID "
+                        + "INNER JOIN P_EmergencyContact ON P_Doctors.CommunityMemberID=P_EmergencyContact.CommunityMemberID "
+                        + "INNER JOIN MembersLoginDetails ON P_EmergencyContact.CommunityMemberID=MembersLoginDetails.CommunityMemberID "
+                        + "INNER JOIN P_StatusLog ON MembersLoginDetails.CommunityMemberID=P_StatusLog.CommunityMemberID "
+                        + "INNER JOIN P_Statuses ON P_StatusLog.StatusNum=P_Statuses.StatusNum "
+                        + "INNER JOIN MP_MedicalPersonnel ON MP_MedicalPersonnel.CommunityMemberID=P_Doctors.CommunityMemberID "
+                        + "INNER JOIN MP_Certification ON MP_MedicalPersonnel.MedicalPersonnelID=MP_Certification.MedicalPersonnelID "
+                        + "INNER JOIN MP_Specialization ON MP_Specialization.SpecializationID=MP_Certification.SpecializationID "
+                        + "INNER JOIN MP_Affiliation ON MP_MedicalPersonnel.MedicalPersonnelID=MP_Affiliation.MedicalPersonnelID "
+                        + "INNER JOIN MP_Positions ON MP_Positions.PositionNum=MP_Affiliation.PositionNum "
+                        + "INNER JOIN MP_Organizations ON MP_Organizations.OrganizationID=MP_Affiliation.OrganizationID "
+                        + "INNER JOIN MP_OrganizationTypes ON MP_Organizations.OrganizationTypeNum=MP_OrganizationTypes.OrganizationTypeNum "
+                        + "WHERE " + conditions + " ORDER BY " + "P_StatusLog.DateFrom");
             ResultSetMetaData rsmd = rs.getMetaData();
             int columnCount = rsmd.getColumnCount();
             ArrayList<String> columnNames = new ArrayList<String>();
@@ -243,6 +268,35 @@ public class DbComm_V1 implements IDbComm_model {
         }
     }
 
+    private int getUserType(String cmid)
+    {
+        ResultSet rs = null;
+        try {
+            if (!(connection != null && !connection.isClosed() && connection.isValid(1)))
+                connect();
+            statement = connection.createStatement();
+            rs = statement.executeQuery("SELECT DISTINCT * FROM P_TypeLog " +
+                    "WHERE CommunityMemberID=" + cmid + " AND DateTo IS NULL");
+            rs.next();
+            return rs.getInt("UserType");
+        }
+        // There was a fault with the connection to the server or with SQL
+        catch (SQLException e) {e.printStackTrace(); return -1;}
+        // Releases the resources of this method
+        finally
+        {
+            releaseResources(statement, connection);
+            if (rs != null)
+            {
+                try
+                {
+                    rs.close();
+                }
+                catch (Exception e) {e.printStackTrace();}
+            }
+        }
+    }
+
     public void updateUserDetails(HashMap<String,String> updates)
     {
         int CMID = Integer.parseInt(updates.get("CMID"));
@@ -264,7 +318,7 @@ public class DbComm_V1 implements IDbComm_model {
                 connect();
             statement = connection.createStatement();
             statement.execute("UPDATE " +  "P_CommunityMembers SET " +
-                    updates + " WHERE InternalID=" + Integer.toString(CMID));
+                    updates + " WHERE CommunityMemberID=" + Integer.toString(CMID));
         }
         // There was a fault with the connection to the server or with SQL
         catch (SQLException e) {e.printStackTrace();}
@@ -488,8 +542,8 @@ public class DbComm_V1 implements IDbComm_model {
 
     public boolean isCommunityMemberExists(int cmid) {
         HashMap<String,String> where = new HashMap<String,String>();
-        where.put("InternalID", Integer.toString(cmid));
-        List<String> columns = Arrays.asList("InternalID");
+        where.put("CommunityMemberID", Integer.toString(cmid));
+        List<String> columns = Arrays.asList("CommunityMemberID");
         HashMap<Integer,HashMap<String,String>> res =
                 selectFromTable("P_CommunityMembers", columns, where);
         return (res.size() != 0);
@@ -497,8 +551,8 @@ public class DbComm_V1 implements IDbComm_model {
 
     public boolean isEmailMemberExists(int cmid) {
         HashMap<String,String> where = new HashMap<String,String>();
-        where.put("InternalID", Integer.toString(cmid));
-        List<String> columns = Arrays.asList("InternalID");
+        where.put("CommunityMemberID", Integer.toString(cmid));
+        List<String> columns = Arrays.asList("CommunityMemberID");
         HashMap<Integer,HashMap<String,String>> res =
                 selectFromTable("P_CommunityMembers", columns, where);
         return (res.size() != 0);
@@ -512,7 +566,7 @@ public class DbComm_V1 implements IDbComm_model {
         HashMap<String,String> cond = new HashMap<String,String>();
         cond.put("State", state);
         HashMap<Integer,HashMap<String,String>> res =
-                selectFromTable("AuthenticationMethod", Arrays.asList("method"), cond);
+                selectFromTable("AuthenticationMethod", Arrays.asList("Method"), cond);
         if (res.size() != 0){
             Collection<HashMap<String,String>> coll = res.values();
             return coll.iterator().next();
@@ -525,7 +579,7 @@ public class DbComm_V1 implements IDbComm_model {
         HashMap<String,String> cond = new HashMap<String,String>();
         cond.put("State", state);
         HashMap<Integer,HashMap<String,String>> res =
-                selectFromTable("DoctorAuthorizers", Arrays.asList("Email"), cond);
+                selectFromTable("DoctorAuthorizers", Arrays.asList("EmailAddress"), cond);
         if (res.size() != 0){
             Collection<HashMap<String,String>> coll = res.values();
             return coll.iterator().next();
