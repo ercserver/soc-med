@@ -24,4 +24,5 @@ public interface IDbComm {
     void updateLastRefreshTime(HashMap<String,String> params);
     HashMap<Integer,HashMap<String,String>> getAllRefreshTimes();
     void updateStatus(int cmid, String oldStatus, String newStatus);
+    void deleteUser(int cmid);
 }
