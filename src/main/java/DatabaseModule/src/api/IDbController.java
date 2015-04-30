@@ -26,4 +26,5 @@ public interface IDbController  extends IDbInit, IDbComm {
     HashMap<Integer,HashMap<String,String>>
     getRowsFromTable(HashMap<String,String> whereConditions, String tableName);
     void initializeAndConnect();
+    void deleteUser(int cmid);
 }

@@ -626,4 +626,61 @@ public class DbComm_V1 implements IDbComm_model {
         conds.put("CommunityMemberID", Integer.toString(cmid));
         return getRowsFromTable(conds, "RegIDs");
     }
+
+    public void deleteUser(int cmid)
+    {
+        String[] tables =  {"P_CommunityMembers", "P_StatusLog", "P_DeviceLog", "P_EmergencyContact", "P_TypeLog",
+                            "MembersLoginDetails", "RefreshDetailsTime", "RegIDs", "P_Patients",
+                            "P_Doctors", "MP_MedicalPersonnel","P_Relations"};
+        String[] pTables = {"P_Supervision", "P_Prescriptions", "P_Diagnosis", "P_Relations"};
+        try
+        {
+            if (!(connection != null && !connection.isClosed() && connection.isValid(1)))
+                connect();
+            HashMap<String,String> cond = new HashMap<String,String>();
+            cond.put("CommunityMemberID", Integer.toString(cmid));
+            HashMap<Integer,HashMap<String,String>> patientID = getRowsFromTable(cond, "P_Patients");
+            HashMap<Integer,HashMap<String,String>> docID = getRowsFromTable(cond, "P_Doctors");
+            HashMap<Integer,HashMap<String,String>> medPersonelID = getRowsFromTable(cond, "MP_MedicalPersonnel");
+            for(int i = 0; i < 9; i++)
+            {
+                statement = connection.createStatement();
+                statement.execute("DELETE FROM " + tables[i] +
+                        " WHERE CommunityMemberID=" + Integer.toString(cmid));
+            }
+            statement = connection.createStatement();
+            statement.execute("DELETE FROM P_Buddies" +
+                    " WHERE CommunityMemberID1=" + Integer.toString(cmid) +
+                    " OR CommunityMemberID2=" + Integer.toString(cmid));
+            if(patientID.size() > 0)
+            {
+                String id = patientID.get(1).get("PatientID");
+                for(int i = 0; i < 4; i++)
+                {
+                    statement = connection.createStatement();
+                    statement.execute("DELETE FROM " + pTables[i] +
+                            " WHERE PatientID=" + id);
+                }
+            }
+            if(docID.size() > 0)
+            {
+                String id = docID.get(1).get("DoctorID");
+                // to do thing that not part of registration...
+            }
+            if(medPersonelID.size() > 0)
+            {
+                String id = medPersonelID.get(1).get("MedicalPersonnelID");
+                statement = connection.createStatement();
+                statement.execute("DELETE FROM MP_Affiliation" +
+                        " WHERE MedicalPersonnelID=" + id);
+            }
+
+        }
+        catch (SQLException e) {e.printStackTrace();}
+        finally
+        {
+            releaseResources(statement, connection);
+        }
+
+    }
 }

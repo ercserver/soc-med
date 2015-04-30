@@ -25,4 +25,5 @@ public interface IDbComm_model {
     void updateStatus(int cmid, String oldStatus, String newStatus);
     HashMap<Integer,HashMap<String,String>>
     getRowsFromTable(HashMap<String,String> whereConditions, String tableName);
+    void deleteUser(int cmid);
 }

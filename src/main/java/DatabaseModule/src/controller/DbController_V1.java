@@ -98,6 +98,8 @@ public class DbController_V1 implements IDbController {
         return DB_communicator.getRowsFromTable(whereConditions, tableName);
     }
 
+    public void deleteUser(int cmid){DB_communicator.deleteUser(cmid);}
+
     private IDbInit_model determineDbInitVersion(){
         switch (dbInitVersion) {
             //determine version of CommToUsers to use

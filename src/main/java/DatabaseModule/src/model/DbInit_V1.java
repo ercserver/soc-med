@@ -458,12 +458,12 @@ public class DbInit_V1 implements IDbInit_model {
             if(!rs.next())
             {
                 statement.executeUpdate("CREATE TABLE MP_MedicalPersonnel " +
-                        "(internalID INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
-                        " externalID VARCHAR(25) not NULL, " +
-                        " externalIDType INTEGER not NULL, " +  //enum:0 for id, 1 for passport num
-                        " firstName VARCHAR(50) not NULL, " +
-                        " lastName VARCHAR(50) not NULL, " +
-                        " birthdayDate DATE not NULL, " +
+                        "(MedicalPersonnelID INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
+                        " ExternalID VARCHAR(25) not NULL, " +
+                        " ExternalIDType INTEGER not NULL, " +  //enum:0 for id, 1 for passport num
+                        " FirstName VARCHAR(50) not NULL, " +
+                        " LastName VARCHAR(50) not NULL, " +
+                        " BirthdayDate DATE not NULL, " +
                         " Gender INTEGER not NULL, " +  //enum:0 for male, 1 for female
                         " State VARCHAR(50) not NULL, " +
                         " City VARCHAR(50) not NULL, " +
@@ -618,7 +618,7 @@ public class DbInit_V1 implements IDbInit_model {
             if(!rs.next())
             {
                 statement.executeUpdate("CREATE TABLE B_DecisionGivenAmbulaneETA " +
-                        "(MedicalID INTEGER NOT NULL FOREIGN KEY REFERENCES M_MedicalConditions(MedicalConditionNum), " +
+                        "(MedicalConditionNum INTEGER NOT NULL FOREIGN KEY REFERENCES M_MedicalConditions(MedicalConditionNum), " +
                         " State  VARCHAR(50) not NULL, " +
                         " PatientAge VARCHAR(50) not NULL, " +
                         " EMS_ETA VARCHAR(50) not NULL, " +
@@ -1175,7 +1175,7 @@ public class DbInit_V1 implements IDbInit_model {
             {
                 statement.executeUpdate("CREATE TABLE AuthenticationMethod " +
                         "(State VARCHAR(50) not NULL PRIMARY KEY, " +
-                        " method INT not NULL)");   //enum:0 for mail, 1 for SMS, 2 for phoneCall
+                        " Method INT not NULL)");   //enum:0 for mail, 1 for SMS, 2 for phoneCall
             }
         }
         // There was a fault with the connection to the server or with SQL
