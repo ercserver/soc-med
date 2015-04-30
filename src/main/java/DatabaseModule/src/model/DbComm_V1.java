@@ -683,10 +683,11 @@ public class DbComm_V1 implements IDbComm_model {
 
     public void deleteUser(int cmid)
     {
-        String[] tables =  {"P_CommunityMembers", "P_StatusLog", "P_DeviceLog", "P_EmergencyContact", "P_TypeLog",
-                            "MembersLoginDetails", "RefreshDetailsTime", "RegIDs", "P_Patients",
-                            "P_Doctors", "MP_MedicalPersonnel","P_Relations"};
-        String[] pTables = {"P_Supervision", "P_Prescriptions", "P_Diagnosis", "P_Relations"};
+        String[] tables =  {"P_StatusLog", "P_DeviceLog", "P_EmergencyContact", "P_TypeLog",
+                            "MembersLoginDetails", "RefreshDetailsTime", "RegIDs"
+                            , "P_Relations"};
+        String[] pTables = {"P_Supervision", "P_Prescriptions", "P_Diagnosis", "P_Relations", "P_Patients", "P_Doctors"};
+        String[] mpTables = {"MP_Affiliation", "MP_Certification", "MP_MedicalPersonnel"};
         try
         {
             if (!(connection != null && !connection.isClosed() && connection.isValid(1)))
@@ -696,7 +697,7 @@ public class DbComm_V1 implements IDbComm_model {
             HashMap<Integer,HashMap<String,String>> patientID = getRowsFromTable(cond, "P_Patients");
             HashMap<Integer,HashMap<String,String>> docID = getRowsFromTable(cond, "P_Doctors");
             HashMap<Integer,HashMap<String,String>> medPersonelID = getRowsFromTable(cond, "MP_MedicalPersonnel");
-            for(int i = 0; i < 9; i++)
+            for(int i = 0; i < 8; i++)
             {
                 statement = connection.createStatement();
                 statement.execute("DELETE FROM " + tables[i] +
@@ -706,29 +707,28 @@ public class DbComm_V1 implements IDbComm_model {
             statement.execute("DELETE FROM P_Buddies" +
                     " WHERE CommunityMemberID1=" + Integer.toString(cmid) +
                     " OR CommunityMemberID2=" + Integer.toString(cmid));
-            if(patientID.size() > 0)
+            if((patientID != null) || (docID != null))
             {
                 String id = patientID.get(1).get("PatientID");
-                for(int i = 0; i < 4; i++)
+                for(int i = 0; i < 6; i++)
                 {
                     statement = connection.createStatement();
                     statement.execute("DELETE FROM " + pTables[i] +
                             " WHERE PatientID=" + id);
                 }
             }
-            if(docID.size() > 0)
-            {
-                String id = docID.get(1).get("DoctorID");
-                // to do thing that not part of registration...
-            }
-            if(medPersonelID.size() > 0)
+            if(medPersonelID != null)
             {
                 String id = medPersonelID.get(1).get("MedicalPersonnelID");
-                statement = connection.createStatement();
-                statement.execute("DELETE FROM MP_Affiliation" +
-                        " WHERE MedicalPersonnelID=" + id);
+                for(int i = 0; i < 3; i++) {
+                    statement = connection.createStatement();
+                    statement.execute("DELETE FROM " + mpTables[i] +
+                            " WHERE MedicalPersonnelID=" + id);
+                }
             }
-
+            statement = connection.createStatement();
+            statement.execute("DELETE FROM P_CommunityMembers" +
+                    " WHERE CommunityMemberID=" + Integer.toString(cmid));
         }
         catch (SQLException e) {e.printStackTrace();}
         finally
