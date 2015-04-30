@@ -265,7 +265,7 @@ public class RegVerify_V2 implements IRegVerify_model {
         HashMap<String, String> member = new HashMap<String, String>();
         member.put("EmailAddress", email);
         HashMap<String, String> details = dbController.getUserByParameter(member);
-        if (details.get("StatusNum").equals("reject"))
+        if (details.get("StatusNum").equals("reject by authentication"))
             return 0;
         if (details.get("StatusNum").equals("active"))
             return 1;

@@ -222,24 +222,33 @@ public class RegController_V1 implements IRegController {
 
     public Object responeToDoctorIfHeAccept(HashMap<String,String> details)
     {
+        HashMap<Integer,HashMap<String,String>> response = new
+                HashMap<Integer,HashMap<String,String>>();
+
         String email = details.get("EmailAddress");
         //reject
-        if (verification.checkIfDoctorIsaccept(email) == 0)
-        {
+        int type = verification.checkIfDoctorIsaccept(email);
+        if (type == 0) {
             int cmid = Integer.parseInt(details.get("CommunityMemberID"));
             dbController.deleteUser(cmid);
+            response = verification.buildRejectMessage(cmid, "reject by authentication");
+            commController.setCommToUsers(response, null, false);
         }
         //accept
-        if (verification.checkIfDoctorIsaccept(email) == 1)
+        if (type == 1)
         {
+            response = verification.BuildResponeWithOnlyRequestID(details,"Active");
+            commController.setCommToUsers(response, null, false);
 
         }
         //in other status
         else
         {
             // is equal to 2
+            response = verification.BuildResponeWithOnlyRequestID(details,"wait");
+            commController.setCommToUsers(response, null, false);
         }
-        return null;
+        return commController.sendResponse();
     }
 
 }
