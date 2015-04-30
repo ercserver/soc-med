@@ -70,7 +70,7 @@ public class DbController_V1 implements IDbController {
         return DB_communicator.addNewCommunityMember(details);
     }
 
-    public HashMap<String,String> getAuthenticationMethod(String state){
+    public int getAuthenticationMethod(String state){
         return DB_communicator.getAuthenticationMethod(state);
     }
 

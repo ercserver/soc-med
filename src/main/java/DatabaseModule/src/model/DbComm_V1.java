@@ -563,16 +563,16 @@ public class DbComm_V1 implements IDbComm_model {
         return 0;
     }
 
-    public HashMap<String,String> getAuthenticationMethod(String state) {
+    public int getAuthenticationMethod(String state) {
         HashMap<String,String> cond = new HashMap<String,String>();
         cond.put("State", state);
         HashMap<Integer,HashMap<String,String>> res =
                 selectFromTable("AuthenticationMethod", Arrays.asList("Method"), cond);
         if (res.size() != 0){
             Collection<HashMap<String,String>> coll = res.values();
-            return coll.iterator().next();
+            return Integer.parseInt(coll.iterator().next().get("Method"));
         }
-        return null;
+        return -1;
     }
 
     public HashMap<String,String> getEmailOfDoctorsAuthorizer(String state)

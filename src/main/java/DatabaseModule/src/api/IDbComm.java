@@ -18,7 +18,7 @@ public interface IDbComm {
     void updateUrgentInRefreshDetailsTime(int CMID, String fieldName, int urgentBit);
     boolean isCommunityMemberExists(int cmid);
     int addNewCommunityMember(HashMap<String,String> details);
-    HashMap<String,String> getAuthenticationMethod(String state);
+    int getAuthenticationMethod(String state);
     HashMap<String,String> getEmailOfDoctorsAuthorizer(String state);
     HashMap<String,String> getLoginDetails(String email);
     void updateLastRefreshTime(HashMap<String,String> params);
