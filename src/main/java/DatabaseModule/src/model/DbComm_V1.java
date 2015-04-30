@@ -185,7 +185,8 @@ public class DbComm_V1 implements IDbComm_model {
                 connect();
             statement = connection.createStatement();
             rs = statement.executeQuery("SELECT DISTINCT * FROM P_CommunityMembers " +
-                    "WHERE " + conditions);
+                            "INNER JOIN MembersLoginDetails ON P_CommunityMembers.CommunityMemberID=MembersLoginDetails.CommunityMemberID "
+                   + "WHERE " + conditions);
             if(!rs.next())
                 return null;
             String cmid = rs.getObject("CommunityMemberID").toString();
@@ -318,7 +319,7 @@ public class DbComm_V1 implements IDbComm_model {
                 connect();
             statement = connection.createStatement();
             statement.execute("UPDATE " +  "P_CommunityMembers SET " +
-                    updates + " WHERE CommunityMemberID=" + Integer.toString(CMID));
+                    Supdates + " WHERE CommunityMemberID=" + Integer.toString(CMID));
         }
         // There was a fault with the connection to the server or with SQL
         catch (SQLException e) {e.printStackTrace();}
