@@ -53,7 +53,7 @@ public class CommController_V1 implements ICommController {
     public void setCommToUsers(HashMap<Integer, HashMap<String, String>> data,
                                ArrayList<String> target,boolean initiatedComm){
         ICommToUsersFactory commToUsersFact = determineCommToUsersVersion();
-        commToUsersFact.createComm(data,target,initiatedComm);
+        commToUsers = commToUsersFact.createComm(data,target,initiatedComm);
     }
 
 

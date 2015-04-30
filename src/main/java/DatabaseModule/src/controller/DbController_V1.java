@@ -54,7 +54,6 @@ public class DbController_V1 implements IDbController {
         return DB_communicator.getFromEnum(cond);
     }
 
-	//רשימה של cmid 
     public HashMap<String,String> getWaitingPatientsCMID(int status, int docCMID){
         return DB_communicator.getWaitingPatientsCMID(status, docCMID);
     }

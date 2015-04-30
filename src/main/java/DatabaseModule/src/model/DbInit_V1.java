@@ -163,7 +163,7 @@ public class DbInit_V1 implements IDbInit_model {
                     +"ZipCode VARCHAR(15),"
                     +"HomePhoneNumber VARCHAR(20),"
                     +"MobilePhoneNumber VARCHAR(20) NOT NULL,"
-                    +"Email VARCHAR(50) NOT NULL,"
+                    +"EmailAddress VARCHAR(50) NOT NULL,"
                     +"MemberSince DATETIME NOT NULL DEFAULT current_timestamp)");
             //connection.commit();
 

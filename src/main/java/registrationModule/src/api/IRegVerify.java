@@ -16,4 +16,6 @@ public interface IRegVerify {
     // if doctor reject we send reason in string reason
     //else we send null
     Object responeDoctor(HashMap<String, String> data);
+
+    Object signIn(HashMap<String,String> details);
 }
