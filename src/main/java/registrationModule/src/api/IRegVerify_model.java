@@ -32,5 +32,7 @@ public interface IRegVerify_model {
     /***********for func SignIn********************/
     HashMap<Integer,HashMap<String,String>>verifySignIn(HashMap<String,String> details);
 
+    /***********for func responeToDoctorIfHeAccept********************/
+    public int checkIfDoctorIsaccept(String email);
 
 }

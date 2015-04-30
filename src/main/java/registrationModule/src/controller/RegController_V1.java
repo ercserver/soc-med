@@ -157,7 +157,7 @@ public class RegController_V1 implements IRegController {
     }
 
     //need to do
-    public Object responeDoctor(HashMap<String, String> data) {
+    public Object responeByDoctor(HashMap<String, String> data) {
         HashMap<Integer,HashMap<String,String>> response =
                 new HashMap<Integer,HashMap<String,String>>();
         int cmid = Integer.parseInt(data.get("CommunityMemberID"));
@@ -218,5 +218,25 @@ public class RegController_V1 implements IRegController {
         }
         return commController.sendResponse();
     }
+
+
+    public Object responeToDoctorIfHeAccept(HashMap<String,String> details)
+    {
+        String email = details.get("EmailAddress");
+        if (verification.checkIfDoctorIsaccept(email) == 0)
+        {
+
+        }
+        if (verification.checkIfDoctorIsaccept(email) == 1)
+        {
+
+        }
+        else
+        {
+            // is equal to 2
+        }
+        return null;
+    }
+
 }
 

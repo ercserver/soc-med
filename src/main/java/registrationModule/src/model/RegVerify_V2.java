@@ -85,8 +85,8 @@ public class RegVerify_V2 implements IRegVerify_model {
     }
 
 
-    private boolean ifTypeISDoctor(String code) {
-        if (code.equals("Docror"))
+    private boolean ifTypeISDoctor(String regid) {
+        if (regid.equals("0"))
             return true;
         else
             return false;
@@ -260,7 +260,19 @@ public class RegVerify_V2 implements IRegVerify_model {
         return response;
     }
 
-
+    public int checkIfDoctorIsaccept(String email)
+    {
+        HashMap<String, String> member = new HashMap<String, String>();
+        member.put("EmailAddress", email);
+        HashMap<String, String> details = dbController.getUserByParameter(member);
+        if (details.get("StatusNum").equals("reject"))
+            return 0;
+        if (details.get("StatusNum").equals("active"))
+            return 1;
+        else
+            // his status equal to verify email or details
+            return 2;
+    }
 }
 
 
