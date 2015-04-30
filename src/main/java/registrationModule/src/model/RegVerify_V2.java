@@ -44,7 +44,7 @@ public class RegVerify_V2 implements IRegVerify_model {
 
     public HashMap<String,String> getPatientAndFillterDataToSendDoctor(int cmid) {
         HashMap<String, String> member = new HashMap<String, String>();
-        member.put("CommunityMemberID", new Integer(cmid).toString());
+        member.put("P_CommunityMembers.CommunityMemberID", new Integer(cmid).toString());
         HashMap<String, String> responseToDoctor = dbController.getUserByParameter(member);
         responseToDoctor.put("RequestID", "verifyPatient");
         return filterDataForVerification(responseToDoctor);
@@ -159,7 +159,7 @@ public class RegVerify_V2 implements IRegVerify_model {
     public HashMap<String, String> getUserByCmid(int cmid) {
 
         HashMap<String, String> member = new HashMap<String, String>();
-        member.put("CommunityMemberID", new Integer(cmid).toString());
+        member.put("P_CommunityMembers.CommunityMemberID", new Integer(cmid).toString());
         HashMap<String, String> details = dbController.getUserByParameter(member);
         return details;
     }
@@ -213,7 +213,7 @@ public class RegVerify_V2 implements IRegVerify_model {
 
     private String getState(int cmid) {
         HashMap<String,String> member = new HashMap<String,String>();
-        member.put("CommunityMemberID",new Integer(cmid).toString());
+        member.put("P_CommunityMembers.CommunityMemberID",new Integer(cmid).toString());
         HashMap<String,String> details = dbController.getUserByParameter(member);
         return details.get("State");
     }
@@ -246,7 +246,7 @@ public class RegVerify_V2 implements IRegVerify_model {
     public HashMap<Integer,HashMap<String,String>>verifySignIn(HashMap<String,String> details)
     {
         HashMap<String,String> conds = new HashMap<String,String>();
-        conds.put("CommunityMemberID", details.get("CommunityMemberID"));
+        conds.put("P_CommunityMembers.CommunityMemberID", details.get("CommunityMemberID"));
         conds.put("Password", "'" + details.get("Password") + "'");
         conds.put("EmailAddress", "'" + details.get("EmailAddress") + "'");
         HashMap<String,String> user = dbController.getUserByParameter(conds);
@@ -263,7 +263,7 @@ public class RegVerify_V2 implements IRegVerify_model {
     public int checkIfDoctorIsaccept(String email)
     {
         HashMap<String, String> member = new HashMap<String, String>();
-        member.put("EmailAddress", email);
+        member.put("P_CommunityMembers.EmailAddress", email);
         HashMap<String, String> details = dbController.getUserByParameter(member);
         if (details.get("StatusNum").equals("reject by authentication"))
             return 0;

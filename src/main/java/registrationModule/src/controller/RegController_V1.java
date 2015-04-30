@@ -196,7 +196,7 @@ public class RegController_V1 implements IRegController {
 
     private boolean checkCmidAndPassword(String password, int cmid) {
         HashMap<String,String> member = new HashMap<String,String>();
-        member.put("CommunityMemberID",new Integer(cmid).toString());
+        member.put("P_CommunityMembers.CommunityMemberID",new Integer(cmid).toString());
         HashMap<String,String> data = dbController.getUserByParameter(member);
         String email = data.get("EmailAddress");
         data = dbController.getLoginDetails(email);
