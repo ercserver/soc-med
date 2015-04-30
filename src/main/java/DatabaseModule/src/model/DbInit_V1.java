@@ -40,7 +40,7 @@ public class DbInit_V1 implements IDbInit_model {
         {
             Class.forName(JDBC_DRIVER);
             connection = DriverManager.getConnection(DB_URL, USERNAME, PASS);
-            connection.setAutoCommit(false);
+            connection.setAutoCommit(true);
             statement = connection.createStatement();
             //statement.addBatch("DROP DATABASE " + DBName);
             //statement.addBatch("CREATE database " + DBName);
@@ -90,12 +90,12 @@ public class DbInit_V1 implements IDbInit_model {
 //            connection.commit();
 
             statement.addBatch("CREATE TABLE M_MedicalConditions ("
-                    +"MedicalConditionNum INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
+                    +"MedicalConditionID INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
                     +"MedicalConditionDescription VARCHAR(100))");
 //            connection.commit();
 
             statement.addBatch("CREATE TABLE M_BrandNames ("
-                    +"BrandNameInternalID INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
+                    +"BrandNameID INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
                     +"BrandNameExternalID VARCHAR(30),"
                     +"BrandNameDescription VARCHAR(30),"
                     +"Manufacturer VARCHAR(30))");
@@ -103,8 +103,8 @@ public class DbInit_V1 implements IDbInit_model {
 
             statement.addBatch("CREATE TABLE M_Indications ("
                     +"IndicationNum INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
-                    +"MedicalConditionID INT NOT NULL FOREIGN KEY REFERENCES m_MedicalConditions(MedicalConditionNum),"
-                    +"BrandNameID INT NOT NULL FOREIGN KEY REFERENCES m_BrandNames(BrandNameInternalID))");
+                    +"MedicalConditionID INT NOT NULL FOREIGN KEY REFERENCES M_MedicalConditions(MedicalConditionID),"
+                    +"BrandNameID INT NOT NULL FOREIGN KEY REFERENCES M_BrandNames(BrandNameID))");
 //            connection.commit();
 
             statement.addBatch("CREATE TABLE M_ActiveComponents ("
@@ -114,16 +114,16 @@ public class DbInit_V1 implements IDbInit_model {
 
             statement.addBatch("CREATE TABLE M_Compositions ("
                     +"ComposiotionNum INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
-                    +"ActiveComponentID INT NOT NULL FOREIGN KEY REFERENCES m_ActiveComponents (ActiveComponentID),"
-                    +"BrandNameID INT NOT NULL FOREIGN KEY REFERENCES m_BrandNames(BrandNameInternalID),"
+                    +"ActiveComponentID INT NOT NULL FOREIGN KEY REFERENCES M_ActiveComponents (ActiveComponentID),"
+                    +"BrandNameID INT NOT NULL FOREIGN KEY REFERENCES M_BrandNames(BrandNameID),"
                     +"Quantity INT NOT NULL ,"
                     +"UnitOfMeasure INT NOT NULL)");
 //            connection.commit();
 
             statement.addBatch("CREATE TABLE M_Substitutives ("
                     +"SubsitutiveNum INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
-                    +"BrandNameID1 INT NOT NULL FOREIGN KEY REFERENCES m_BrandNames(BrandNameInternalID),"
-                    +"BrandNameID2 INT NOT NULL FOREIGN KEY REFERENCES m_BrandNames(BrandNameInternalID),"
+                    +"BrandNameID1 INT NOT NULL FOREIGN KEY REFERENCES M_BrandNames(BrandNameID),"
+                    +"BrandNameID2 INT NOT NULL FOREIGN KEY REFERENCES M_BrandNames(BrandNameID),"
                     +"ConversionRatio FLOAT NOT NULL,"
                     +"Compliance VARCHAR(10) NOT NULL)"); // --Enum(full, partial))
 //            connection.commit();
@@ -169,13 +169,13 @@ public class DbInit_V1 implements IDbInit_model {
 
             statement.addBatch("CREATE Table P_Patients("
                     +"PatientID INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
-                    +"CommunityMemberID INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(InternalID))");
+                    +"CommunityMemberID INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(CommunityMemberID))");
             //connection.commit();
 
             statement.addBatch("CREATE TABLE P_StatusLog ("
                     +"StatusHistoryNum INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
                     +"StatusNum INT NOT NULL FOREIGN KEY REFERENCES P_Statuses(StatusNum),"
-                    +"CommunityMemberID INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(InternalID),"
+                    +"CommunityMemberID INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(CommunityMemberID),"
                     +"DateFrom Datetime NOT NULL DEFAULT current_timestamp,"
                     +"DateTo Datetime)");
             //connection.commit();
@@ -183,15 +183,15 @@ public class DbInit_V1 implements IDbInit_model {
             statement.addBatch("CREATE TABLE P_DeviceLog ("
                     +"StatusHistoryNum INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
                     +"StatusNum INT NOT NULL FOREIGN KEY REFERENCES P_Statuses(StatusNum),"
-                    +"CommunityMemberID INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(InternalID),"
+                    +"CommunityMemberID INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(CommunityMemberID),"
                     +"DateFrom Datetime NOT NULL DEFAULT current_timestamp,"
                     +"DateTo Datetime)");
             //connection.commit();
 
             statement.addBatch("CREATE TABLE P_Buddies ("
                     +"RelationshipNum INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
-                    +"CommunityMemberID1 INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(InternalID),"
-                    +"CommunityMemberID2 INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(InternalID),"
+                    +"CommunityMemberID1 INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(CommunityMemberID),"
+                    +"CommunityMemberID2 INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(CommunityMemberID),"
                     +"DateFrom Datetime NOT NULL DEFAULT current_timestamp,"
                     +"DateTo Datetime)");
             //connection.commit();
@@ -201,22 +201,22 @@ public class DbInit_V1 implements IDbInit_model {
 
             statement.addBatch("CREATE TABLE P_Relations ("
                     +"RelationNum INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
-                    +"CommunityMemberID INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(InternalID),"
+                    +"CommunityMemberID INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(CommunityMemberID),"
                     +"PatientID INT NOT NULL FOREIGN KEY REFERENCES P_Patients(PatientID),"
-                    +"RelationTypeNum INT NOT NULL FOREIGN KEY REFERENCES P_RelationTypes(relationTypeNum),"
+                    +"RelationTypeNum INT NOT NULL FOREIGN KEY REFERENCES P_RelationTypes(RelationTypeNum),"
                     +"DateFrom Datetime NOT NULL DEFAULT current_timestamp,"
                     +"DateTo Datetime)");
             //connection.commit();
 
             statement.addBatch("CREATE TABLE P_EmergencyContact ("
-                    +"CommunityMemberID INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(InternalID),"
+                    +"CommunityMemberID INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(CommunityMemberID),"
                     +"ContactPhone VARCHAR(20) NOT NULL)");
             //connection.commit();
 
             statement.addBatch("CREATE TABLE P_TypeLog ("
                     +"TypeHistoryNum INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
                     +"MemberTypeNum INT NOT NULL," // --Enum={patient, doctor, guardian}
-                    +"CommunityMemberID INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(InternalID),"
+                    +"CommunityMemberID INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(CommunityMemberID),"
                     +"DateFrom Datetime NOT NULL DEFAULT current_timestamp,"
                     +"DateTo Datetime)");
             //connection.commit();
@@ -226,17 +226,17 @@ public class DbInit_V1 implements IDbInit_model {
                     +"FirstName VARCHAR(30) NOT NULL,"
                     +"LastName VARCHAR(30) NOT NULL,"
                     +"LicenseNumber INT NOT NULL,"
-                    +"CommunityMemberID INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(InternalID))");
+                    +"CommunityMemberID INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(CommunityMemberID))");
             //connection.commit();
 
             statement.addBatch("CREATE TABLE MembersLoginDetails("
-                    +"CommunityMemberID INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(InternalID),"
+                    +"CommunityMemberID INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(CommunityMemberID),"
                     +"Password VARCHAR(30) NOT NULL,"
                     +"EmailAddress VARCHAR(30) NOT NULL)");
             //connection.commit();
 
             statement.addBatch("CREATE TABLE RefreshDetailsTime ("
-                    +"CommunityMemberID INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(InternalID),"
+                    +"CommunityMemberID INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(CommunityMemberID),"
                     +"FieldName VARCHAR(30) NOT NULL,"
                     +"LastUpdateTime Datetime NOT NULL,"
                     +"Urgent BIT DEFAULT 0)");
@@ -287,7 +287,7 @@ public class DbInit_V1 implements IDbInit_model {
             statement.addBatch("CREATE TABLE P_Diagnosis ("
                     +"DiagnosisNum INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
                     +"PatientID INT NOT NULL FOREIGN KEY REFERENCES P_Patients(PatientID),"
-                    +"MedicalConditionID INT NOT NULL FOREIGN KEY REFERENCES m_MedicalConditions(MedicalConditionNum),"
+                    +"MedicalConditionID INT NOT NULL FOREIGN KEY REFERENCES M_MedicalConditions(MedicalConditionID),"
                     +"DoctorID INT NOT NULL FOREIGN KEY REFERENCES P_Doctors(DoctorID),"
                     +"DateFrom Datetime DEFAULT current_timestamp,"
                     +"DateTo Datetime)");
@@ -298,7 +298,7 @@ public class DbInit_V1 implements IDbInit_model {
 
             statement.executeBatch();
 
-            createPatientDBDiagnosis();
+            //createPatientDBDiagnosis();
             createMedicalPersonnelDBOrganizationTypes();
             createMedicalPersonnelDBSpecifalization();
             createMedicalPesonnelDBOrganizations();
@@ -472,8 +472,8 @@ public class DbInit_V1 implements IDbInit_model {
                         " ZipCode INTEGER, " +
                         " HomePhoneNumber VARCHAR(50), " +
                         " MobilePhoneNumber VARCHAR(50) not NULL, " +
-                        " Email VARCHAR(100) not NULL, " +
-                        " CommunityMemberID INTEGER not NULL FOREIGN KEY REFERENCES P_CommunityMembers(InternalID))");
+                        " EmailAddress VARCHAR(100) not NULL, " +
+                        " CommunityMemberID INTEGER not NULL FOREIGN KEY REFERENCES P_CommunityMembers(CommunityMemberID))");
             }
         }
         // There was a fault with the connection to the server or with SQL
@@ -507,7 +507,7 @@ public class DbInit_V1 implements IDbInit_model {
                 statement.executeUpdate("CREATE TABLE MP_Affiliation " +
                         "(TypeHistoryNum INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
                         " OrganizationID INTEGER not NULL FOREIGN KEY REFERENCES MP_Organizations(OrganizationID), " +
-                        " MedicalPersonnelID INTEGER not NULL FOREIGN KEY REFERENCES MP_MedicalPersonnel(internalID), " +
+                        " MedicalPersonnelID INTEGER not NULL FOREIGN KEY REFERENCES MP_MedicalPersonnel(MedicalPersonnelID), " +
                         " PositionNum INTEGER not NULL FOREIGN KEY REFERENCES MP_Positions(PositionNum), " +
                         " DateFrom DATE not NULL, " +
                         " DateTo DATE not NULL)");
@@ -584,7 +584,7 @@ public class DbInit_V1 implements IDbInit_model {
                         " house INTEGER not NULL, " +
                         " PhoneNumber VARCHAR(50) not NULL, " +
                         " FaxNumber VARCHAR(50) not NULL, " +
-                        " Email VARCHAR(100) not NULL, " +
+                        " EmailAddressOfOrganization VARCHAR(100) not NULL, " +
                         " WebSite VARCHAR(100) not NULL, " +
                         " Remarks VARCHAR(100))");
             }
@@ -618,7 +618,7 @@ public class DbInit_V1 implements IDbInit_model {
             if(!rs.next())
             {
                 statement.executeUpdate("CREATE TABLE B_DecisionGivenAmbulaneETA " +
-                        "(MedicalConditionNum INTEGER NOT NULL FOREIGN KEY REFERENCES M_MedicalConditions(MedicalConditionNum), " +
+                        "(MedicalConditionID INTEGER NOT NULL FOREIGN KEY REFERENCES M_MedicalConditions(MedicalConditionID), " +
                         " State  VARCHAR(50) not NULL, " +
                         " PatientAge VARCHAR(50) not NULL, " +
                         " EMS_ETA VARCHAR(50) not NULL, " +
@@ -688,7 +688,7 @@ public class DbInit_V1 implements IDbInit_model {
             {
                 statement.executeUpdate("CREATE TABLE O_EmergencyEventResponse " +
                         "(ResponseNum INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
-                        " CommunityMemberID INTEGER not NULL FOREIGN KEY REFERENCES P_CommunityMembers(InternalID), " +
+                        " CommunityMemberID INTEGER not NULL FOREIGN KEY REFERENCES P_CommunityMembers(CommunityMemberID), " +
                         " EventID INTEGER not NULL FOREIGN KEY REFERENCES O_EmergencyEvents(EventID), " +
                         " EmergencyEventNum INTEGER not NULL, " +
                         " ActionTypeNum INTEGER not NULL, " +
@@ -840,7 +840,7 @@ public class DbInit_V1 implements IDbInit_model {
                         " PatientId INTEGER not NULL, " +
                         " CreatedDate TIMESTAMP not NULL, " +
                         " FinishedDate DATETIME, " +
-                        " EmsMemberID INTEGER not NULL FOREIGN KEY REFERENCES P_CommunityMembers(InternalID), " +
+                        " EmsMemberID INTEGER not NULL FOREIGN KEY REFERENCES P_CommunityMembers(CommunityMemberID), " +
                         " StatusNum INTEGER not NULL FOREIGN KEY REFERENCES O_EventStatuses(StatusNum), " +
                         " X REAL not NULL, " +
                         " Y REAL not NULL, " +
@@ -881,9 +881,9 @@ public class DbInit_V1 implements IDbInit_model {
             {
                 statement.executeUpdate("CREATE TABLE O_EmergencyEventActions " +
                         "(EmergencyActionNum INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
-                        " EmergencyEventID INTEGER not NULL FOREIGN KEY REFERENCES O_EmergencyEvents(EventID), " +
+                        " EventID INTEGER not NULL FOREIGN KEY REFERENCES O_EmergencyEvents(EventID), " +
                         " ActionTypeNum INTEGER not NULL FOREIGN KEY REFERENCES O_ActionTypes(ActionTypeNum), " +
-                        " ActionStatusNum INTEGER not NULL FOREIGN KEY REFERENCES O_ActionStatus(StatusNum), " +
+                        " ActionStatusNum INTEGER not NULL FOREIGN KEY REFERENCES O_ActionStatus(ActionStatusNum), " +
                         " CreatedDate TIMESTAMP not NULL, " +
                         " FinishedDate DATETIME not NULL)");
             }
@@ -918,7 +918,7 @@ public class DbInit_V1 implements IDbInit_model {
             {
                 statement.executeUpdate("CREATE TABLE O_EmergencyMedicationUse " +
                         "(EmergenctMedicationUseNum INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
-                        " EmergencyEventNum INTEGER not NULL FOREIGN KEY REFERENCES O_EmergencyEvents(EventID), " +
+                        " EventID INTEGER not NULL FOREIGN KEY REFERENCES O_EmergencyEvents(EventID), " +
                         " ProvidingMemberId INTEGER not NULL FOREIGN KEY REFERENCES O_InvolvedCommunityMembers(InternalID), " +
                         " ProvidingDispenserNum INTEGER not NULL FOREIGN KEY REFERENCES O_AutomaticDispensers(DispensersNum), " +
                         " ApprovedByID INTEGER not NULL, " +
@@ -957,7 +957,7 @@ public class DbInit_V1 implements IDbInit_model {
             if(!rs.next())
             {
                 statement.executeUpdate("CREATE TABLE O_ActionStatus " +
-                        "(StatusNum INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
+                        "(ActionStatusNum INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
                         " StatusName VARCHAR(30) not NULL)");
             }
         }
@@ -1038,7 +1038,7 @@ public class DbInit_V1 implements IDbInit_model {
                         " ZipCode INTEGER, " +
                         " HomePhoneNumber VARCHAR(50), " +
                         " MobilePhoneNumber VARCHAR(50) not NULL, " +
-                        " Email VARCHAR(100) not NULL)");
+                        " EmailAddress VARCHAR(100) not NULL)");
             }
         }
         // There was a fault with the connection to the server or with SQL
@@ -1106,7 +1106,7 @@ public class DbInit_V1 implements IDbInit_model {
                 statement.executeUpdate("CREATE TABLE Frequencies " +
                         "(Name VARCHAR(30) not NULL PRIMARY KEY, " +
                         " Frequency REAL not NULL, " +
-                        " MedicalCondition VARCHAR(50), " +
+                        " MedicalConditionID INT FOREIGN KEY REFERENCES M_MedicalConditions(MedicalConditionID), " +
                         " State VARCHAR(50) not NULL, " +
                         " Area VARCHAR(50), " +
                         " PatientAge INTEGER)");
@@ -1208,7 +1208,7 @@ public class DbInit_V1 implements IDbInit_model {
             {
                 statement.executeUpdate("CREATE TABLE DoctorAuthorizers " +
                         "(State VARCHAR(50) not NULL PRIMARY KEY, " +
-                        " Email VARCHAR(100) not NULL)");
+                        " EmailAddress VARCHAR(100) not NULL)");
             }
         }
         // There was a fault with the connection to the server or with SQL

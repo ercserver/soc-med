@@ -1,3 +1,4 @@
+import DatabaseModule.src.model.DbInit_V1;
 import registrationModule.src.api.IRegVerify_model;
 import registrationModule.src.controller.RegController_V1;
 import registrationModule.src.model.RegVerify_V2;
