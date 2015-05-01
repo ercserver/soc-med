@@ -5,7 +5,7 @@ import DatabaseModule.src.api.*;
 import DatabaseModule.src.model.*;
 
 
-
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -54,8 +54,8 @@ public class DbController_V1 implements IDbController {
         return DB_communicator.getFromEnum(cond);
     }
 
-    public HashMap<String,String> getWaitingPatientsCMID(int status, int docCMID){
-        return DB_communicator.getWaitingPatientsCMID(status, docCMID);
+    public ArrayList<String> getWaitingPatientsCMID(int docCMID){
+        return DB_communicator.getWaitingPatientsCMID(docCMID);
     }
 	
     public void updateUrgentInRefreshDetailsTime(int CMID, String fieldName, int urgentBit){

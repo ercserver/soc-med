@@ -1,5 +1,6 @@
 package DatabaseModule.src.api;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -13,7 +14,7 @@ public interface IDbComm_model {
     HashMap<Integer,HashMap<String,String>> getDefaultInEmergency(String state);
     HashMap<String,String> getRejectCodes();
     HashMap<Integer,HashMap<String,String>> getFromEnum(HashMap<String,String> cond);
-    HashMap<String,String> getWaitingPatientsCMID(int status, int docCMID);
+    ArrayList<String> getWaitingPatientsCMID(int docCMID);
     void updateUrgentInRefreshDetailsTime(int CMID, String fieldName, int urgentBit);
     boolean isCommunityMemberExists(int cmid);
     int addNewCommunityMember(HashMap<String,String> details);

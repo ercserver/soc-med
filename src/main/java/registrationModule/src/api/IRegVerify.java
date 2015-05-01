@@ -1,5 +1,7 @@
 package registrationModule.src.api;
 
+import java.util.HashMap;
+
 /**
  * Created by NAOR on 06/04/2015.
  */
@@ -14,6 +16,8 @@ public interface IRegVerify {
     // if doctor reject we send reason in string reason
     //else we send null
     Object responeDoctor(int cmid,String reason);
+
+    Object signIn(HashMap<String,String> details);
 
 
 }

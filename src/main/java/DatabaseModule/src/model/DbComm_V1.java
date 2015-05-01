@@ -363,7 +363,7 @@ public class DbComm_V1 implements IDbComm_model {
         return selectFromTable("Enum", null, cond);
     }
 
-    public HashMap<String,String> getWaitingPatientsCMID(int status, int docCMID)
+    public ArrayList<String> getWaitingPatientsCMID(int docCMID)
     {
         ResultSet rs = null;
         ResultSet rs1 = null;
@@ -380,7 +380,7 @@ public class DbComm_V1 implements IDbComm_model {
                 return null;
             else
             {
-                HashMap<String,String> res = new HashMap<String,String>();
+                ArrayList<String> res = new ArrayList<String>();
                 int numOfPatients = 0;
                 do
                 {
@@ -388,16 +388,15 @@ public class DbComm_V1 implements IDbComm_model {
                     Statement statement2 = connection.createStatement();
                     rs1 = statement2.executeQuery("SELECT DISTINCT * FROM " + "P_Patients INNER JOIN "
                             + "P_StatusLog ON P_Patients.CommunityMemberID=P_StatusLog.CommunityMemberID"
-                            + " WHERE P_Patients.PatientID="
-                            + Integer.toString(patientID) + " AND " + "P_StatusLog.StatusNum="
-                            + Integer.toString(status));
+                            + "INNER JOIN P_Statuses ON P_Statuses.StatusNum=P_StatusLog.StatusNum"
+                            + " WHERE P_Patients.PatientID=" + Integer.toString(patientID) +
+                            " AND P_Statuses.StatusName='verifying details'");
                     if (!rs1.next())
                         continue;
                     else
                     {
                         numOfPatients++;
-                        res.put(Integer.toString(numOfPatients),
-                                Integer.toString(rs1.getInt("CommunityMemberID")));
+                        res.add(Integer.toString(rs1.getInt("CommunityMemberID")));
                     }
                 }while (rs.next());
                 return res;

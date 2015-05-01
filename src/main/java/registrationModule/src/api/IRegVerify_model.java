@@ -19,5 +19,7 @@ public interface IRegVerify_model {
 
     ArrayList<String> verifyFilledForm(HashMap<String, String> filledForm);
 
-    HashMap<String,String> generateDataForAuth(HashMap<String, String> filledForm, int authMethod);
+    HashMap<String,String> generateDataForAuth(HashMap<String, String> filledForm, int authMethod);//*
+
+    HashMap<Integer,HashMap<String,String>> verifySignIn(HashMap<String,String> details);
 }

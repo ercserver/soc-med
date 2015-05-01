@@ -137,4 +137,21 @@ public class RegController_V1 implements IRegController {
         //need for each CMID - pull from db and grab relevant fields to be JSON'ed. TODO - What are they??
         return null;
     }
+
+    public Object signIn(HashMap<String,String> details)
+    {
+        HashMap<Integer,HashMap<String,String>> response = verification.verifySignIn(details);
+        // Sign in of doctor/ems
+        if(details.get("RegID") == "0")
+        {
+            commController.setCommToUsers(response, null, false);
+        }
+        else
+        {
+            ArrayList<String> target = new ArrayList<String>();
+            target.add(details.get("RegID"));
+            commController.setCommToUsers(response, target, false);
+        }
+        return commController.sendResponse();
+    }
 }
