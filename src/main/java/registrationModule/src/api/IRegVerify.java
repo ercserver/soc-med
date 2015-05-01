@@ -9,7 +9,7 @@ public interface IRegVerify {
     Object VerifyDetail(int cmid);
     //boolean verifyDetailsDueToType(int userType);
 
-    Object resendMail(int cmid);
+    Object resendAuth(int cmid);
 
     // if doctor reject we send reason in string reason
     //else we send null

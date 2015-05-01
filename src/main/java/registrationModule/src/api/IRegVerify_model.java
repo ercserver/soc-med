@@ -10,7 +10,7 @@ public interface IRegVerify_model {
 
     Object VerifyDetail(int cmid);
 
-    Object resendMail(int cmid);
+    Object resendAuth(int cmid);//TODO////need to get mail also!!
 
     // if doctor reject we send reason in string reason
     //else we send null

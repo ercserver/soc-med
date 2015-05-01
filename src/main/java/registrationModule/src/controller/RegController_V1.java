@@ -116,9 +116,9 @@ public class RegController_V1 implements IRegController {
         return verification.VerifyDetail(cmid);
     }
 
-    public Object resendMail(int cmid)
-    {
-        return verification.resendMail(cmid);
+    //TODO - Shmulit: need to implement resending of email or SMS
+    public Object resendAuth(int cmid){
+        return verification.resendAuth(cmid);
     }
 
     public Object responeDoctor(int cmid,String reason)
