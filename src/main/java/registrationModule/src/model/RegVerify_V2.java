@@ -6,6 +6,8 @@ import DatabaseModule.src.api.IDbController;
 import registrationModule.src.api.IRegVerify_model;
 import Utilities.ModelsFactory;
 
+import javax.swing.plaf.basic.BasicScrollPaneUI;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -164,30 +166,19 @@ public class RegVerify_V2 implements IRegVerify_model {
         return details;
     }
 
-    public ArrayList<String> generateMailForVerificationEmail(HashMap<String, String> details){
-        String firstName = details.get("FirstName");
-        String lastName = details.get("LastName");
-        String emailAddress = details.get("EmailAddress");
-        String emailMessage = "Dear " + firstName + "  " + lastName + ",\n";
-        String subject = "Confirm your email for Socmed App";
 
-        ArrayList<String> emailDetails = new ArrayList<String>();
-        emailDetails.add(emailAddress);
-        emailDetails.add(emailMessage);
-        emailDetails.add(subject);
 
-        return emailDetails;
-    }
+
 
     /***********for func responeDoctor********************/
     public HashMap<Integer,HashMap<String,String>> buildRejectMessage(int cmid, String Reason) {
-        dbController.updateStatus(cmid,"'verifying details'","'active'");
+        dbController.updateStatus(cmid, "'verifying details'", "'active'");
         HashMap<Integer,HashMap<String,String>> responseToPatient =
                 new HashMap<Integer,HashMap<String,String>>();
         HashMap<String,String> response = new HashMap<String, String>();
         response.put("RequestID", "Reject");
         response.put("Reason", Reason);
-        responseToPatient.put(1,response);
+        responseToPatient.put(1, response);
         return responseToPatient;
     }
 
@@ -243,7 +234,7 @@ public class RegVerify_V2 implements IRegVerify_model {
 
 
 
-    public HashMap<Integer,HashMap<String,String>>verifySignIn(HashMap<String,String> details)
+    public HashMap<Integer,HashMap<String,String>> verifySignIn(HashMap<String,String> details)
     {
         HashMap<String,String> conds = new HashMap<String,String>();
         conds.put("P_CommunityMembers.CommunityMemberID", details.get("CommunityMemberID"));
@@ -272,6 +263,82 @@ public class RegVerify_V2 implements IRegVerify_model {
         else
             // his status equal to verify email or details
             return 2;
+    }
+
+    public ArrayList<String> verifyFilledForm(HashMap<String, String> filledForm) {
+        ArrayList<String> errorMessages = new ArrayList<String>();
+        String userType = filledForm.get("userType");
+        if (userType.equals("Patient")) {
+            if(!doesDoctorExist(filledForm.get("DoctorID"))){
+                errorMessages.add("Doctor does not exist!");
+            }
+            //if{....}
+            //more things to verify....
+            //
+
+        }/*
+        else if(userType.equals("Doctor")){
+          ........
+            ........need to verify something in this stage?
+              ........
+        }
+        else if(userType.equals("EMS")){
+          ........
+            ........need to verify something in this stage?
+              ........
+        }
+        else if(userType.equals("Apotropus")){
+          ........
+            ........need to verify something in this stage?
+              ........
+        }
+        */
+        return errorMessages;
+    }
+
+    private boolean doesDoctorExist(String doctorID) {
+        HashMap<String,String> whereConditions = new HashMap<String, String>();
+        whereConditions.put("DoctorID", doctorID);
+        return (null != dbController.getRowsFromTable(whereConditions, "'Doctors'"));
+    }
+
+    public HashMap<String, String> generateDataForAuth(HashMap<String, String> filledForm, int authMethod) {
+        //Generate data for the authentication object to be created according to the authentication method
+        switch(authMethod){
+            case 0:{
+                return generateVerificationForMail(filledForm);
+            }
+            case 1:{
+                return generateVerificationForSMS(filledForm);
+            }/*
+            case x:{
+                return generateVerificationForXXXXX();
+            }
+            */
+            default:{
+                return null;
+            }
+        }
+    }
+
+    private HashMap<String,String> generateVerificationForMail(HashMap<String, String> data){
+        String firstName = data.get("FirstName");
+        String lastName = data.get("LastName");
+        String emailAddress = data.get("EmailAddress");
+        String emailMessage = "Dear " + firstName + "  " + lastName + ",\n";
+        String emailSubject = "Confirm your email for Socmed App";
+
+        HashMap<String,String> generatedAuthMail = new HashMap<String, String>();
+        generatedAuthMail.put("Subject", emailSubject);
+        generatedAuthMail.put("Message", emailMessage);
+        generatedAuthMail.put("Email", emailAddress);
+
+        return generatedAuthMail;
+    }
+
+    //TODO - Not for prototype for future releases only
+    private HashMap<String,String> generateVerificationForSMS(HashMap<String, String> data){
+        return null;
     }
 }
 

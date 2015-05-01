@@ -14,4 +14,6 @@ public interface IRegVerify {
     // if doctor reject we send reason in string reason
     //else we send null
     Object responeDoctor(int cmid,String reason);
+
+
 }

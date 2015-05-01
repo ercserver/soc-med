@@ -16,5 +16,8 @@ public interface IRegVerify_model {
     //else we send null
     Object responeDoctor(int cmid,String reason);
 
-    ArrayList<String> generateMailForVerification(HashMap<String, String> details);
+
+    ArrayList<String> verifyFilledForm(HashMap<String, String> filledForm);
+
+    HashMap<String,String> generateDataForAuth(HashMap<String, String> filledForm, int authMethod);
 }

@@ -21,9 +21,7 @@ public class InitiatedHTTPCommunication_V1 extends CommToUsers_V1 {
 
     public JSONArray sendResponse () {
 
-
-
-
+        //TODO - NAOR
 
         return null;
     }

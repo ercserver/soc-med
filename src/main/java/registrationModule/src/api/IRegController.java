@@ -7,6 +7,6 @@ import java.util.HashMap;
  */
 public interface IRegController extends IRegRequest,IRegVerify {
 
-
+    Object getWaitingForDoctor (int doctorCmid);
 
 }
