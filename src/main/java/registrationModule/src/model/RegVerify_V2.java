@@ -238,8 +238,8 @@ public class RegVerify_V2 implements IRegVerify_model {
     {
         HashMap<String,String> conds = new HashMap<String,String>();
         conds.put("P_CommunityMembers.CommunityMemberID", details.get("CommunityMemberID"));
-        conds.put("Password", "'" + details.get("Password") + "'");
-        conds.put("EmailAddress", "'" + details.get("EmailAddress") + "'");
+        conds.put("MembersLoginDetails.Password", "'" + details.get("Password") + "'");
+        conds.put("MembersLoginDetails.EmailAddress", "'" + details.get("EmailAddress") + "'");
         HashMap<String,String> user = dbController.getUserByParameter(conds);
         HashMap<Integer,HashMap<String,String>> response = new HashMap<Integer,HashMap<String,String>>();
         HashMap<String,String> res = new HashMap<String,String>();
