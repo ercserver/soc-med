@@ -83,218 +83,218 @@ public class DbInit_V1 implements IDbInit_model {
             connection.setAutoCommit(true);
 
             statement.addBatch("CREATE TABLE Enum ("
-                    +"TableName VARCHAR(30) NOT NULL,"
-                    +"ColumnName VARCHAR(30) NOT NULL,"
-                    +"EnumCode INT NOT NULL,"
-                    +"EnumValue VARCHAR(30) NOT NULL)");
+                    +"table_name VARCHAR(30) NOT NULL,"
+                    +"column_name VARCHAR(30) NOT NULL,"
+                    +"enum_code INT NOT NULL,"
+                    +"enum_value VARCHAR(30) NOT NULL)");
 //            connection.commit();
 
             statement.addBatch("CREATE TABLE M_MedicalConditions ("
-                    +"MedicalConditionID INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
-                    +"MedicalConditionDescription VARCHAR(100))");
+                    +"medical_condition_id INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
+                    +"medical_condition_description VARCHAR(100))");
 //            connection.commit();
 
             statement.addBatch("CREATE TABLE M_BrandNames ("
-                    +"BrandNameID INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
-                    +"BrandNameExternalID VARCHAR(30),"
-                    +"BrandNameDescription VARCHAR(30),"
-                    +"Manufacturer VARCHAR(30))");
+                    +"brand_name_id INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
+                    +"brand_name_external_id VARCHAR(30),"
+                    +"brand_name_description VARCHAR(30),"
+                    +"manufacturer VARCHAR(30))");
 //            connection.commit();
 
             statement.addBatch("CREATE TABLE M_Indications ("
-                    +"IndicationNum INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
-                    +"MedicalConditionID INT NOT NULL FOREIGN KEY REFERENCES M_MedicalConditions(MedicalConditionID),"
-                    +"BrandNameID INT NOT NULL FOREIGN KEY REFERENCES M_BrandNames(BrandNameID))");
+                    +"indication_num INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
+                    +"medical_condition_id INT NOT NULL FOREIGN KEY REFERENCES M_MedicalConditions(medical_condition_id),"
+                    +"brand_name_id INT NOT NULL FOREIGN KEY REFERENCES M_BrandNames(brand_name_id))");
 //            connection.commit();
 
             statement.addBatch("CREATE TABLE M_ActiveComponents ("
-                    +"ActiveComponentID INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
-                    +"ActiveComponentDescription VARCHAR(30) NOT NULL)");
+                    +"active_component_id INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
+                    +"active_component_description VARCHAR(30) NOT NULL)");
 //            connection.commit();
 
             statement.addBatch("CREATE TABLE M_Compositions ("
-                    +"ComposiotionNum INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
-                    +"ActiveComponentID INT NOT NULL FOREIGN KEY REFERENCES M_ActiveComponents (ActiveComponentID),"
-                    +"BrandNameID INT NOT NULL FOREIGN KEY REFERENCES M_BrandNames(BrandNameID),"
-                    +"Quantity INT NOT NULL ,"
-                    +"UnitOfMeasure INT NOT NULL)");
+                    +"composiotion_num INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
+                    +"active_component_id INT NOT NULL FOREIGN KEY REFERENCES M_ActiveComponents (active_component_id),"
+                    +"brand_name_id INT NOT NULL FOREIGN KEY REFERENCES M_BrandNames(brand_name_id),"
+                    +"quantity INT NOT NULL ,"
+                    +"unit_of_measure INT NOT NULL)");
 //            connection.commit();
 
             statement.addBatch("CREATE TABLE M_Substitutives ("
-                    +"SubsitutiveNum INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
-                    +"BrandNameID1 INT NOT NULL FOREIGN KEY REFERENCES M_BrandNames(BrandNameID),"
-                    +"BrandNameID2 INT NOT NULL FOREIGN KEY REFERENCES M_BrandNames(BrandNameID),"
-                    +"ConversionRatio FLOAT NOT NULL,"
-                    +"Compliance VARCHAR(10) NOT NULL)"); // --Enum(full, partial))
+                    +"subsitutive_num INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
+                    +"brand_name_id1 INT NOT NULL FOREIGN KEY REFERENCES M_BrandNames(brand_name_id),"
+                    +"brand_name_id2 INT NOT NULL FOREIGN KEY REFERENCES M_BrandNames(brand_name_id),"
+                    +"conversion_ratio FLOAT NOT NULL,"
+                    +"compliance VARCHAR(10) NOT NULL)"); // --Enum(full, partial))
 //            connection.commit();
 
             statement.addBatch("CREATE TABLE P_Devices ("
-                    +"DeviceInternalID INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
-                    +"DeviceExternalID VARCHAR(30),"
-                    +"DeviceType INT," // --Enum(Smartphone, Computer,Tablet,...)
-                    +"DeviceModel VARCHAR(30) NOT NULL,"
-                    +"OS VARCHAR(30) NOT NULL,"
-                    +"OSVersion VARCHAR(30) NOT NULL,"
-                    +"CERCAppVersion VARCHAR(30) NOT NULL,"
-                    +"GPSEnabled INT NOT NULL,"
-                    +"NFCEnabled INT NOT NULL,"
-                    +"SIMEnabled INT NOT NULL,"
-                    +"InstallationDate Datetime NOT NULL,"
-                    +"LastUpdateDate Datetime )");
+                    +"device_internal_id INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
+                    +"device_external_id VARCHAR(30),"
+                    +"device_type INT," // --Enum(Smartphone, Computer,Tablet,...)
+                    +"device_model VARCHAR(30) NOT NULL,"
+                    +"os VARCHAR(30) NOT NULL,"
+                    +"os_version VARCHAR(30) NOT NULL,"
+                    +"cerc_app_version VARCHAR(30) NOT NULL,"
+                    +"gps_enabled INT NOT NULL,"
+                    +"nfc_enabled INT NOT NULL,"
+                    +"sim_enabled INT NOT NULL,"
+                    +"installation_date Datetime NOT NULL,"
+                    +"last_update_date Datetime )");
             //connection.commit();
 
             statement.addBatch("CREATE TABLE P_Statuses ("
-                    +"StatusNum INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
-                    +"StatusName VARCHAR(30) NOT NULL)");
+                    +"status_num INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
+                    +"status_name VARCHAR(30) NOT NULL)");
             //connection.commit();
 
             statement.addBatch("CREATE Table P_CommunityMembers("
-                    +"CommunityMemberID INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
-                    +"ExternalID VARCHAR(25) NOT NULL,"
-                    +"ExternalIDType INT NOT NULL," // --Enum = {IdCard, Passport,...}
-                    +"FirstName VARCHAR(50) NOT NULL,"
-                    +"LastName VARCHAR(50) NOT NULL,"
-                    +"BirthDate DATE NOT NULL,"
-                    +"Gender INT NOT NULL, " //--Enum = {male, female}
-                    +"State VARCHAR(50) NOT NULL,"
-                    +"City VARCHAR(50) NOT NULL,"
-                    +"Street VARCHAR(50) NOT NULL,"
-                    +"HouseNumber INT,"
-                    +"ZipCode VARCHAR(15),"
-                    +"HomePhoneNumber VARCHAR(20),"
-                    +"MobilePhoneNumber VARCHAR(20) NOT NULL,"
-                    +"EmailAddress VARCHAR(50) NOT NULL,"
-                    +"MemberSince DATETIME NOT NULL DEFAULT current_timestamp)");
+                    +"community_member_id INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
+                    +"external_id VARCHAR(25) NOT NULL,"
+                    +"external_id_type INT NOT NULL," // --Enum = {IdCard, Passport,...}
+                    +"first_name VARCHAR(50) NOT NULL,"
+                    +"last_name VARCHAR(50) NOT NULL,"
+                    +"birth_date DATE NOT NULL,"
+                    +"gender INT NOT NULL, " //--Enum = {male, female}
+                    +"state VARCHAR(50) NOT NULL,"
+                    +"city VARCHAR(50) NOT NULL,"
+                    +"street VARCHAR(50) NOT NULL,"
+                    +"house_number INT,"
+                    +"zip_code VARCHAR(15),"
+                    +"home_phone_number VARCHAR(20),"
+                    +"mobile_phone_number VARCHAR(20) NOT NULL,"
+                    +"email_address VARCHAR(50) NOT NULL,"
+                    +"member_since DATETIME NOT NULL DEFAULT current_timestamp)");
             //connection.commit();
 
             statement.addBatch("CREATE Table P_Patients("
-                    +"PatientID INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
-                    +"CommunityMemberID INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(CommunityMemberID))");
+                    +"patient_id INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
+                    +"community_member_id INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(community_member_id))");
             //connection.commit();
 
             statement.addBatch("CREATE TABLE P_StatusLog ("
-                    +"StatusHistoryNum INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
-                    +"StatusNum INT NOT NULL FOREIGN KEY REFERENCES P_Statuses(StatusNum),"
-                    +"CommunityMemberID INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(CommunityMemberID),"
-                    +"DateFrom Datetime NOT NULL DEFAULT current_timestamp,"
-                    +"DateTo Datetime)");
+                    +"status_history_num INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
+                    +"status_num INT NOT NULL FOREIGN KEY REFERENCES P_Statuses(status_num),"
+                    +"community_member_id INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(community_member_id),"
+                    +"date_from Datetime NOT NULL DEFAULT current_timestamp,"
+                    +"date_to Datetime)");
             //connection.commit();
 
             statement.addBatch("CREATE TABLE P_DeviceLog ("
-                    +"StatusHistoryNum INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
-                    +"StatusNum INT NOT NULL FOREIGN KEY REFERENCES P_Statuses(StatusNum),"
-                    +"CommunityMemberID INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(CommunityMemberID),"
-                    +"DateFrom Datetime NOT NULL DEFAULT current_timestamp,"
-                    +"DateTo Datetime)");
+                    +"status_history_num INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
+                    +"status_num INT NOT NULL FOREIGN KEY REFERENCES P_Statuses(status_num),"
+                    +"community_member_id INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(community_member_id),"
+                    +"date_from Datetime NOT NULL DEFAULT current_timestamp,"
+                    +"date_to Datetime)");
             //connection.commit();
 
             statement.addBatch("CREATE TABLE P_Buddies ("
-                    +"RelationshipNum INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
-                    +"CommunityMemberID1 INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(CommunityMemberID),"
-                    +"CommunityMemberID2 INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(CommunityMemberID),"
-                    +"DateFrom Datetime NOT NULL DEFAULT current_timestamp,"
-                    +"DateTo Datetime)");
+                    +"relationship_num INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
+                    +"community_member_id1 INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(community_member_id),"
+                    +"community_member_id2 INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(community_member_id),"
+                    +"date_from Datetime NOT NULL DEFAULT current_timestamp,"
+                    +"date_to Datetime)");
             //connection.commit();
             statement.executeBatch();
 
             createPatientsDBRelationTypes();
 
             statement.addBatch("CREATE TABLE P_Relations ("
-                    +"RelationNum INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
-                    +"CommunityMemberID INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(CommunityMemberID),"
-                    +"PatientID INT NOT NULL FOREIGN KEY REFERENCES P_Patients(PatientID),"
-                    +"RelationTypeNum INT NOT NULL FOREIGN KEY REFERENCES P_RelationTypes(RelationTypeNum),"
-                    +"DateFrom Datetime NOT NULL DEFAULT current_timestamp,"
-                    +"DateTo Datetime)");
+                    +"relation_num INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
+                    +"community_member_id INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(community_member_id),"
+                    +"patient_id INT NOT NULL FOREIGN KEY REFERENCES P_Patients(patient_id),"
+                    +"relation_type_num INT NOT NULL FOREIGN KEY REFERENCES P_RelationTypes(relation_type_num),"
+                    +"date_from Datetime NOT NULL DEFAULT current_timestamp,"
+                    +"date_to Datetime)");
             //connection.commit();
 
             statement.addBatch("CREATE TABLE P_EmergencyContact ("
-                    +"CommunityMemberID INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(CommunityMemberID),"
-                    +"ContactPhone VARCHAR(20) NOT NULL)");
+                    +"community_member_id INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(community_member_id),"
+                    +"contact_phone VARCHAR(20) NOT NULL)");
             //connection.commit();
 
             statement.addBatch("CREATE TABLE P_TypeLog ("
-                    +"TypeHistoryNum INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
-                    +"UserType INT NOT NULL," // --Enum={patient, doctor, guardian, ems}
-                    +"CommunityMemberID INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(CommunityMemberID),"
-                    +"DateFrom Datetime NOT NULL DEFAULT current_timestamp,"
-                    +"DateTo Datetime)");
+                    +"type_history_num INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
+                    +"user_type INT NOT NULL," // --Enum={patient, doctor, guardian, ems}
+                    +"community_member_id INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(community_member_id),"
+                    +"date_from Datetime NOT NULL DEFAULT current_timestamp,"
+                    +"date_to Datetime)");
             //connection.commit();
 
             statement.addBatch("CREATE TABLE P_Doctors ("
-                    +"DoctorID INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
-                    +"FirstName VARCHAR(30) NOT NULL,"
-                    +"LastName VARCHAR(30) NOT NULL,"
-                    +"LicenseNumber INT NOT NULL,"
-                    +"CommunityMemberID INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(CommunityMemberID))");
+                    +"doctor_id INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
+                    +"first_name VARCHAR(30) NOT NULL,"
+                    +"last_name VARCHAR(30) NOT NULL,"
+                    +"license_number INT NOT NULL,"
+                    +"community_member_id INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(community_member_id))");
             //connection.commit();
 
             statement.addBatch("CREATE TABLE MembersLoginDetails("
-                    +"CommunityMemberID INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(CommunityMemberID),"
-                    +"Password VARCHAR(30) NOT NULL,"
-                    +"EmailAddress VARCHAR(30) NOT NULL)");
+                    +"community_member_id INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(community_member_id),"
+                    +"password VARCHAR(30) NOT NULL,"
+                    +"email_address VARCHAR(30) NOT NULL)");
             //connection.commit();
 
             statement.addBatch("CREATE TABLE RefreshDetailsTime ("
-                    +"CommunityMemberID INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(CommunityMemberID),"
-                    +"FieldName VARCHAR(30) NOT NULL,"
-                    +"LastUpdateTime Datetime NOT NULL,"
-                    +"Urgent BIT DEFAULT 0)");
+                    +"community_member_id INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(community_member_id),"
+                    +"field_name VARCHAR(30) NOT NULL,"
+                    +"last_update_time Datetime NOT NULL,"
+                    +"urgent BIT DEFAULT 0)");
             //connection.commit();
 
             statement.addBatch("CREATE TABLE RegistrationFields ("
-                    +"FieldName VARCHAR(30) NOT NULL,"
-                    +"Type INT NOT NULL," // --Enum = {string, int, float}
-                    +"UserType INT NOT NULL," // --Enum = {patient, doctor, guardian}
-                    +"FieldsGroup INT NOT NULL," // --Enum = {personal, medical, professional, preferences}
-                    +"NeedsVerification BIT NOT NUll DEFAULT 0," // 0-no, 1-yes
-                    +"IsRequired BIT NOT NUll DEFAULT 0,"//0-yes, 1-no
-                    +"MaxLength INT NOT NUll DEFAULT 0,"
-                    +"GetPossibleValuesFrom VARCHAR(50),"
-                    +"SerialNum INT NOT NUll," //begin with 1
-                    +"InsertDataTo VARCHAR(200),"
-                    +"RefreshTime INT)");
+                    +"field_name VARCHAR(30) NOT NULL,"
+                    +"type INT NOT NULL," // --Enum = {string, int, float}
+                    +"user_type INT NOT NULL," // --Enum = {patient, doctor, guardian}
+                    +"fields_group INT NOT NULL," // --Enum = {personal, medical, professional, preferences}
+                    +"needs_verification BIT NOT NUll DEFAULT 0," // 0-no, 1-yes
+                    +"is_required BIT NOT NUll DEFAULT 0,"//0-yes, 1-no
+                    +"max_length INT NOT NUll DEFAULT 0,"
+                    +"get_possible_values_from VARCHAR(50),"
+                    +"serial_num INT NOT NUll," //begin with 1
+                    +"insert_data_to VARCHAR(200),"
+                    +"refresh_time INT)");
             //connection.commit();
 
             statement.addBatch("CREATE TABLE ServerUserNames ("
-                    +"UserName VARCHAR(30) NOT NULL PRIMARY KEY,"
-                    +"Password VARCHAR(30) NOT NULL)");
+                    +"user_name VARCHAR(30) NOT NULL PRIMARY KEY,"
+                    +"password VARCHAR(30) NOT NULL)");
             //connection.commit();
 
             statement.addBatch("CREATE TABLE P_Supervision ("
-                    +"TreatmentNum INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
-                    +"DoctorID INT NOT NULL FOREIGN KEY REFERENCES P_Doctors(DoctorID),"
-                    +"PatientID INT NOT NULL FOREIGN KEY REFERENCES P_Patients(PatientID),"
-                    +"DateFrom Datetime DEFAULT current_timestamp,"
-                    +"DateTo Datetime)");
+                    +"treatment_num INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
+                    +"doctor_id INT NOT NULL FOREIGN KEY REFERENCES P_Doctors(doctor_id),"
+                    +"patient_id INT NOT NULL FOREIGN KEY REFERENCES P_Patients(patient_id),"
+                    +"date_from Datetime DEFAULT current_timestamp,"
+                    +"date_to Datetime)");
             //connection.commit();
 
             statement.addBatch("CREATE TABLE P_Medications ("
-                    +"MedicationNum INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
-                    +"MedicationName VARCHAR(100) NOT NULL)");
+                    +"medication_num INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
+                    +"medication_name VARCHAR(100) NOT NULL)");
             //connection.commit();
 
             statement.addBatch("CREATE TABLE P_Prescriptions ("
-                    +"PrescriptionNum INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
-                    +"MedicationNum INT NOT NULL FOREIGN KEY REFERENCES P_Medications(MedicationNum),"
-                    +"Dosage FLOAT NOT NULL,"
-                    +"DoctorID INT NOT NULL FOREIGN KEY REFERENCES P_Doctors(DoctorID),"
-                    +"PatientID INT NOT NULL FOREIGN KEY REFERENCES P_Patients(PatientID),"
-                    +"DateFrom Datetime DEFAULT current_timestamp,"
-                    +"DateTo Datetime)");
+                    +"prescription_num INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
+                    +"medication_num INT NOT NULL FOREIGN KEY REFERENCES P_Medications(medication_num),"
+                    +"dosage FLOAT NOT NULL,"
+                    +"doctor_id INT NOT NULL FOREIGN KEY REFERENCES P_Doctors(doctor_id),"
+                    +"patient_id INT NOT NULL FOREIGN KEY REFERENCES P_Patients(patient_id),"
+                    +"date_from Datetime DEFAULT current_timestamp,"
+                    +"date_to Datetime)");
             //connection.commit();
 
             statement.addBatch("CREATE TABLE P_Diagnosis ("
-                    +"DiagnosisNum INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
-                    +"PatientID INT NOT NULL FOREIGN KEY REFERENCES P_Patients(PatientID),"
-                    +"MedicalConditionID INT NOT NULL FOREIGN KEY REFERENCES M_MedicalConditions(MedicalConditionID),"
-                    +"DoctorID INT NOT NULL FOREIGN KEY REFERENCES P_Doctors(DoctorID),"
-                    +"DateFrom Datetime DEFAULT current_timestamp,"
-                    +"DateTo Datetime)");
+                    +"diagnosis_num INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
+                    +"patient_id INT NOT NULL FOREIGN KEY REFERENCES P_Patients(patient_id),"
+                    +"medical_condition_id INT NOT NULL FOREIGN KEY REFERENCES M_MedicalConditions(medical_condition_id),"
+                    +"doctor_id INT NOT NULL FOREIGN KEY REFERENCES P_Doctors(doctor_id),"
+                    +"date_from Datetime DEFAULT current_timestamp,"
+                    +"date_to Datetime)");
             //connection.commit();
             statement.addBatch("CREATE TABLE RegIDs ("
-                    +"RegID VARCHAR(100) NOT NULL PRIMARY KEY,"
-                    +"CommunityMemberID INT NOT NULL)");
+                    +"reg_id VARCHAR(100) NOT NULL PRIMARY KEY,"
+                    +"community_member_id INT NOT NULL)");
 
             statement.executeBatch();
 
@@ -391,8 +391,8 @@ public class DbInit_V1 implements IDbInit_model {
             if(!rs.next())
             {
                 statement.executeUpdate("CREATE TABLE MP_Specialization " +
-                        "(SpecializationID INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
-                        " SpecializationDescription VARCHAR(3000))");
+                        "(specialization_id INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
+                        " specialization_description VARCHAR(3000))");
             }
         }
         // There was a fault with the connection to the server or with SQL
@@ -424,12 +424,12 @@ public class DbInit_V1 implements IDbInit_model {
             if(!rs.next())
             {
                 statement.executeUpdate("CREATE TABLE MP_Certification " +
-                        "(CertificationInternalID INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
-                        " CertificationExternalID INTEGER not NULL, " +
-                        " MedicalPersonnelID INTEGER not NULL FOREIGN KEY REFERENCES MP_MedicalPersonnel(MedicalPersonnelID), " +
-                        " DateFrom DATE not NULL DEFAULT current_timestamp, " +
-                        " DateTo DATE , " +
-                        " SpecializationID INTEGER not NULL FOREIGN KEY REFERENCES MP_Specialization(SpecializationID))");
+                        "(certification_internal_id INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
+                        " certification_external_id INTEGER not NULL, " +
+                        " medical_personnel_id INTEGER not NULL FOREIGN KEY REFERENCES MP_MedicalPersonnel(medical_personnel_id), " +
+                        " date_from DATE not NULL DEFAULT current_timestamp, " +
+                        " date_to DATE , " +
+                        " specialization_id INTEGER not NULL FOREIGN KEY REFERENCES MP_Specialization(specialization_id))");
             }
         }
         // There was a fault with the connection to the server or with SQL
@@ -461,22 +461,22 @@ public class DbInit_V1 implements IDbInit_model {
             if(!rs.next())
             {
                 statement.executeUpdate("CREATE TABLE MP_MedicalPersonnel " +
-                        "(MedicalPersonnelID INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
-                        " ExternalID VARCHAR(25) not NULL, " +
-                        " ExternalIDType INTEGER not NULL, " +  //enum:0 for id, 1 for passport num
-                        " FirstName VARCHAR(50) not NULL, " +
-                        " LastName VARCHAR(50) not NULL, " +
-                        " BirthdayDate DATE not NULL, " +
-                        " Gender INTEGER not NULL, " +  //enum:0 for male, 1 for female
-                        " State VARCHAR(50) not NULL, " +
-                        " City VARCHAR(50) not NULL, " +
-                        " Street VARCHAR(50) not NULL, " +
-                        " HouseNumber INTEGER not NULL, " +
-                        " ZipCode INTEGER, " +
-                        " HomePhoneNumber VARCHAR(50), " +
-                        " MobilePhoneNumber VARCHAR(50) not NULL, " +
-                        " EmailAddress VARCHAR(100) not NULL, " +
-                        " CommunityMemberID INTEGER not NULL FOREIGN KEY REFERENCES P_CommunityMembers(CommunityMemberID))");
+                        "(medical_personnel_id INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
+                        " external_id VARCHAR(25) not NULL, " +
+                        " external_id_type INTEGER not NULL, " +  //enum:0 for id, 1 for passport num
+                        " first_name VARCHAR(50) not NULL, " +
+                        " last_name VARCHAR(50) not NULL, " +
+                        " birthday_date DATE not NULL, " +
+                        " gender INTEGER not NULL, " +  //enum:0 for male, 1 for female
+                        " state VARCHAR(50) not NULL, " +
+                        " city VARCHAR(50) not NULL, " +
+                        " street VARCHAR(50) not NULL, " +
+                        " house_number INTEGER not NULL, " +
+                        " zip_code INTEGER, " +
+                        " home_phone_number VARCHAR(50), " +
+                        " mobile_phone_number VARCHAR(50) not NULL, " +
+                        " email_address VARCHAR(100) not NULL, " +
+                        " community_member_id INTEGER not NULL FOREIGN KEY REFERENCES P_CommunityMembers(community_member_id))");
             }
         }
         // There was a fault with the connection to the server or with SQL
@@ -508,12 +508,12 @@ public class DbInit_V1 implements IDbInit_model {
             if(!rs.next())
             {
                 statement.executeUpdate("CREATE TABLE MP_Affiliation " +
-                        "(TypeHistoryNum INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
-                        " OrganizationID INTEGER not NULL FOREIGN KEY REFERENCES MP_Organizations(OrganizationID), " +
-                        " MedicalPersonnelID INTEGER not NULL FOREIGN KEY REFERENCES MP_MedicalPersonnel(MedicalPersonnelID), " +
-                        " PositionNum INTEGER not NULL FOREIGN KEY REFERENCES MP_Positions(PositionNum), " +
-                        " DateFrom DATETime not NULL DEFAULT current_timestamp, " +
-                        " DateTo DATETime)");
+                        "(type_history_num INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
+                        " organization_id INTEGER not NULL FOREIGN KEY REFERENCES MP_Organizations(organization_id), " +
+                        " medical_personnel_id INTEGER not NULL FOREIGN KEY REFERENCES MP_MedicalPersonnel(medical_personnel_id), " +
+                        " position_num INTEGER not NULL FOREIGN KEY REFERENCES MP_Positions(position_num), " +
+                        " date_from DATETime not NULL DEFAULT current_timestamp, " +
+                        " date_to DATETime)");
             }
         }
         // There was a fault with the connection to the server or with SQL
@@ -545,8 +545,8 @@ public class DbInit_V1 implements IDbInit_model {
             if(!rs.next())
             {
                 statement.executeUpdate("CREATE TABLE MP_Positions " +
-                        "(PositionNum INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
-                        " PositionDescription VARCHAR(50) not NULL)");
+                        "(position_num INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
+                        " position_description VARCHAR(50) not NULL)");
             }
         }
         // There was a fault with the connection to the server or with SQL
@@ -578,18 +578,18 @@ public class DbInit_V1 implements IDbInit_model {
             if(!rs.next())
             {
                 statement.executeUpdate("CREATE TABLE MP_Organizations " +
-                        "(OrganizationID INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY," +
-                        "OrganizationDescription VARCHAR(50) not NULL," +
-                        "OrganizationTypeNum INTEGER not NULL FOREIGN KEY REFERENCES MP_OrganizationTypes(OrganizationTypeNum)," +
-                        "OrgState VARCHAR(50) not NULL," +
-                        "OrgCity VARCHAR(50) not NULL," +
-                        "OrgStreet VARCHAR(50) not NULL," +
-                        "Orghouse INTEGER not NULL," +
-                        "OrgPhoneNumber VARCHAR(50) not NULL," +
-                        "FaxNumber VARCHAR(50) not NULL," +
-                        "EmailAddressOfOrganization VARCHAR(100) not NULL,n" +
-                        "WebSite VARCHAR(100) not NULL," +
-                        "Remarks VARCHAR(100))");
+                        "(organization_id INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY," +
+                        "organization_description VARCHAR(50) not NULL," +
+                        "organization_type_num INTEGER not NULL FOREIGN KEY REFERENCES MP_OrganizationTypes(organization_type_num)," +
+                        "org_state VARCHAR(50) not NULL," +
+                        "org_city VARCHAR(50) not NULL," +
+                        "org_street VARCHAR(50) not NULL," +
+                        "org_house INTEGER not NULL," +
+                        "org_phone_number VARCHAR(50) not NULL," +
+                        "fax_number VARCHAR(50) not NULL," +
+                        "email_address_of_organization VARCHAR(100) not NULL," +
+                        "web_site VARCHAR(100) not NULL," +
+                        "remarks VARCHAR(100))");
             }
         }
         // There was a fault with the connection to the server or with SQL
@@ -621,11 +621,11 @@ public class DbInit_V1 implements IDbInit_model {
             if(!rs.next())
             {
                 statement.executeUpdate("CREATE TABLE B_DecisionGivenAmbulaneETA " +
-                        "(MedicalConditionID INTEGER NOT NULL FOREIGN KEY REFERENCES M_MedicalConditions(MedicalConditionID), " +
-                        " State  VARCHAR(50) not NULL, " +
-                        " PatientAge VARCHAR(50) not NULL, " +
-                        " EMS_ETA VARCHAR(50) not NULL, " +
-                        " Use_ERC BIT not NULL)");
+                        "(medical_condition_id INTEGER NOT NULL FOREIGN KEY REFERENCES M_MedicalConditions(medical_condition_id), " +
+                        " state  VARCHAR(50) not NULL, " +
+                        " patient_age VARCHAR(50) not NULL, " +
+                        " ems_eta VARCHAR(50) not NULL, " +
+                        " use_erc BIT not NULL)");
             }
         }
         // There was a fault with the connection to the server or with SQL
@@ -657,8 +657,8 @@ public class DbInit_V1 implements IDbInit_model {
             if(!rs.next())
             {
                 statement.executeUpdate("CREATE TABLE O_ActionTypes " +
-                        "(ActionTypeNum INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
-                        " ActionTypeName  VARCHAR(100) not NULL)");
+                        "(action_type_num INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
+                        " action_type_name  VARCHAR(100) not NULL)");
             }
         }
         // There was a fault with the connection to the server or with SQL
@@ -690,24 +690,24 @@ public class DbInit_V1 implements IDbInit_model {
             if(!rs.next())
             {
                 statement.executeUpdate("CREATE TABLE O_EmergencyEventResponse " +
-                        "(ResponseNum INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
-                        " CommunityMemberID INTEGER not NULL FOREIGN KEY REFERENCES P_CommunityMembers(CommunityMemberID), " +
-                        " EventID INTEGER not NULL FOREIGN KEY REFERENCES O_EmergencyEvents(EventID), " +
-                        " EmergencyEventNum INTEGER not NULL, " +
-                        " ActionTypeNum INTEGER not NULL, " +
-                        " ETAByFoot INTEGER not NULL, " +
-                        " ActionStatusNum INTEGER not NULL, " +
-                        " ETAByCar INTEGER not NULL, " +
-                        " CreatedDate TIMESTAMP not NULL, " +
-                        " X REAL not NULL, " +
-                        " Y REAL not NULL, " +
-                        " RequestSentDate DATETIME, " +
-                        " ResponseDate DATETIME, " +
-                        " ResponseType VARCHAR(50) not NULL, " +
-                        " TransformationMean INTEGER not NULL, " +  //enum: 0 for foot, 1 for car
-                        " ActivationDate DATETIME, " +
-                        " ArrivalDate DATETIME, " +
-                        " Result VARCHAR(100))");
+                        "(response_num INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
+                        " community_member_id INTEGER not NULL FOREIGN KEY REFERENCES P_CommunityMembers(community_member_id), " +
+                        " event_id INTEGER not NULL FOREIGN KEY REFERENCES O_EmergencyEvents(event_id), " +
+                        " emergency_event_num INTEGER not NULL, " +
+                        " action_type_num INTEGER not NULL, " +
+                        " eta_by_foot INTEGER not NULL, " +
+                        " action_status_num INTEGER not NULL, " +
+                        " eta_by_car INTEGER not NULL, " +
+                        " created_date TIMESTAMP not NULL, " +
+                        " x REAL not NULL, " +
+                        " y REAL not NULL, " +
+                        " request_sent_date DATETIME, " +
+                        " response_date DATETIME, " +
+                        " response_type VARCHAR(50) not NULL, " +
+                        " transformation_mean INTEGER not NULL, " +  //enum: 0 for foot, 1 for car
+                        " activation_date DATETIME, " +
+                        " arrival_date DATETIME, " +
+                        " result VARCHAR(100))");
             }
         }
         // There was a fault with the connection to the server or with SQL
@@ -739,8 +739,8 @@ public class DbInit_V1 implements IDbInit_model {
             if(!rs.next())
             {
                 statement.executeUpdate("CREATE TABLE P_RelationTypes " +
-                        "(RelationTypeNum INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
-                        " RelationTypeDescription  VARCHAR(30) not NULL)");
+                        "(relation_type_num INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
+                        " relation_type_description  VARCHAR(30) not NULL)");
             }
         }
         // There was a fault with the connection to the server or with SQL
@@ -772,8 +772,8 @@ public class DbInit_V1 implements IDbInit_model {
             if(!rs.next())
             {
                 statement.executeUpdate("CREATE TABLE MP_OrganizationTypes " +
-                        "(OrganizationTypeNum INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
-                        " OrganizationTypeDescription  VARCHAR(30) not NULL)");
+                        "(organization_type_num INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
+                        " organization_type_description  VARCHAR(30) not NULL)");
             }
         }
         // There was a fault with the connection to the server or with SQL
@@ -805,8 +805,8 @@ public class DbInit_V1 implements IDbInit_model {
             if(!rs.next())
             {
                 statement.executeUpdate("CREATE TABLE O_EventStatuses " +
-                        "(StatusNum INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
-                        " StatusName  VARCHAR(30) not NULL)");
+                        "(status_num INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
+                        " status_name  VARCHAR(30) not NULL)");
             }
         }
         // There was a fault with the connection to the server or with SQL
@@ -838,20 +838,20 @@ public class DbInit_V1 implements IDbInit_model {
             if(!rs.next())
             {
                 statement.executeUpdate("CREATE TABLE O_EmergencyEvents " +
-                        "(EventID INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
-                        " CreateBymemberID INTEGER not NULL FOREIGN KEY REFERENCES O_InvolvedCommunityMembers(InternalID), " +
-                        " PatientId INTEGER not NULL, " +
-                        " CreatedDate TIMESTAMP not NULL, " +
-                        " FinishedDate DATETIME, " +
-                        " EmsMemberID INTEGER not NULL FOREIGN KEY REFERENCES P_CommunityMembers(CommunityMemberID), " +
-                        " StatusNum INTEGER not NULL FOREIGN KEY REFERENCES O_EventStatuses(StatusNum), " +
-                        " X REAL not NULL, " +
-                        " Y REAL not NULL, " +
-                        " LocationRemark VARCHAR(100), " +
-                        " PatientConditionRemarks VARCHAR(300), " +
-                        " LastActionTime DATETIME, " +
-                        " TimeToNextReminder INTEGER, " +
-                        " Memo VARCHAR(300))");
+                        "(event_id INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
+                        " create_by_member_id INTEGER not NULL FOREIGN KEY REFERENCES O_InvolvedCommunityMembers(internal_id), " +
+                        " patient_id INTEGER not NULL, " +
+                        " created_date TIMESTAMP not NULL, " +
+                        " finished_date DATETIME, " +
+                        " ems_member_id INTEGER not NULL FOREIGN KEY REFERENCES P_CommunityMembers(community_member_id), " +
+                        " status_num INTEGER not NULL FOREIGN KEY REFERENCES O_EventStatuses(status_num), " +
+                        " x REAL not NULL, " +
+                        " y REAL not NULL, " +
+                        " location_remark VARCHAR(100), " +
+                        " patient_condition_remarks VARCHAR(300), " +
+                        " last_action_time DATETIME, " +
+                        " time_to_next_reminder INTEGER, " +
+                        " memo VARCHAR(300))");
             }
         }
         // There was a fault with the connection to the server or with SQL
@@ -883,12 +883,12 @@ public class DbInit_V1 implements IDbInit_model {
             if(!rs.next())
             {
                 statement.executeUpdate("CREATE TABLE O_EmergencyEventActions " +
-                        "(EmergencyActionNum INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
-                        " EventID INTEGER not NULL FOREIGN KEY REFERENCES O_EmergencyEvents(EventID), " +
-                        " ActionTypeNum INTEGER not NULL FOREIGN KEY REFERENCES O_ActionTypes(ActionTypeNum), " +
-                        " ActionStatusNum INTEGER not NULL FOREIGN KEY REFERENCES O_ActionStatus(ActionStatusNum), " +
-                        " CreatedDate TIMESTAMP not NULL, " +
-                        " FinishedDate DATETIME not NULL)");
+                        "(emergency_action_num INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
+                        " event_id INTEGER not NULL FOREIGN KEY REFERENCES O_EmergencyEvents(event_id), " +
+                        " action_type_num INTEGER not NULL FOREIGN KEY REFERENCES O_ActionTypes(action_type_num), " +
+                        " action_status_num INTEGER not NULL FOREIGN KEY REFERENCES O_ActionStatus(action_status_num), " +
+                        " created_date TIMESTAMP not NULL, " +
+                        " finished_date DATETIME not NULL)");
             }
         }
         // There was a fault with the connection to the server or with SQL
@@ -920,15 +920,15 @@ public class DbInit_V1 implements IDbInit_model {
             if(!rs.next())
             {
                 statement.executeUpdate("CREATE TABLE O_EmergencyMedicationUse " +
-                        "(EmergenctMedicationUseNum INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
-                        " EventID INTEGER not NULL FOREIGN KEY REFERENCES O_EmergencyEvents(EventID), " +
-                        " ProvidingMemberId INTEGER not NULL FOREIGN KEY REFERENCES O_InvolvedCommunityMembers(InternalID), " +
-                        " ProvidingDispenserNum INTEGER not NULL FOREIGN KEY REFERENCES O_AutomaticDispensers(DispensersNum), " +
-                        " ApprovedByID INTEGER not NULL, " +
-                        " MedicationNum INTEGER not NULL FOREIGN KEY REFERENCES P_Medications(MedicationNum), " +
-                        " ApprovalDate DATETIME, " +
-                        " MedicationProvisionDate DATETIME, " +
-                        " DigitalSignatureFile VARCHAR(100))");
+                        "(emergency_medication_use_num INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
+                        " event_id INTEGER not NULL FOREIGN KEY REFERENCES O_EmergencyEvents(event_id), " +
+                        " providing_member_id INTEGER not NULL FOREIGN KEY REFERENCES O_InvolvedCommunityMembers(internal_id), " +
+                        " providing_dispenser_num INTEGER not NULL FOREIGN KEY REFERENCES O_AutomaticDispensers(dispensers_num), " +
+                        " approved_by_id INTEGER not NULL, " +
+                        " medication_num INTEGER not NULL FOREIGN KEY REFERENCES P_Medications(medication_num), " +
+                        " approval_date DATETIME, " +
+                        " medication_provision_date DATETIME, " +
+                        " digital_signature_file VARCHAR(100))");
             }
         }
         // There was a fault with the connection to the server or with SQL
@@ -960,8 +960,8 @@ public class DbInit_V1 implements IDbInit_model {
             if(!rs.next())
             {
                 statement.executeUpdate("CREATE TABLE O_ActionStatus " +
-                        "(ActionStatusNum INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
-                        " StatusName VARCHAR(30) not NULL)");
+                        "(action_status_num INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
+                        " status_name VARCHAR(30) not NULL)");
             }
         }
         // There was a fault with the connection to the server or with SQL
@@ -993,9 +993,9 @@ public class DbInit_V1 implements IDbInit_model {
             if(!rs.next())
             {
                 statement.executeUpdate("CREATE TABLE O_AutomaticDispensers " +
-                        "(DispensersNum INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
-                        " DispensersName VARCHAR(30) not NULL, " +
-                        " DispensersLocation VARCHAR(100) not NULL)");
+                        "(dispensers_num INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
+                        " dispensers_name VARCHAR(30) not NULL, " +
+                        " dispensers_location VARCHAR(100) not NULL)");
             }
         }
         // There was a fault with the connection to the server or with SQL
@@ -1027,21 +1027,21 @@ public class DbInit_V1 implements IDbInit_model {
             if(!rs.next())
             {
                 statement.executeUpdate("CREATE TABLE O_InvolvedCommunityMembers " +
-                        "(InternalID INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
-                        " ExternalID VARCHAR(30) not NULL, " +
-                        " ExternalIDType INTEGER not NULL, " +  //enum:0 for id, 1 for passport num
-                        " FirstName VARCHAR(30) not NULL, " +
-                        " LastName VARCHAR(30) not NULL, " +
-                        " BirthdayDate DATE not NULL, " +
-                        " Gender INTEGER not NULL, " +  //enum:0 for male, 1 for female
-                        " State VARCHAR(50) not NULL, " +
-                        " City VARCHAR(50) not NULL, " +
-                        " Street VARCHAR(50) not NULL, " +
-                        " HouseNumber INTEGER not NULL, " +
-                        " ZipCode INTEGER, " +
-                        " HomePhoneNumber VARCHAR(50), " +
-                        " MobilePhoneNumber VARCHAR(50) not NULL, " +
-                        " EmailAddress VARCHAR(100) not NULL)");
+                        "(internal_id INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
+                        " external_id VARCHAR(30) not NULL, " +
+                        " external_id_type INTEGER not NULL, " +  //enum:0 for id, 1 for passport num
+                        " first_name VARCHAR(30) not NULL, " +
+                        " last_name VARCHAR(30) not NULL, " +
+                        " birthday_date DATE not NULL, " +
+                        " gender INTEGER not NULL, " +  //enum:0 for male, 1 for female
+                        " state VARCHAR(50) not NULL, " +
+                        " city VARCHAR(50) not NULL, " +
+                        " street VARCHAR(50) not NULL, " +
+                        " house_number INTEGER not NULL, " +
+                        " zip_code INTEGER, " +
+                        " home_phone_number VARCHAR(50), " +
+                        " mobile_phone_number VARCHAR(50) not NULL, " +
+                        " email_address VARCHAR(100) not NULL)");
             }
         }
         // There was a fault with the connection to the server or with SQL
@@ -1073,9 +1073,9 @@ public class DbInit_V1 implements IDbInit_model {
             if(!rs.next())
             {
                 statement.executeUpdate("CREATE TABLE UpdatesDB " +
-                        "(Id INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
-                        " Json INTEGER not NULL, " +
-                        " Cmid INTEGER not NULL)");
+                        "(id INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
+                        " json INTEGER not NULL, " +
+                        " community_member_id INTEGER not NULL)");
             }
         }
         // There was a fault with the connection to the server or with SQL
@@ -1107,12 +1107,12 @@ public class DbInit_V1 implements IDbInit_model {
             if(!rs.next())
             {
                 statement.executeUpdate("CREATE TABLE Frequencies " +
-                        "(Name VARCHAR(30) not NULL PRIMARY KEY, " +
-                        " Frequency REAL not NULL, " +
-                        " MedicalConditionID INT FOREIGN KEY REFERENCES M_MedicalConditions(MedicalConditionID), " +
-                        " State VARCHAR(50) not NULL, " +
-                        " Area VARCHAR(50), " +
-                        " PatientAge INTEGER)");
+                        "(name VARCHAR(30) not NULL PRIMARY KEY, " +
+                        " frequency REAL not NULL, " +
+                        " medical_condition_id INT FOREIGN KEY REFERENCES M_MedicalConditions(medical_condition_id), " +
+                        " state VARCHAR(50) not NULL, " +
+                        " area VARCHAR(50), " +
+                        " patient_age INTEGER)");
             }
         }
         // There was a fault with the connection to the server or with SQL
@@ -1144,8 +1144,8 @@ public class DbInit_V1 implements IDbInit_model {
             if(!rs.next())
             {
                 statement.executeUpdate("CREATE TABLE RejectCodes " +
-                        "(Id INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
-                        " Description VARCHAR(100) not NULL)");
+                        "(id INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
+                        " description VARCHAR(100) not NULL)");
             }
         }
         // There was a fault with the connection to the server or with SQL
@@ -1177,8 +1177,8 @@ public class DbInit_V1 implements IDbInit_model {
             if(!rs.next())
             {
                 statement.executeUpdate("CREATE TABLE AuthenticationMethod " +
-                        "(State VARCHAR(50) not NULL PRIMARY KEY, " +
-                        " Method INT not NULL)");   //enum:0 for mail, 1 for SMS, 2 for phoneCall
+                        "(state VARCHAR(50) not NULL PRIMARY KEY, " +
+                        " method INT not NULL)");   //enum:0 for mail, 1 for SMS, 2 for phoneCall
             }
         }
         // There was a fault with the connection to the server or with SQL
@@ -1210,8 +1210,8 @@ public class DbInit_V1 implements IDbInit_model {
             if(!rs.next())
             {
                 statement.executeUpdate("CREATE TABLE DoctorAuthorizers " +
-                        "(State VARCHAR(50) not NULL PRIMARY KEY, " +
-                        " EmailAddress VARCHAR(100) not NULL)");
+                        "(state VARCHAR(50) not NULL PRIMARY KEY, " +
+                        " email_address VARCHAR(100) not NULL)");
             }
         }
         // There was a fault with the connection to the server or with SQL
@@ -1243,8 +1243,8 @@ public class DbInit_V1 implements IDbInit_model {
             if(!rs.next())
             {
                 statement.executeUpdate("CREATE TABLE DefaultCallerSettings " +
-                        "(State VARCHAR(50) not NULL PRIMARY KEY, " +
-                        " DefaultCaller INTEGER not NULL)"); // enum:0 for app, 1 for server
+                        "(state VARCHAR(50) not NULL PRIMARY KEY, " +
+                        " default_caller INTEGER not NULL)"); // enum:0 for app, 1 for server
             }
         }
         // There was a fault with the connection to the server or with SQL
