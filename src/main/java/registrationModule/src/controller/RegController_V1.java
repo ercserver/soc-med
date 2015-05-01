@@ -77,7 +77,6 @@ public class RegController_V1 implements IRegController {
                 //Communicate authorization (email/sms/...)
                 commAuthMethod.sendMessage();
             }
-
         }
         HashMap<String,String> data = new HashMap<String, String>();
         data.put("Message", message);
