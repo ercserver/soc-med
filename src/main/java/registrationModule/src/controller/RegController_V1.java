@@ -281,14 +281,14 @@ public class RegController_V1 implements IRegController {
     {
         HashMap<Integer,HashMap<String,String>> response = verification.verifySignIn(details);
         // Sign in of doctor/ems
-        if(details.get("RegID") == "0")
+        if(details.get("reg_id") == "0")
         {
             commController.setCommToUsers(response, null, false);
         }
         else
         {
             ArrayList<String> target = new ArrayList<String>();
-            target.add(details.get("RegID"));
+            target.add(details.get("reg_id"));
             commController.setCommToUsers(response, target, false);
         }
         return commController.sendResponse();
