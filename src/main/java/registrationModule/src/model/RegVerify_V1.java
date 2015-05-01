@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * Created by NAOR on 06/04/2015.
  */
-public class RegVerify_V1 implements IRegVerify_model {
+/*public class RegVerify_V1 implements IRegVerify_model {
 
     IDbController dbController = null;
 
@@ -249,7 +249,7 @@ public class RegVerify_V1 implements IRegVerify_model {
 
         responseToPatient.put(1,response);
         */
-        return response;
+        /*return response;
 
     }
 
@@ -338,4 +338,4 @@ public class RegVerify_V1 implements IRegVerify_model {
     }
 
 
-}
+}*/

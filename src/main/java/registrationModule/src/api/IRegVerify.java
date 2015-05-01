@@ -8,16 +8,19 @@ import java.util.HashMap;
 public interface IRegVerify {
 
     //boolean verifyEmailWithCmid(String mail,int cmid);
-    Object VerifyDetail(int cmid);
+    Object verifyDetail(HashMap<String, String> data);
     //boolean verifyDetailsDueToType(int userType);
 
-    Object resendAuth(int cmid);
+    Object resendMail(HashMap<String, String> data);
+
+    Object resendAuth(int cmid);//wasn't in shmulik's file
 
     // if doctor reject we send reason in string reason
     //else we send null
-    Object responeDoctor(int cmid,String reason);
+    Object responeByDoctor(HashMap<String, String> data);
 
     Object signIn(HashMap<String,String> details);
 
+    Object responeToDoctorIfHeAccept (HashMap<String,String> details);
 
 }

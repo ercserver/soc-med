@@ -33,7 +33,6 @@ public class RegVerify_V2 implements IRegVerify_model {
                 new HashMap<Integer, HashMap<String, String>>();
         if (!statusIsEqualTo("verifying details",data))
         {
-            //dbController.updateStatus(cmid,"'verifying details'","'verifying email'");
             dbController.updateStatus(cmid, "'verifying email'", "'verifying details'");
             HashMap<String, String> dataToPatient = new HashMap<String, String>();
             dataToPatient.putAll(addRequestID(dataToPatient, "wait"));
@@ -166,9 +165,20 @@ public class RegVerify_V2 implements IRegVerify_model {
         return details;
     }
 
+    public ArrayList<String> generateMailForVerificationEmail(HashMap<String, String> details){
+        String firstName = details.get("FirstName");
+        String lastName = details.get("LastName");
+        String emailAddress = details.get("EmailAddress");
+        String emailMessage = "Dear " + firstName + "  " + lastName + ",\n";
+        String subject = "Confirm your email for Socmed App";
 
+        ArrayList<String> emailDetails = new ArrayList<String>();
+        emailDetails.add(emailAddress);
+        emailDetails.add(emailMessage);
+        emailDetails.add(subject);
 
-
+        return emailDetails;
+    }
 
     /***********for func responeDoctor********************/
     public HashMap<Integer,HashMap<String,String>> buildRejectMessage(int cmid, String Reason) {

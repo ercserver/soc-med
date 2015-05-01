@@ -112,18 +112,158 @@ public class RegController_V1 implements IRegController {
         return sendTo;
     }
 
-    public Object VerifyDetail(int cmid){
-        return verification.VerifyDetail(cmid);
+    //do
+    public Object verifyDetail(HashMap<String, String> data) {
+        int cmid = Integer.parseInt(data.get("CommunityMemberID"));
+        String password = data.get("Password");
+        String regid = data.get("RegID");
+        //String code = data.get("RequestID");
+        ArrayList<String> target = new ArrayList<String>();
+        target.add(regid);
+        if (checkCmidAndPassword(password, cmid)) {
+            changeStatusToVerifyDetailAndSendToApp(cmid,regid, target,data);
+            HashMap<String,String> dataFilter = verification.getPatientAndFillterDataToSendDoctor(cmid);
+            ArrayList<String> mail = verification.iFIsADoctorBuildMail(cmid, regid, dataFilter);
+            if (null != mail )
+            {
+                String emailAddress = mail.get(0);
+                String emailMessage = mail.get(1);
+                String subject =   mail.get(2);
+                sendMail(emailAddress,emailMessage,
+                        subject);
+            }
+        }
+        return null;
+    }
+
+    private void sendMail(String emailAddress, String emailMessage, String subject) {
+        commController.setCommToMail(emailAddress, emailMessage, subject);
+        commController.sendEmail();
+    }
+
+    private void changeStatusToVerifyDetailAndSendToApp(int cmid, String code,
+                                                        ArrayList<String> target,
+                                                        HashMap<String, String> data) {
+        if(verification.ifTypeISPatientOrGuardian(code)) {
+            commController.setCommToUsers(verification.changeStatusToVerifyDetailAndSendToApp(cmid,data),
+                    target, false);
+            commController.sendResponse();
+        }
+    }
+
+    public Object resendMail(HashMap<String, String> data) {
+        int cmid = Integer.parseInt(data.get("CommunityMemberID"));
+        String password = data.get("Password");
+        String regid = data.get("RegID");
+        ArrayList<String> target = new ArrayList<String>();
+        target.add(regid);
+        if (checkCmidAndPassword(password, cmid)) {
+            HashMap<String,String> details = verification.getUserByCmid(cmid);
+            if (details.get("StatusNum").equals("verifying email")) {
+                ArrayList<String> mail =  verification.generateMailForVerificationEmail(details);
+                String emailAddress = mail.get(0);
+                String emailMessage = mail.get(1);
+                String subject =   mail.get(2);
+                sendMail(emailAddress,emailMessage,
+                        subject);
+            }
+            else
+            {
+                if(ifTypeISPatientOrGuardian(regid)) {
+                    commController.setCommToUsers(verification.BuildResponeWithOnlyRequestID(
+                            data,"rejectResend"),target,false);
+                    commController.sendResponse();
+                }
+            }
+        }
+        return null;
+    }
+
+    private boolean ifTypeISPatientOrGuardian(String regid) {
+        return !regid.equals("0");
+    }
+
+    //need to do
+    public Object responeByDoctor(HashMap<String, String> data) {
+        HashMap<Integer,HashMap<String,String>> response =
+                new HashMap<Integer,HashMap<String,String>>();
+        int cmid = Integer.parseInt(data.get("CommunityMemberID"));
+        String reason = data.get("Reason");
+        String password = data.get("Password");
+        String regid = data.get("RegID");
+        ArrayList<String> target = new ArrayList<String>();
+        target.add(regid);
+        if (checkCmidAndPassword(password, cmid)) {
+            if (reason == null) {
+                dbController.updateStatus(cmid, "'verifying details'", "'active'");
+                if (verification.ifTypeISPatientOrGuardian(regid)) {
+                    response =  verification.proccesOfOkMember(cmid);
+                    commController.setCommToUsers(response, target, false);
+                    commController.sendResponse();
+                }
+            }
+            else
+            {
+                //if is a doctor
+                if (!verification.ifTypeISPatientOrGuardian(regid))
+                {
+                    dbController.updateStatus(cmid, "'verifying details'", "'reject by authentication'");
+                    return null;
+                }
+                else {
+                    response = verification.buildRejectMessage(cmid, reason);
+                    commController.setCommToUsers(response, target, false);
+                    commController.sendResponse();
+                }
+            }
+        }   //verification.responeDoctor(cmid, reason,regid);
+        return null;
+    }
+
+    private boolean checkCmidAndPassword(String password, int cmid) {
+        HashMap<String,String> member = new HashMap<String,String>();
+        member.put("P_CommunityMembers.CommunityMemberID",new Integer(cmid).toString());
+        HashMap<String,String> data = dbController.getUserByParameter(member);
+        String email = data.get("EmailAddress");
+        data = dbController.getLoginDetails("'" +email + "'");
+        String pas = data.get("Password");
+        return pas.equals(password);
+    }
+
+    public Object responeToDoctorIfHeAccept(HashMap<String,String> details)
+    {
+        HashMap<Integer,HashMap<String,String>> response = new
+                HashMap<Integer,HashMap<String,String>>();
+
+        String email = details.get("EmailAddress");
+        //reject
+        int type = verification.checkIfDoctorIsaccept(email);
+        if (type == 0) {
+            int cmid = Integer.parseInt(details.get("CommunityMemberID"));
+            dbController.deleteUser(cmid);
+            response = verification.buildRejectMessage(cmid, "reject by authentication");
+            commController.setCommToUsers(response, null, false);
+        }
+        //accept
+        if (type == 1)
+        {
+            response = verification.BuildResponeWithOnlyRequestID(details,"Active");
+            commController.setCommToUsers(response, null, false);
+
+        }
+        //in other status
+        else
+        {
+            // is equal to 2
+            response = verification.BuildResponeWithOnlyRequestID(details,"wait");
+            commController.setCommToUsers(response, null, false);
+        }
+        return commController.sendResponse();
     }
 
     //TODO - Shmulit: need to implement resending of email or SMS
     public Object resendAuth(int cmid){
         return verification.resendAuth(cmid);
-    }
-
-    public Object responeDoctor(int cmid,String reason)
-    {
-        return verification.responeDoctor(cmid,reason);
     }
 
     public Object getWaitingForDoctor(int doctorCmid) {
