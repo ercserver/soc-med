@@ -329,7 +329,7 @@ public class RegVerify_V2 implements IRegVerify_model {
         String emailSubject = "Confirm your email for Socmed App";
 
         HashMap<String,String> generatedAuthMail = new HashMap<String, String>();
-        generatedAuthMail.put("Subject", emailSubject);
+        generatedAuthMail.put("Subject", emailSubject);//
         generatedAuthMail.put("Message", emailMessage);
         generatedAuthMail.put("Email", emailAddress);
 
