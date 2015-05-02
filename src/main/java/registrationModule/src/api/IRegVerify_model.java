@@ -35,7 +35,7 @@ public interface IRegVerify_model {
     /***********for func responeToDoctorIfHeAccept********************/
     int checkIfDoctorIsaccept(String email);
 
-    Object resendAuth(int cmid);//TODO////need to get mail also!!
+    //*Object resendAuth(int cmid);//TODO////need to get mail also!!
 
     ArrayList<String> verifyFilledForm(HashMap<String, String> filledForm);
 
