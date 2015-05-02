@@ -135,10 +135,10 @@ public class RegController_V1 implements IRegController {
         return null;
     }
 
-    private void sendMail(String emailAddress, String emailMessage, String subject) {
+    /*private void sendMail(String emailAddress, String emailMessage, String subject) {
         commController.setCommToMail(emailAddress, emailMessage, subject);
         commController.sendEmail();
-    }
+    }*/
 
     private void changeStatusToVerifyDetailAndSendToApp(int cmid, String code,
                                                         ArrayList<String> target,
@@ -159,12 +159,17 @@ public class RegController_V1 implements IRegController {
         if (checkCmidAndPassword(password, cmid)) {
             HashMap<String,String> details = verification.getUserByCmid(cmid);
             if (details.get("StatusNum").equals("verifying email")) {
-                ArrayList<String> mail =  verification.generateMailForVerificationEmail(details);
-                String emailAddress = mail.get(0);
+                int authMethod = dbController.getAuthenticationMethod("Israel");
+                HashMap<String, String> mail =  verification.generateDataForAuth(details, authMethod);
+                ICommController commAuthMethod = new ModelsFactory().determineCommControllerVersion();
+                commAuthMethod.setCommOfficial(data,authMethod);
+                //Communicate authorization (email/sms/...)
+                commAuthMethod.sendMessage();
+               /* String emailAddress = mail.get(0);
                 String emailMessage = mail.get(1);
                 String subject =   mail.get(2);
                 sendMail(emailAddress,emailMessage,
-                        subject);
+                        subject);*/
             }
             else
             {
