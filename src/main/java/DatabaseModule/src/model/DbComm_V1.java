@@ -64,10 +64,14 @@ public class DbComm_V1 implements IDbComm_model {
         }*/
     }
 
+    /*For all of the methods:in each HashMap if the value represent value of column with type varchar,
+      the value need to be in this format: 'value' */
+
     public HashMap<Integer,HashMap<String,String>>
     getRowsFromTable(HashMap<String,String> whereConditions, String tableName)
     {
         String conditions = "";
+        // select *....
         if(whereConditions == null)
             conditions = "1=1";
         else
@@ -75,6 +79,7 @@ public class DbComm_V1 implements IDbComm_model {
             int numOfConditions = whereConditions.size();
             Set<String> keys = whereConditions.keySet();
             Iterator<String> iter = keys.iterator();
+            // creates the where condition for sql query
             String key = iter.next();
             conditions = key + "=" + whereConditions.get(key);
             for (int i = 1; i < numOfConditions; i++)
@@ -91,17 +96,22 @@ public class DbComm_V1 implements IDbComm_model {
             statement = connection.createStatement();
             rs = statement.executeQuery("SELECT DISTINCT * FROM " + tableName +
                     " WHERE " + conditions);
+            // gets columns names
             ResultSetMetaData rsmd = rs.getMetaData();
             int columnCount = rsmd.getColumnCount();
             ArrayList<String> columnNames = new ArrayList<String>();
             for (int i = 1; i <= columnCount; i++ )
                 columnNames.add(rsmd.getColumnName(i));
             HashMap<Integer,HashMap<String,String>> results= new HashMap<Integer,HashMap<String,String>>();
+            // no data this time
             if (!rs.next())
                 return null;
             else
             {
                 int j = 1;
+                /* each simple HashMap represent a tuple from the resultSet: key=column-name, value=column-value
+                 * the complex HashMap has all of the tuples: key=serial number from the resultSet(begins with 1)
+                  * value=the tuple*/
                 do
                 {
                     HashMap<String,String> line = new HashMap<String,String>();
@@ -111,6 +121,7 @@ public class DbComm_V1 implements IDbComm_model {
                         String column = iter.next();
                         if(rs.getObject(column) != null)
                             line.put(column, rs.getObject(column).toString());
+                        // no data in this column ofthat tuple
                         else
                             line.put(column, "null");
                     }
@@ -141,13 +152,17 @@ public class DbComm_V1 implements IDbComm_model {
     {
         HashMap<String,String> conds = new HashMap<String,String>();
         conds.put("user_type", Integer.toString(userType));
+        // gets registration fields according to the givven usetType
         HashMap<Integer,HashMap<String,String>> ret = getRowsFromTable(conds, "RegistrationFields");
+        /* gets for each registration field the possible values from the proper table, if
+           the fiel is not "free text". we put a json object that converted to string */
         for(int i = 1; i <= ret.size(); i++)
         {
             if(ret.get(i).get("get_possible_values_from") == "null")
                 continue;
             String tableName = ret.get(i).get("get_possible_values_from");
             JSONObject jo;
+            // field that has few possible values from Enum table
             if(tableName.substring(0, 5) == "Enum.")
             {
                 ArrayList<String> l = new ArrayList<String>();
@@ -171,6 +186,8 @@ public class DbComm_V1 implements IDbComm_model {
         int numOfConditions = whereConditions.size();
         Set<String> keys = whereConditions.keySet();
         Iterator<String> iter = keys.iterator();
+        /* creates where coditions for sql query. each key in the input here should be in this format:
+           table-name.column-name */
         String key = iter.next();
         conditions = key + "=" + whereConditions.get(key);
         for (int i = 1; i < numOfConditions; i++)
@@ -184,15 +201,18 @@ public class DbComm_V1 implements IDbComm_model {
             if (!(connection != null && !connection.isClosed() && connection.isValid(1)))
                 connect();
             statement = connection.createStatement();
+            // gets basic data about the user
             rs = statement.executeQuery("SELECT DISTINCT * FROM P_CommunityMembers " +
                             "INNER JOIN MembersLoginDetails ON P_CommunityMembers.community_member_id=MembersLoginDetails.community_member_id "
                    + "WHERE " + conditions);
+            // no user exists for the givven conditions
             if(!rs.next())
                 return null;
             String cmid = rs.getObject("community_member_id").toString();
+            // gets the userType by the user's cmid
             int userType = getUserType(cmid);
             statement = connection.createStatement();
-            // Patient user
+            // gets all important data about Patient user
             if(userType == 0)
                 rs = statement.executeQuery("SELECT DISTINCT * FROM " + "P_CommunityMembers INNER JOIN "
                         + "P_Patients ON P_CommunityMembers.community_member_id=P_Patients.community_member_id "
@@ -204,7 +224,7 @@ public class DbComm_V1 implements IDbComm_model {
                         + "INNER JOIN P_StatusLog ON MembersLoginDetails.community_member_id=P_StatusLog.community_member_id "
                         + "INNER JOIN P_Statuses ON P_StatusLog.status_num=P_Statuses.status_num " +
                         "WHERE " + conditions + " ORDER BY " + "P_StatusLog.date_from");
-            // Doctor or ems user
+            // gets all important data about Doctor or ems user
             else
                 rs = statement.executeQuery("SELECT DISTINCT * FROM " + "P_CommunityMembers INNER JOIN "
                         + "P_Doctors ON P_CommunityMembers.community_member_id=P_Doctors.community_member_id "
@@ -223,31 +243,33 @@ public class DbComm_V1 implements IDbComm_model {
             ResultSetMetaData rsmd = rs.getMetaData();
             int columnCount = rsmd.getColumnCount();
             ArrayList<String> columnNames = new ArrayList<String>();
+            // gets all column names from the executed query
             for (int i = 1; i <= columnCount; i++ )
                 columnNames.add(rsmd.getColumnName(i));
+            // no user for the givven conditions is exists
             if (!rs.next())
                 return null;
             else
             {
                 HashMap<String,String> user = new HashMap<String,String>();;
+                // gets the data about the user:key=column-name, value=column-value-needs the most updated data
                 do
                 {
                     user.clear();
-                    //if (rs.isLast())
-                    //{
                     iter = columnNames.iterator();
                     for (int i = 0; i < columnCount; i++)
                     {
                         String column = iter.next();
+                        // no need for duplications or data about dates in this system
                         if((!user.containsKey(column)) && (column != "date_from") && (column != "date_to"))
                         {
                             if (rs.getObject(column) != null)
                                 user.put(column, rs.getObject(column).toString());
+                            // no data about the user in this column
                             else
                                 user.put(column, "null");
                         }
                     }
-                    //}
                 }while (rs.next());
                 return user;
             }
@@ -276,6 +298,7 @@ public class DbComm_V1 implements IDbComm_model {
             if (!(connection != null && !connection.isClosed() && connection.isValid(1)))
                 connect();
             statement = connection.createStatement();
+            // gets the userType by cmid
             rs = statement.executeQuery("SELECT DISTINCT * FROM P_TypeLog " +
                     "WHERE community_member_id=" + cmid + " AND date_to IS NULL");
             rs.next();
@@ -306,6 +329,7 @@ public class DbComm_V1 implements IDbComm_model {
         int numOfUpdates = updates.size();
         Set<String> keys = updates.keySet();
         Iterator<String> iter = keys.iterator();
+        // gets personal updates for this user. the input format should be:key=column-name,value=column-new-value
         String key = iter.next();
         Supdates = key + "=" + updates.get(key);
         for (int i = 1; i < numOfUpdates; i++)
@@ -313,6 +337,7 @@ public class DbComm_V1 implements IDbComm_model {
             key = iter.next();
             Supdates += ", " + key + "=" + updates.get(key);
         }
+        // update user's personal details
         try
         {
             if (!(connection != null && !connection.isClosed() && connection.isValid(1)))
@@ -331,6 +356,7 @@ public class DbComm_V1 implements IDbComm_model {
 
     public HashMap<Integer,HashMap<String,String>> getFrequency(HashMap<String,String> kindOfFrequency)
     {
+        // gets all data about specific frequency
         return selectFromTable("Frequencies", null, kindOfFrequency);
     }
 
@@ -340,16 +366,19 @@ public class DbComm_V1 implements IDbComm_model {
         cond.put("state", "'" + state + "'");
         ArrayList<String> select = new ArrayList<String>();
         select.add("default_caller");
+        // gets the default caller in emergency event according to the givven state
         return selectFromTable("DefaultCallerSettings", select, cond);
     }
 
     public HashMap<String,String> getRejectCodes()
     {
+        // gets all reject codes of patient that can givven by doctor
         HashMap<Integer,HashMap<String,String>> rejectCodes = getRowsFromTable(null, "RejectCodes");
         int numOfCodes = rejectCodes.size();
         HashMap<String,String> codes = new HashMap<String,String>();
         Collection<HashMap<String,String>> col = rejectCodes.values();
         Iterator<HashMap<String,String>> iter = col.iterator();
+        // The returned HashMap will be in this format:key=id-of-reject-code, value=the-reject-code
         for(int i = 0; i < numOfCodes; i++)
         {
             HashMap<String,String> m = iter.next();
@@ -358,6 +387,7 @@ public class DbComm_V1 implements IDbComm_model {
         return codes;
     }
 
+    // gets value of enum by the enum number(or the opposite) from specific table and column
     public HashMap<Integer,HashMap<String,String>> getFromEnum(HashMap<String,String> cond)
     {
         return selectFromTable("Enum", null, cond);
@@ -372,10 +402,12 @@ public class DbComm_V1 implements IDbComm_model {
             if (!(connection != null && !connection.isClosed() && connection.isValid(1)))
                 connect();
             statement = connection.createStatement();
+            // gets all related patients for this doctor
             rs = statement.executeQuery("SELECT DISTINCT * FROM " + "P_Doctors INNER JOIN "+
                     "P_Supervision ON P_Doctors.doctor_id=P_Supervision.doctor_id "
                     + "WHERE P_Doctors.community_member_id="
                     + Integer.toString(docCMID));
+            // no patient related for this doctor
             if(!rs.next())
                 return null;
             else
@@ -386,13 +418,16 @@ public class DbComm_V1 implements IDbComm_model {
                 {
                     int patientID = rs.getInt("patient_id");
                     Statement statement2 = connection.createStatement();
+                    // gets all relevant data about related patient that waits for doctor's approval
                     rs1 = statement2.executeQuery("SELECT DISTINCT * FROM " + "P_Patients INNER JOIN "
                             + "P_StatusLog ON P_Patients.community_member_id=P_StatusLog.community_member_id"
                             + "INNER JOIN P_Statuses ON P_Statuses.status_num=P_StatusLog.status_num"
                             + " WHERE P_Patients.patient_id=" + Integer.toString(patientID) +
                             " AND P_Statuses.status_name='verifying details'");
+                    // this patient is not waiting for doctor's approval
                     if (!rs1.next())
                         continue;
+                    // gets patient's cmid
                     else
                     {
                         numOfPatients++;
@@ -425,6 +460,7 @@ public class DbComm_V1 implements IDbComm_model {
         HashMap<String,String> cond = new HashMap<String,String>();
         cond.put("community_member_id", Integer.toString(CMID));
         cond.put("field_name", fieldName);
+        // updates refresh of specific field of spesific user to be urgent
         updateTable("RefreshDetailsTime", cond, "urgent", Integer.toString(urgentBit));
         updateTable("RefreshDetailsTime", cond, "last_update_time", Calendar.getInstance());
     }
@@ -562,11 +598,13 @@ public class DbComm_V1 implements IDbComm_model {
         return 0;
     }
 
+    // expected format of the state:'state-name'
     public int getAuthenticationMethod(String state) {
         HashMap<String,String> cond = new HashMap<String,String>();
         cond.put("state", state);
         HashMap<Integer,HashMap<String,String>> res =
                 selectFromTable("AuthenticationMethod", Arrays.asList("method"), cond);
+        // returns authentication method in this state:mail,SMS...
         if (res.size() != 0){
             Collection<HashMap<String,String>> coll = res.values();
             return Integer.parseInt(coll.iterator().next().get("method"));
@@ -574,12 +612,14 @@ public class DbComm_V1 implements IDbComm_model {
         return -1;
     }
 
+    // expected format of the state:'state-name'
     public HashMap<String,String> getEmailOfDoctorsAuthorizer(String state)
     {
         HashMap<String,String> cond = new HashMap<String,String>();
         cond.put("state", state);
         HashMap<Integer,HashMap<String,String>> res =
                 selectFromTable("DoctorAuthorizers", Arrays.asList("email_address"), cond);
+        // returns the mail of doctors authorizer
         if (res.size() != 0){
             Collection<HashMap<String,String>> coll = res.values();
             return coll.iterator().next();
@@ -587,11 +627,13 @@ public class DbComm_V1 implements IDbComm_model {
         return null;
     }
 
+    // expected format of the email:'mail-address'
     public HashMap<String,String> getLoginDetails(String email) {
         HashMap<String,String> cond = new HashMap<String,String>();
         cond.put("email_address", email);
         HashMap<Integer,HashMap<String,String>> res =
                 selectFromTable("MembersLoginDetails", null, cond);
+        // returns login details of the givven mail if exists in the system
         if (res.size() != 0){
             Collection<HashMap<String,String>> coll = res.values();
             return coll.iterator().next();
@@ -618,6 +660,7 @@ public class DbComm_V1 implements IDbComm_model {
         return selectFromTable("RefreshDetailsTime", null, null);
     }
 
+    // the status format should be:'status-name'
     public void updateStatus(int cmid, String oldStatus, String newStatus)
     {
         try
@@ -629,11 +672,13 @@ public class DbComm_V1 implements IDbComm_model {
             if(oldStatus != null)
             {
                 cond.put("status_name", oldStatus);
+                // gets status number of the givven old status
                 s = getRowsFromTable(cond, "P_Statuses");
                 val = s.values();
                 statusNum = val.iterator().next().get("status_num");
                 if (!(connection != null && !connection.isClosed() && connection.isValid(1)))
                     connect();
+                // closed time of this user in the old status
                 statement = connection.createStatement();
                 statement.execute("UPDATE P_StatusLog SET date_to=CURRENT_TIMESTAMP" +
                         " WHERE" + " status_num=" + statusNum + " AND community_member_id="
@@ -641,12 +686,14 @@ public class DbComm_V1 implements IDbComm_model {
             }
             cond.clear();
             cond.put("status_name", newStatus);
+            // gets status number of the givven new status
             s = getRowsFromTable(cond, "P_Statuses");
             val = s.values();
             statusNum = val.iterator().next().get("status_num");
             if (!(connection != null && !connection.isClosed() && connection.isValid(1)))
                 connect();
             statement = connection.createStatement();
+            // updates the givven user with the givven new status
             statement.execute("INSERT INTO P_StatusLog (status_num,community_member_id) VALUES (" +
                     statusNum + "," + Integer.toString(cmid) + ")");
         }
@@ -657,6 +704,7 @@ public class DbComm_V1 implements IDbComm_model {
         }
     }
 
+    // expected regID format:'redID'
     public void insertRegID(String regId, int cmid)
     {
         try
@@ -664,6 +712,7 @@ public class DbComm_V1 implements IDbComm_model {
             if (!(connection != null && !connection.isClosed() && connection.isValid(1)))
                 connect();
             statement = connection.createStatement();
+            // inserts the regid to the regIDs table
             statement.execute("INSERT INTO RegIDs (reg_id,community_member_id) VALUES (" +
                     regId + "," + Integer.toString(cmid) + ")");
         }
@@ -674,6 +723,7 @@ public class DbComm_V1 implements IDbComm_model {
         }
     }
 
+    // return user's regID in a HashMap according to his cmid
     public HashMap<Integer,HashMap<String,String>> getRegIDsOfUser(int cmid)
     {
         HashMap<String,String> conds = new HashMap<String,String>();
@@ -683,10 +733,13 @@ public class DbComm_V1 implements IDbComm_model {
 
     public void deleteUser(int cmid)
     {
+        // tables that relevant for each user in this community
         String[] tables =  {"P_StatusLog", "P_DeviceLog", "P_EmergencyContact", "P_TypeLog",
                             "MembersLoginDetails", "RefreshDetailsTime", "RegIDs"
                             , "P_Relations"};
+        // tables that relevant for each Patient or Doctor user
         String[] pTables = {"P_Supervision", "P_Prescriptions", "P_Diagnosis", "P_Relations", "P_Patients", "P_Doctors"};
+        // tables that relevant for each Doctor or ems user
         String[] mpTables = {"MP_Affiliation", "MP_Certification", "MP_MedicalPersonnel"};
         try
         {
@@ -694,9 +747,11 @@ public class DbComm_V1 implements IDbComm_model {
                 connect();
             HashMap<String,String> cond = new HashMap<String,String>();
             cond.put("community_member_id", Integer.toString(cmid));
+            // gets userTypeID according to the cmid, if exists
             HashMap<Integer,HashMap<String,String>> patientID = getRowsFromTable(cond, "P_Patients");
             HashMap<Integer,HashMap<String,String>> docID = getRowsFromTable(cond, "P_Doctors");
             HashMap<Integer,HashMap<String,String>> medPersonelID = getRowsFromTable(cond, "MP_MedicalPersonnel");
+            // deletes the user from the data-base
             for(int i = 0; i < 8; i++)
             {
                 statement = connection.createStatement();
@@ -707,6 +762,7 @@ public class DbComm_V1 implements IDbComm_model {
             statement.execute("DELETE FROM P_Buddies" +
                     " WHERE community_member_id1=" + Integer.toString(cmid) +
                     " OR community_member_id2=" + Integer.toString(cmid));
+            // deletes patient or doctor from relevant tables
             if((patientID != null) || (docID != null))
             {
                 String id = patientID.get(1).get("patient_id");
@@ -717,6 +773,7 @@ public class DbComm_V1 implements IDbComm_model {
                             " WHERE patient_id=" + id);
                 }
             }
+            // deletes ems or doctor from relevant tables
             if(medPersonelID != null)
             {
                 String id = medPersonelID.get(1).get("medical_personnel_id");
