@@ -288,6 +288,8 @@ public class RegController_V1 implements IRegController {
     {
         // verify log-in details
         HashMap<Integer,HashMap<String,String>> response = verification.verifySignIn(details);
+
+        ArrayList<String> target = new ArrayList<String>();
         // Sign in of doctor/ems
         if(details.get("reg_id") == "0")
         {
@@ -296,7 +298,6 @@ public class RegController_V1 implements IRegController {
         // Sign-in of patient
         else
         {
-            ArrayList<String> target = new ArrayList<String>();
             target.add(details.get("reg_id"));
             commController.setCommToUsers(response, target, false);
         }

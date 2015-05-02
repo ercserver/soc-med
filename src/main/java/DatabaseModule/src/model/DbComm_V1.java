@@ -306,7 +306,7 @@ public class DbComm_V1 implements IDbComm_model {
         }
     }
 
-    private int getUserType(String cmid)
+    public int getUserType(String cmid)
     {
         ResultSet rs = null;
         try {

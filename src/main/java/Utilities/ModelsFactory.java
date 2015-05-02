@@ -5,6 +5,8 @@ import CommunicationModule.src.controller.CommController_V1;
 import DatabaseModule.src.api.IDbController;
 import DatabaseModule.src.controller.DbController_V1;
 import RoutineModule.src.api.IRoutineController;
+import RoutineModule.src.api.IUpdates_model;
+import RoutineModule.src.model.Updates_V1;
 import registrationModule.src.api.IRegRequest_model;
 import registrationModule.src.api.IRegVerify_model;
 import registrationModule.src.model.RegRequest_V1;
@@ -65,5 +67,17 @@ public class ModelsFactory {
                 }
             }
         }
+
+    public IUpdates_model determineIUpdatesVersion(){
+        switch (dbControllerVersion) {
+            //Communicate the DB to retrieve the data
+            case 1: {
+                return new Updates_V1();
+            }
+            default: {
+                return null;
+            }
+        }
+    }
 
 }
