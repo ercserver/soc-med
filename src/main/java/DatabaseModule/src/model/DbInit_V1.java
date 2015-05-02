@@ -225,7 +225,7 @@ public class DbInit_V1 implements IDbInit_model {
                     +"doctor_id INT NOT NULL IDENTITY(1000,1) PRIMARY KEY,"
                     +"first_name VARCHAR(30) NOT NULL,"
                     +"last_name VARCHAR(30) NOT NULL,"
-                    +"license_number INT NOT NULL,"
+                    +"doc_license_number INT NOT NULL,"
                     +"community_member_id INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(community_member_id))");
             //connection.commit();
 
@@ -295,6 +295,13 @@ public class DbInit_V1 implements IDbInit_model {
             statement.addBatch("CREATE TABLE RegIDs ("
                     +"reg_id VARCHAR(100) NOT NULL PRIMARY KEY,"
                     +"community_member_id INT NOT NULL)");
+
+            statement.addBatch("CREATE TABLE Availability ("
+                    +"hour_from INT NOT NULL,"
+                    +"minutes_from INT NOT NULL,"
+                    +"hour_to INT NOT NULL,"
+                    +"minutes_to INT NOT NULL,"
+                    +"community_member_id INT NOT NULL FOREIGN KEY REFERENCES P_CommunityMembers(community_member_id))");
 
             statement.executeBatch();
 
@@ -427,8 +434,8 @@ public class DbInit_V1 implements IDbInit_model {
                         "(certification_internal_id INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
                         " certification_external_id INTEGER not NULL, " +
                         " medical_personnel_id INTEGER not NULL FOREIGN KEY REFERENCES MP_MedicalPersonnel(medical_personnel_id), " +
-                        " date_from DATE not NULL DEFAULT current_timestamp, " +
-                        " date_to DATE , " +
+                        " c_date_from DATE not NULL DEFAULT current_timestamp, " +
+                        " c_date_to DATE , " +
                         " specialization_id INTEGER not NULL FOREIGN KEY REFERENCES MP_Specialization(specialization_id))");
             }
         }
@@ -512,8 +519,8 @@ public class DbInit_V1 implements IDbInit_model {
                         " organization_id INTEGER not NULL FOREIGN KEY REFERENCES MP_Organizations(organization_id), " +
                         " medical_personnel_id INTEGER not NULL FOREIGN KEY REFERENCES MP_MedicalPersonnel(medical_personnel_id), " +
                         " position_num INTEGER not NULL FOREIGN KEY REFERENCES MP_Positions(position_num), " +
-                        " date_from DATETime not NULL DEFAULT current_timestamp, " +
-                        " date_to DATETime)");
+                        " a_date_from DATETime not NULL DEFAULT current_timestamp, " +
+                        " a_date_to DATETime)");
             }
         }
         // There was a fault with the connection to the server or with SQL

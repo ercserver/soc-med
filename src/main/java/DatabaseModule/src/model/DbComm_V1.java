@@ -220,7 +220,10 @@ public class DbComm_V1 implements IDbComm_model {
                         + "INNER JOIN MembersLoginDetails ON P_EmergencyContact.community_member_id=MembersLoginDetails.community_member_id "
                         + "INNER JOIN P_Supervision ON P_Patients.patient_id=P_Supervision.patient_id "
                         + "INNER JOIN P_Prescriptions ON P_Supervision.patient_id=P_Prescriptions.patient_id "
+                        + "INNER JOIN P_Medications ON P_Medications.medication_num=P_Prescriptions.medication_num "
                         + "INNER JOIN P_Diagnosis ON P_Prescriptions.patient_id=P_Diagnosis.patient_id "
+                        + "INNER JOIN M_MedicalConditions ON M_MedicalConditions.medical_condition_id=P_Diagnosis.medical_condition_id "
+                        + "INNER JOIN Availability ON Availability.community_member_id=P_CommunityMembers.community_member_id "
                         + "INNER JOIN P_StatusLog ON MembersLoginDetails.community_member_id=P_StatusLog.community_member_id "
                         + "INNER JOIN P_Statuses ON P_StatusLog.status_num=P_Statuses.status_num " +
                         "WHERE " + conditions + " ORDER BY " + "P_StatusLog.date_from");
@@ -239,6 +242,7 @@ public class DbComm_V1 implements IDbComm_model {
                         + "INNER JOIN MP_Positions ON MP_Positions.position_num=MP_Affiliation.position_num "
                         + "INNER JOIN MP_Organizations ON MP_Organizations.organization_id=MP_Affiliation.organization_id "
                         + "INNER JOIN MP_OrganizationTypes ON MP_Organizations.organization_type_num=MP_OrganizationTypes.organization_type_num "
+                        + "INNER JOIN Availability ON Availability.community_member_id=P_CommunityMembers.community_member_id "
                         + "WHERE " + conditions + " ORDER BY " + "P_StatusLog.date_from");
             ResultSetMetaData rsmd = rs.getMetaData();
             int columnCount = rsmd.getColumnCount();
@@ -271,6 +275,17 @@ public class DbComm_V1 implements IDbComm_model {
                         }
                     }
                 }while (rs.next());
+                // for patient user-gets his doctor's license
+                if(userType == 0)
+                {
+                    rs = statement.executeQuery("SELECT DISTINCT * FROM " + "P_CommunityMembers INNER JOIN "
+                            + "P_Patients ON P_CommunityMembers.community_member_id=P_Patients.community_member_id "
+                            + "INNER JOIN P_Supervision ON P_Patients.patient_id=P_Supervision.patient_id "
+                            + "INNER JOIN P_Doctors ON P_Supervision.doctor_id=P_Doctors.doctor_id " +
+                            "INNER JOIN MembersLoginDetails ON P_CommunityMembers.community_member_id=MembersLoginDetails.community_member_id " +
+                            "WHERE " + conditions + " ORDER BY " + "P_StatusLog.date_from");
+                    user.put("doc_license_number", rs.getObject("doc_license_number").toString());
+                }
                 return user;
             }
         }
