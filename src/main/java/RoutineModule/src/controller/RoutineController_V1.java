@@ -24,6 +24,7 @@ public class RoutineController_V1 implements IRoutineController {
 
     public Object transferLocation(HashMap<String, String> data)
     {
+        // just transfer the location data to the GIS
         HashMap<Integer,HashMap<String,String>> response = new HashMap<Integer,HashMap<String,String>>();
         response.put(1, data);
         ArrayList<String> target = new ArrayList<String>();
