@@ -279,18 +279,21 @@ public class RegController_V1 implements IRegController {
 
     public Object signIn(HashMap<String,String> details)
     {
+        // verify log-in details
         HashMap<Integer,HashMap<String,String>> response = verification.verifySignIn(details);
         // Sign in of doctor/ems
         if(details.get("reg_id") == "0")
         {
             commController.setCommToUsers(response, null, false);
         }
+        // Sign-in of patient
         else
         {
             ArrayList<String> target = new ArrayList<String>();
             target.add(details.get("reg_id"));
             commController.setCommToUsers(response, target, false);
         }
+        // Sends response to the proper user
         return commController.sendResponse();
     }
 }
