@@ -21,19 +21,19 @@ public interface IRegVerify_model {
 
     HashMap<String, String> getUserByCmid(int cmid);
     ArrayList<String> generateMailForVerificationEmail(HashMap<String, String> details);
-    public HashMap<Integer,HashMap<String,String>> BuildResponeWithOnlyRequestID(
+    HashMap<Integer,HashMap<String,String>> BuildResponeWithOnlyRequestID(
             HashMap<String, String> details,
             String code);
 
     /***********for func responeDoctor********************/
-    public HashMap<Integer,HashMap<String,String>> buildRejectMessage(int cmid, String Reason);
-    public HashMap<Integer,HashMap<String,String>> proccesOfOkMember(int cmid);
+    HashMap<Integer,HashMap<String,String>> buildRejectMessage(int cmid, String Reason);
+    HashMap<Integer,HashMap<String,String>> proccesOfOkMember(int cmid);
 
     /***********for func SignIn********************/
     HashMap<Integer,HashMap<String,String>>verifySignIn(HashMap<String,String> details);
 
     /***********for func responeToDoctorIfHeAccept********************/
-    public int checkIfDoctorIsaccept(String email);
+    int checkIfDoctorIsaccept(String email);
 
     Object resendAuth(int cmid);//TODO////need to get mail also!!
 

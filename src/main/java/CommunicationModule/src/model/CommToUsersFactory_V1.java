@@ -27,5 +27,4 @@ public class CommToUsersFactory_V1 implements ICommToUsersFactory {
             return new GcmCommnication_V1(data,target);
         }
         }
-
 }

@@ -11,4 +11,6 @@ public interface IRegRequest_model {
     HashMap<String,String> regDetailsRequest(HashMap<String,String> request);
 
     String doesUserExist(HashMap<String, String> filledForm);
+
+    HashMap<String,String> filterFieldsForDoctorAuth(HashMap<String, String> userByParameter);
 }

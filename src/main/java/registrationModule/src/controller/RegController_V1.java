@@ -266,15 +266,22 @@ public class RegController_V1 implements IRegController {
     }
 
     public Object getWaitingForDoctor(int doctorCmid) {
+        //Pull from the db the list of patient that are pending the doctor's confirmation
+        ArrayList<String> listOfPatients = dbController.getWaitingPatientsCMID(doctorCmid);
 
-        /**
-         * Maor, why does this function require more than just doctor CMID? What's the logic
-         * behind that... also looked at it and couldn't understand why does it need "status" in addition to Doctor CMID.
-         * TODO - MAOR, Please clarify the above*/
-        //dbController.getWaitingPatientsCMID(doctorCmid);
-        //
-        //need for each CMID - pull from db and grab relevant fields to be JSON'ed. TODO - What are they??
-        return null;
+        HashMap<Integer,HashMap<String,String>> response = new HashMap<Integer,HashMap<String,String>>();
+        //for each cmid in the list received - filter fields and add to the response
+        int index = 1;
+        for(String currCmid : listOfPatients){
+            HashMap<String,String> whereConditions = new HashMap<String, String>();
+            whereConditions.put("community_member_id", "'" + currCmid + "'");
+            response.put(index,registrator.filterFieldsForDoctorAuth(dbController.getUserByParameter(whereConditions)));
+            index++;
+        }
+        //determine how to send the data - initiated communication so use "false"
+        commController.setCommToUsers(response,null,false);
+        //send the data
+        return commController.sendResponse();
     }
 
     public Object signIn(HashMap<String,String> details)

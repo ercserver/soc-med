@@ -4,6 +4,8 @@ import DatabaseModule.src.api.IDbController;
 import registrationModule.src.api.IRegRequest_model;
 import registrationModule.src.utilities.ModelsFactory;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -32,12 +34,35 @@ public class RegRequest_V1 implements IRegRequest_model {
         return userExistsMessage;
     }
 
+    public HashMap<String, String> filterFieldsForDoctorAuth(HashMap<String, String> fieldsToFilter) {
+        HashMap<String,String> filteredResponse = new HashMap<String, String>();
+        //Get the list of fields to filter
+        ArrayList<String> listOfFieldsToFilter = decideFieldsToFilterForDoctorAuth();
+        //One-by-one - retrieve the fields into the response
+        for(String field : listOfFieldsToFilter){
+            filteredResponse.put(field,fieldsToFilter.get(field));
+        }
+        return filteredResponse;
+    }
+
+    private ArrayList<String> decideFieldsToFilterForDoctorAuth() {
+        ArrayList<String> decision = new ArrayList<String>();
+        decision.add("first_name");
+        decision.add("last_name");
+        decision.add("community_member_id");
+        decision.add("external_id");
+        //TODO - More fields?
+        //decision.add("medical_condition");
+        //...
+        //...
+        return decision;
+    }
+
 
     public HashMap<String,String> regDetailsRequest(HashMap<String,String> request) {
 
         String regID = request.get("regID");
         int userType = Integer.parseInt(request.get("userType"));
-
         //generate the data to be sent
         return establishRequestParams(userType,regID);
     }
@@ -49,5 +74,4 @@ public class RegRequest_V1 implements IRegRequest_model {
         response.put("SendToRegID",regID);
         return response;
     }
-
 }
