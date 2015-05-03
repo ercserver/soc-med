@@ -279,16 +279,31 @@ public class DbComm_V1 implements IDbComm_model {
                 // for patient user-gets his doctor's license
                 if(userType == 0)
                 {
-                    rs = statement.executeQuery("SELECT DISTINCT * FROM " + "P_CommunityMembers INNER JOIN "
-                            + "P_Patients ON P_CommunityMembers.community_member_id=P_Patients.community_member_id "
-                            + "INNER JOIN P_Supervision ON P_Patients.patient_id=P_Supervision.patient_id "
-                            + "INNER JOIN P_Doctors ON P_Supervision.doctor_id=P_Doctors.doctor_id " +
-                            "INNER JOIN MembersLoginDetails ON P_CommunityMembers.community_member_id=MembersLoginDetails.community_member_id " +
-                            "WHERE " + conditions + " AND P_Supervision.date_to IS NULL");
-                    if((rs.next()) && (rs.getObject("doc_license_number") != null))
-                        user.put("doc_license_number", rs.getObject("doc_license_number").toString());
-                    else
-                        user.put("doc_license_number", "null");
+                    rs = statement.executeQuery("SELECT DISTINCT P_Doctors.doc_license_number as sup,doc1.doc_license_number as pre,doc2.doc_license_number as dia FROM P_CommunityMembers INNER JOIN \n" +
+                            "P_Patients ON P_CommunityMembers.community_member_id=P_Patients.community_member_id \n" +
+                            "INNER JOIN P_Supervision ON P_Patients.patient_id=P_Supervision.patient_id\n" +
+                            "  INNER JOIN P_Prescriptions ON P_Patients.patient_id=P_Prescriptions.patient_id\n" +
+                            "  INNER JOIN P_Diagnosis ON P_Patients.patient_id=P_Diagnosis.patient_id\n" +
+                            "  INNER JOIN P_Doctors ON P_Supervision.doctor_id=P_Doctors.doctor_id\n" +
+                            "  INNER JOIN P_Doctors as doc1 ON P_Prescriptions.doctor_id=doc1.doctor_id\n" +
+                            "  INNER JOIN P_Doctors as doc2 ON P_Diagnosis.doctor_id=doc2.doctor_id\n" +
+                            "  INNER JOIN MembersLoginDetails ON P_CommunityMembers.community_member_id=MembersLoginDetails.community_member_id \n" +
+                            "WHERE " + conditions + " and P_Supervision.date_to is null");
+                    if(rs.next())
+                    {
+                        if(rs.getObject("sup") != null)
+                        user.put("P_supervision.doc_license_number", rs.getObject("sup").toString());
+                        else
+                            user.put("P_supervision.doc_license_number", "null");
+                        if(rs.getObject("pre") != null)
+                            user.put("P_prescriptions.doc_license_number", rs.getObject("pre").toString());
+                        else
+                            user.put("P_prescriptions.doc_license_number", "null");
+                        if(rs.getObject("dia") != null)
+                            user.put("P_diagnosis.doc_license_number", rs.getObject("dia").toString());
+                        else
+                            user.put("P_diagnosis.doc_license_number", "null");
+                    }
                 }
                 return user;
             }

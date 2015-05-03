@@ -9,9 +9,12 @@ import registrationModule.src.model.RegVerify_V2;
 import java.util.HashMap;
 
 */
+
+import registrationModule.src.model.RegVerify_V2;
+
 /**
  * Created by User on 16/04/2015.
- *//*
+ */
 
 public class ShmulikTest {
     public static void main(String[] args) {
@@ -26,4 +29,4 @@ public class ShmulikTest {
         //v.resendMail(1002);
     }
 }
-*/
+
