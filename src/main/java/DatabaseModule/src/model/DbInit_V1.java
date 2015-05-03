@@ -16,7 +16,6 @@ public class DbInit_V1 implements IDbInit_model {
     static final private String PASS = "saaccount";
     private static Connection connection = null;
     private static Statement statement = null;
-    private static String SCHEMA = "Ohad";
 
     public  void initializeAndConnect()
     {
@@ -309,7 +308,7 @@ public class DbInit_V1 implements IDbInit_model {
             createMedicalPersonnelDBOrganizationTypes();
             createMedicalPersonnelDBSpecifalization();
             createMedicalPesonnelDBOrganizations();
-            createMedicalPesonnelDBMedicalPersonnel();
+            //createMedicalPesonnelDBMedicalPersonnel();
             createMedicalPersonnelDBCertification();
             createMedicalPesonnelDBPositions();
             createMedicalPesonnelDBAffiliation();
@@ -433,9 +432,9 @@ public class DbInit_V1 implements IDbInit_model {
                 statement.executeUpdate("CREATE TABLE MP_Certification " +
                         "(certification_internal_id INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
                         " certification_external_id INTEGER not NULL, " +
-                        " medical_personnel_id INTEGER not NULL FOREIGN KEY REFERENCES MP_MedicalPersonnel(medical_personnel_id), " +
-                        " c_date_from DATE not NULL DEFAULT current_timestamp, " +
-                        " c_date_to DATE , " +
+                        " medical_personnel_id INTEGER not NULL FOREIGN KEY REFERENCES P_doctors(doctor_id), " +
+                        " date_from DATE not NULL DEFAULT current_timestamp, " +
+                        " date_to DATE , " +
                         " specialization_id INTEGER not NULL FOREIGN KEY REFERENCES MP_Specialization(specialization_id))");
             }
         }
@@ -455,7 +454,7 @@ public class DbInit_V1 implements IDbInit_model {
         }
     }
 
-    private  void createMedicalPesonnelDBMedicalPersonnel()
+    /*private  void createMedicalPesonnelDBMedicalPersonnel()
     {
         ResultSet rs = null;
         try
@@ -500,7 +499,7 @@ public class DbInit_V1 implements IDbInit_model {
                 catch (Exception e) {e.printStackTrace();}
             }
         }
-    }
+    }*/
 
     private  void createMedicalPesonnelDBAffiliation()
     {
@@ -515,12 +514,12 @@ public class DbInit_V1 implements IDbInit_model {
             if(!rs.next())
             {
                 statement.executeUpdate("CREATE TABLE MP_Affiliation " +
-                        "(type_history_num INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
+                        "(affiliation_num INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
                         " organization_id INTEGER not NULL FOREIGN KEY REFERENCES MP_Organizations(organization_id), " +
-                        " medical_personnel_id INTEGER not NULL FOREIGN KEY REFERENCES MP_MedicalPersonnel(medical_personnel_id), " +
+                        " medical_personnel_id INTEGER not NULL FOREIGN KEY REFERENCES P_Doctors(doctor_id), " +
                         " position_num INTEGER not NULL FOREIGN KEY REFERENCES MP_Positions(position_num), " +
-                        " a_date_from DATETime not NULL DEFAULT current_timestamp, " +
-                        " a_date_to DATETime)");
+                        " date_from DATETime not NULL DEFAULT current_timestamp, " +
+                        " date_to DATETime)");
             }
         }
         // There was a fault with the connection to the server or with SQL
