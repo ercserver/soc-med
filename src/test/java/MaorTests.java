@@ -9,9 +9,9 @@ public class MaorTests {
     public static void main(String[] args) {
         RegVerify_V2 r = new RegVerify_V2();
         HashMap<String,String> h = new HashMap<String,String>();
-        h.put("CommunityMemberID", "1002");
-        h.put("Password", "1234");
-        h.put("EmailAddress", "ercserver@gmail.com");
+        h.put("community_member_id", "1002");
+        h.put("password", "1234");
+        h.put("email_address", "ercserver@gmail.com");
         System.out.println(r.verifySignIn(h).toString());
     }
 }
