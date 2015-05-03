@@ -334,10 +334,44 @@ public class RegVerify_V2 implements IRegVerify_model {
         }
     }
 
+    public HashMap<String, String> generateDataForAuthD(String access, String message, String subject, int authMethod) {
+        //Generate data for the authentication object to be created according to the authentication method
+        switch(authMethod){
+            case 0:{
+                return generateVerificationForMailD(access, message, subject);
+            }
+            case 1:{
+                return generateVerificationForSMSD(access, message, subject);
+            }/*
+            case x:{
+                return generateVerificationForXXXXX();
+            }
+            */
+            default:{
+                return null;
+            }
+        }
+    }
+
+    //TODO - Not for prototype for future releases only
+    private HashMap<String, String> generateVerificationForSMSD(String access, String message, String subject) {
+        return null;
+    }
+
+    private HashMap<String,String> generateVerificationForMailD(String access, String message, String subject)
+    {
+        HashMap<String,String> generatedAuthMail = new HashMap<String, String>();
+        generatedAuthMail.put("Subject", subject);
+        generatedAuthMail.put("Message", message);
+        generatedAuthMail.put("Email", access);
+
+        return generatedAuthMail;
+    }
+
     private HashMap<String,String> generateVerificationForMail(HashMap<String, String> data){
-        String firstName = data.get("FirstName");
-        String lastName = data.get("LastName");
-        String emailAddress = data.get("EmailAddress");
+        String firstName = data.get("first_name");
+        String lastName = data.get("last_name");
+        String emailAddress = data.get("email_address");
         String emailMessage = "Dear " + firstName + "  " + lastName + ",\n";
         String emailSubject = "Confirm your email for Socmed App";
 

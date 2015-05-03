@@ -128,17 +128,23 @@ public class RegController_V1 implements IRegController {
                 String emailAddress = mail.get(0);
                 String emailMessage = mail.get(1);
                 String subject =   mail.get(2);
-                sendMail(emailAddress,emailMessage,
+                sendMailD(emailAddress,emailMessage,
                         subject);
             }
         }
         return null;
     }
 
-    /*private void sendMail(String emailAddress, String emailMessage, String subject) {
-        commController.setCommToMail(emailAddress, emailMessage, subject);
-        commController.sendEmail();
-    }*/
+    private void sendMailD(String emailAddress, String emailMessage, String subject) {
+        int authMethod = dbController.getAuthenticationMethod("Israel");
+        HashMap<String, String> mail =  verification.generateDataForAuthD(emailAddress, emailMessage, subject, authMethod);
+        ICommController commAuthMethod = new ModelsFactory().determineCommControllerVersion();
+        commAuthMethod.setCommOfficial(mail,authMethod);
+        //Communicate authorization (email/sms/...)
+        commAuthMethod.sendMessage();
+        //commController.setCommToMail(emailAddress, emailMessage, subject);
+        //commController.sendEmail();
+    }
 
     private void changeStatusToVerifyDetailAndSendToApp(int cmid, String code,
                                                         ArrayList<String> target,
@@ -162,7 +168,7 @@ public class RegController_V1 implements IRegController {
                 int authMethod = dbController.getAuthenticationMethod("Israel");
                 HashMap<String, String> mail =  verification.generateDataForAuth(details, authMethod);
                 ICommController commAuthMethod = new ModelsFactory().determineCommControllerVersion();
-                commAuthMethod.setCommOfficial(data,authMethod);
+                commAuthMethod.setCommOfficial(mail,authMethod);
                 //Communicate authorization (email/sms/...)
                 commAuthMethod.sendMessage();
                /* String emailAddress = mail.get(0);
