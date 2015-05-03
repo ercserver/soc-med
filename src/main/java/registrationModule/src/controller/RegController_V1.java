@@ -235,10 +235,12 @@ public class RegController_V1 implements IRegController {
     }
 
     private boolean checkCmidAndPassword(String password, int cmid) {
+        /*
         HashMap<String,String> member = new HashMap<String,String>();
         member.put("P_CommunityMembers.community_member_id",new Integer(cmid).toString());
-        HashMap<String,String> data = dbController.getUserByParameter(member);
-        String email = data.get("email_address");
+        HashMap<String,String> data = dbController.getUserByParameter(member);*/
+        HashMap<String,String> data = verification.getUserByCmid(cmid);
+         String email = data.get("email_address");
         data = dbController.getLoginDetails("'" +email + "'");
         String pas = data.get("password");
         return pas.equals(password);
