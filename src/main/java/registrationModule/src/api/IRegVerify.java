@@ -13,7 +13,7 @@ public interface IRegVerify {
 
     Object resendMail(HashMap<String, String> data);
 
-    //Object resendAuth(int cmid);//wasn't in shmulik's file
+    Object resendAuth(HashMap<String, String> data);
 
     // if doctor reject we send reason in string reason
     //else we send null

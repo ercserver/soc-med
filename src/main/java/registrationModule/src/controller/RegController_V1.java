@@ -128,7 +128,7 @@ public class RegController_V1 implements IRegController {
                 String emailAddress = mail.get(0);
                 String emailMessage = mail.get(1);
                 String subject =   mail.get(2);
-                sendMailD(emailAddress,emailMessage,
+                sendMailD(emailAddress, emailMessage,
                         subject);
             }
         }
@@ -235,10 +235,12 @@ public class RegController_V1 implements IRegController {
     }
 
     private boolean checkCmidAndPassword(String password, int cmid) {
+        /*
         HashMap<String,String> member = new HashMap<String,String>();
         member.put("P_CommunityMembers.community_member_id",new Integer(cmid).toString());
-        HashMap<String,String> data = dbController.getUserByParameter(member);
-        String email = data.get("email_address");
+        HashMap<String,String> data = dbController.getUserByParameter(member);*/
+        HashMap<String,String> data = verification.getUserByCmid(cmid);
+         String email = data.get("email_address");
         data = dbController.getLoginDetails("'" +email + "'");
         String pas = data.get("password");
         return pas.equals(password);
@@ -275,12 +277,27 @@ public class RegController_V1 implements IRegController {
         return commController.sendResponse();
     }
 
-/*
+
     //TODO - Shmulit: need to implement resending of email or SMS
-    public Object resendAuth(int cmid){
-        return verification.resendAuth(cmid);
+    public Object resendAuth(HashMap<String, String> data)
+    {
+        int authMethod = dbController.getAuthenticationMethod("Israel");
+        switch(authMethod)
+        {
+            case 0:
+                return resendMail(data);
+            case 1:
+                return resendSMS(data);
+            default:
+                return null;
+        }
     }
-*/
+
+    //TODO- Not for prototype for future releases
+    private Object resendSMS(HashMap<String, String> data) {
+        return null;
+    }
+
     public Object getWaitingForDoctor(int doctorCmid) {
         //Pull from the db the list of patient that are pending the doctor's confirmation
         ArrayList<String> listOfPatients = dbController.getWaitingPatientsCMID(doctorCmid);

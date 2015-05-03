@@ -284,8 +284,11 @@ public class DbComm_V1 implements IDbComm_model {
                             + "INNER JOIN P_Supervision ON P_Patients.patient_id=P_Supervision.patient_id "
                             + "INNER JOIN P_Doctors ON P_Supervision.doctor_id=P_Doctors.doctor_id " +
                             "INNER JOIN MembersLoginDetails ON P_CommunityMembers.community_member_id=MembersLoginDetails.community_member_id " +
-                            "WHERE " + conditions + " ORDER BY " + "P_StatusLog.date_from");
-                    user.put("doc_license_number", rs.getObject("doc_license_number").toString());
+                            "WHERE " + conditions + " AND P_Supervision.date_to IS NULL");
+                    if((rs.next()) && (rs.getObject("doc_license_number") != null))
+                        user.put("doc_license_number", rs.getObject("doc_license_number").toString());
+                    else
+                        user.put("doc_license_number", "null");
                 }
                 return user;
             }
