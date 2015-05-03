@@ -21,15 +21,11 @@ public interface IRegVerify_model {
 
     HashMap<String, String> getUserByCmid(int cmid);
     HashMap<String, String> getUserByMail(String mail);
-    void UpdateUserMail(String mail);
-    ArrayList<String> generateMailForVerificationEmail(HashMap<String, String> details);
-    HashMap<Integer,HashMap<String,String>> BuildResponeWithOnlyRequestID(
-            HashMap<String, String> details,
-            String code);
+
+
     boolean checkCondForResendMail(HashMap<String, String> details, String email, int cmid);
 
     /***********for func responeDoctor********************/
-    HashMap<Integer,HashMap<String,String>> buildRejectMessage(int cmid, String Reason);
     HashMap<Integer,HashMap<String,String>> proccesOfOkMember(int cmid);
 
     /***********for func SignIn********************/
@@ -38,7 +34,7 @@ public interface IRegVerify_model {
     /***********for func responeToDoctorIfHeAccept********************/
     int checkIfDoctorIsaccept(String email);
 
-    //Object resendAuth(int cmid);//TODO////need to get mail also!!
+
 
     ArrayList<String> verifyFilledForm(HashMap<String, String> filledForm);
 
