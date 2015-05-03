@@ -12,12 +12,14 @@ import java.util.HashMap;
  */
 public class ShmulikTest {
     public static void main(String[] args) {
-        HashMap<String,String> h = new HashMap<String,String>();
+       /* HashMap<String,String> h = new HashMap<String,String>();
         h.put("community_member_id","1002");
         h.put("password","1234");
         h.put("reg_id","0");//h.put("RegID","adasdfasfas");
         RegController_V1 v = new RegController_V1();
-        v.verifyDetail(h);
+        v.verifyDetail(h);*/
+        RegVerify_V2 v2 = new  RegVerify_V2();
+        v2.getUserByCmid(1002);
         //v.resendMail(1002);
     }
 }
