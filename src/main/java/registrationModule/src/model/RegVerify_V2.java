@@ -383,8 +383,8 @@ public class RegVerify_V2 implements IRegVerify_model {
         }
     }
 
-    //TODO - Not for prototype for future releases only
-    private HashMap<String, String> generateVerificationForSMSD(String access, String message, String subject) {
+    //TODO- Not for prototype for future releases
+    private HashMap<String, String>  generateVerificationForSMSD(String access, String message, String subject) {
         return null;
     }
 
