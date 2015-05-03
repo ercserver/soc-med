@@ -45,7 +45,7 @@ public class RegVerify_V2 implements IRegVerify_model {
 
     public HashMap<String,String> getPatientAndFillterDataToSendDoctor(int cmid) {
         HashMap<String, String> member = new HashMap<String, String>();
-        member.put("P_CommunityMembers.CommunityMemberID", new Integer(cmid).toString());
+        member.put("P_CommunityMembers.community_member_id", new Integer(cmid).toString());
         HashMap<String, String> responseToDoctor = dbController.getUserByParameter(member);
         responseToDoctor.put("RequestID", "verifyPatient");
         return filterDataForVerification(responseToDoctor);
@@ -63,9 +63,9 @@ public class RegVerify_V2 implements IRegVerify_model {
 
     private ArrayList<String> generateMailForVerificationDoctor(HashMap<String, String> memberDetails,
                                                                HashMap<String, String> doctorsAuthorizer){
-        String firstName = memberDetails.get("FirstName");
-        String lastName = memberDetails.get("LastName");
-        String licenseNumber = memberDetails.get("LicenseNumber");
+        String firstName = memberDetails.get("first_name");
+        String lastName = memberDetails.get("last_name");
+        String licenseNumber = memberDetails.get("license_number");
 
         String emailAddress = doctorsAuthorizer.get("Email");
         String emailMessage  = "Dear authorizer,\n" +
@@ -94,7 +94,7 @@ public class RegVerify_V2 implements IRegVerify_model {
     }
 
     public boolean ifTypeISPatientOrGuardian(String code) {
-        if (code.equals("Patient") || code.equals("Guardian"))
+        if (code.equals("patient") || code.equals("guardian"))
             return true;
         else
             return false;
@@ -104,33 +104,35 @@ public class RegVerify_V2 implements IRegVerify_model {
     {
         HashMap<String, String> filter = new  HashMap<String, String>();
         HashMap<String,String> whereConditions =  new HashMap<String, String>();
-        whereConditions.put("MedicalConditionID", data.get("MedicalConditionID"));
+        whereConditions.put("medical_condition_id", data.get("medical_condition_id"));
 
-        String medicalConditionDescription = dbController.getRowsFromTable(whereConditions,"medicalConditions").get(1)
-                .get("MedicalConditionDescription");
+        String medicalConditionDescription =
+                dbController.getRowsFromTable(whereConditions,"medical_conditions").get(1)
+                .get("medical_condition_description");
 
-        filter.put("MedicalConditionDescription", medicalConditionDescription);
+        filter.put("medical_condition_description", medicalConditionDescription);
 
 
 
 
         HashMap<String,String> whereConditions2 =  new HashMap<String, String>();
-        whereConditions.put("MedicationNum", data.get("MedicationNum"));
+        whereConditions.put("medication_num", data.get("medication_num"));
 
-        String medicationName = dbController.getRowsFromTable(whereConditions2,"Medications").get(1)
-                .get("MedicationName");
+        String medicationName =
+                dbController.getRowsFromTable(whereConditions2,"medications").get(1)
+                .get("medication_name");
 
-        filter.put("MedicationName", medicationName);
+        filter.put("medication_name", medicationName);
 
 
 
         for (String key : data.keySet()) {
-            if (key == "FirstName" || key == "LastName" || key == "Street" ||
-                    key ==  "HomePhoneNumber" || key == "EmailAddress"
-                    || key == "HouseNumber" || key == "ContactPhone" ||
-                    key == "ZipCode" || key == "BirthDate" || key == "City" ||
-                    key == "MobilePhoneNumber" || key == "State"
-                    || key == "Gender"  || key == "Dosage")
+            if (key == "first_name" || key == "last_name" || key == "street" ||
+                    key ==  "home_phone_number" || key == "email_address"
+                    || key == "house_number" || key == "contact_phone" ||
+                    key == "zip_code" || key == "birth_date" || key == "city" ||
+                    key == "mobile_phone_number" || key == "state"
+                    || key == "gender"  || key == "dosage")
                 filter.put(key,data.get(key));
 
         }
@@ -153,22 +155,40 @@ public class RegVerify_V2 implements IRegVerify_model {
 
 
     public boolean statusIsEqualTo(String s,HashMap <String,String> details) {
-        return details.get("StatusNum").equals(s);
+        return details.get("status_num").equals(s);
     }
 
     /***********for func resendMail*********************/
     public HashMap<String, String> getUserByCmid(int cmid) {
 
         HashMap<String, String> member = new HashMap<String, String>();
-        member.put("P_CommunityMembers.CommunityMemberID", new Integer(cmid).toString());
+        member.put("P_CommunityMembers.community_member_id", new Integer(cmid).toString());
         HashMap<String, String> details = dbController.getUserByParameter(member);
         return details;
     }
 
+    public HashMap<String, String> getUserByMail(String mail) {
+
+        HashMap<String, String> member = new HashMap<String, String>();
+        member.put("P_CommunityMembers.email_address", "'" + mail + "'");
+        HashMap<String, String> details = dbController.getUserByParameter(member);
+        return details;
+    }
+
+
+    public void UpdateUserMail(String mail) {
+
+        HashMap<String, String> member = new HashMap<String, String>();
+        member.put("P_CommunityMembers.email_address", "'" + mail + "'");
+        dbController.updateUserDetails(member);
+    }
+
+
+
     public ArrayList<String> generateMailForVerificationEmail(HashMap<String, String> details){
-        String firstName = details.get("FirstName");
-        String lastName = details.get("LastName");
-        String emailAddress = details.get("EmailAddress");
+        String firstName = details.get("first_name");
+        String lastName = details.get("last_name");
+        String emailAddress = details.get("email_address");
         String emailMessage = "Dear " + firstName + "  " + lastName + ",\n";
         String subject = "Confirm your email for Socmed App";
 
@@ -180,6 +200,16 @@ public class RegVerify_V2 implements IRegVerify_model {
         return emailDetails;
     }
 
+
+    public boolean checkCondForResendMail(HashMap<String, String> details, String email, int cmid) {
+        if (details.get("status_num").equals("verifying email"))
+            return false;
+        if (getUserByMail(email) == null)
+            return false;
+        else
+            return true;
+    }
+
     /***********for func responeDoctor********************/
     public HashMap<Integer,HashMap<String,String>> buildRejectMessage(int cmid, String Reason) {
         dbController.updateStatus(cmid, "'verifying details'", "'active'");
@@ -187,7 +217,7 @@ public class RegVerify_V2 implements IRegVerify_model {
                 new HashMap<Integer,HashMap<String,String>>();
         HashMap<String,String> response = new HashMap<String, String>();
         response.put("RequestID", "Reject");
-        response.put("Reason", Reason);
+        response.put("reason", Reason);
         responseToPatient.put(1, response);
         return responseToPatient;
     }
@@ -214,7 +244,7 @@ public class RegVerify_V2 implements IRegVerify_model {
 
     private String getState(int cmid) {
         HashMap<String,String> member = new HashMap<String,String>();
-        member.put("P_CommunityMembers.CommunityMemberID",new Integer(cmid).toString());
+        member.put("P_CommunityMembers.community_member_id",new Integer(cmid).toString());
         HashMap<String,String> details = dbController.getUserByParameter(member);
         return details.get("State");
     }
@@ -231,7 +261,7 @@ public class RegVerify_V2 implements IRegVerify_model {
 
     private HashMap<String,String> getFrequency(String code) {
         HashMap<String,String> kindOfFrequency = new HashMap<String,String>();
-        kindOfFrequency.put("Name",code);
+        kindOfFrequency.put("name",code);
         HashMap<Integer,HashMap<String,String>> freq
                 = dbController.getFrequency(kindOfFrequency);
         for (Map.Entry<Integer,HashMap<String,String>> objs : freq.entrySet()){
@@ -267,11 +297,11 @@ public class RegVerify_V2 implements IRegVerify_model {
     public int checkIfDoctorIsaccept(String email)
     {
         HashMap<String, String> member = new HashMap<String, String>();
-        member.put("P_CommunityMembers.EmailAddress", email);
+        member.put("P_CommunityMembers.email_address", email);
         HashMap<String, String> details = dbController.getUserByParameter(member);
-        if (details.get("StatusNum").equals("reject by authentication"))
+        if (details.get("status_num").equals("reject by authentication"))
             return 0;
-        if (details.get("StatusNum").equals("active"))
+        if (details.get("status_num").equals("Active"))
             return 1;
         else
             // his status equal to verify email or details
@@ -311,7 +341,7 @@ public class RegVerify_V2 implements IRegVerify_model {
 
     private boolean doesDoctorExist(String doctorID) {
         HashMap<String,String> whereConditions = new HashMap<String, String>();
-        whereConditions.put("DoctorID", doctorID);
+        whereConditions.put("doctor_id", doctorID);
         return (null != dbController.getRowsFromTable(whereConditions, "'Doctors'"));
     }
 

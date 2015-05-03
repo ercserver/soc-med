@@ -113,9 +113,9 @@ public class RegController_V1 implements IRegController {
 
     //do
     public Object verifyDetail(HashMap<String, String> data) {
-        int cmid = Integer.parseInt(data.get("CommunityMemberID"));
-        String password = data.get("Password");
-        String regid = data.get("RegID");
+        int cmid = Integer.parseInt(data.get("community_member_id"));
+        String password = data.get("password");
+        String regid = data.get("reg_id");
         //String code = data.get("RequestID");
         ArrayList<String> target = new ArrayList<String>();
         target.add(regid);
@@ -157,25 +157,26 @@ public class RegController_V1 implements IRegController {
     }
 
     public Object resendMail(HashMap<String, String> data) {
-        int cmid = Integer.parseInt(data.get("CommunityMemberID"));
-        String password = data.get("Password");
-        String regid = data.get("RegID");
+        int cmid = Integer.parseInt(data.get("community_member_id"));
+        String password = data.get("password");
+        String regid = data.get("reg_id");
+        String email = data.get("email_address");
         ArrayList<String> target = new ArrayList<String>();
         target.add(regid);
         if (checkCmidAndPassword(password, cmid)) {
             HashMap<String,String> details = verification.getUserByCmid(cmid);
-            if (details.get("StatusNum").equals("verifying email")) {
+            if (verification.checkCondForResendMail(details, email, cmid)) {
+                if (!details.get("email_address").equals(email))
+                {
+                    verification.UpdateUserMail(email);
+                }
                 int authMethod = dbController.getAuthenticationMethod("Israel");
                 HashMap<String, String> mail =  verification.generateDataForAuth(details, authMethod);
                 ICommController commAuthMethod = new ModelsFactory().determineCommControllerVersion();
                 commAuthMethod.setCommOfficial(mail,authMethod);
                 //Communicate authorization (email/sms/...)
                 commAuthMethod.sendMessage();
-               /* String emailAddress = mail.get(0);
-                String emailMessage = mail.get(1);
-                String subject =   mail.get(2);
-                sendMail(emailAddress,emailMessage,
-                        subject);*/
+
             }
             else
             {
@@ -189,6 +190,9 @@ public class RegController_V1 implements IRegController {
         return null;
     }
 
+
+
+
     private boolean ifTypeISPatientOrGuardian(String regid) {
         return !regid.equals("0");
     }
@@ -197,10 +201,10 @@ public class RegController_V1 implements IRegController {
     public Object responeByDoctor(HashMap<String, String> data) {
         HashMap<Integer,HashMap<String,String>> response =
                 new HashMap<Integer,HashMap<String,String>>();
-        int cmid = Integer.parseInt(data.get("CommunityMemberID"));
-        String reason = data.get("Reason");
-        String password = data.get("Password");
-        String regid = data.get("RegID");
+        int cmid = Integer.parseInt(data.get("community_member_id"));
+        String reason = data.get("reason");
+        String password = data.get("password");
+        String regid = data.get("reg_id");
         ArrayList<String> target = new ArrayList<String>();
         target.add(regid);
         if (checkCmidAndPassword(password, cmid)) {
@@ -232,11 +236,11 @@ public class RegController_V1 implements IRegController {
 
     private boolean checkCmidAndPassword(String password, int cmid) {
         HashMap<String,String> member = new HashMap<String,String>();
-        member.put("P_CommunityMembers.CommunityMemberID",new Integer(cmid).toString());
+        member.put("P_CommunityMembers.community_member_id",new Integer(cmid).toString());
         HashMap<String,String> data = dbController.getUserByParameter(member);
-        String email = data.get("EmailAddress");
+        String email = data.get("email_address");
         data = dbController.getLoginDetails("'" +email + "'");
-        String pas = data.get("Password");
+        String pas = data.get("password");
         return pas.equals(password);
     }
 
@@ -245,11 +249,11 @@ public class RegController_V1 implements IRegController {
         HashMap<Integer,HashMap<String,String>> response = new
                 HashMap<Integer,HashMap<String,String>>();
 
-        String email = details.get("EmailAddress");
+        String email = details.get("email_address");
         //reject
         int type = verification.checkIfDoctorIsaccept(email);
         if (type == 0) {
-            int cmid = Integer.parseInt(details.get("CommunityMemberID"));
+            int cmid = Integer.parseInt(details.get("community_member_id"));
             dbController.deleteUser(cmid);
             response = verification.buildRejectMessage(cmid, "reject by authentication");
             commController.setCommToUsers(response, null, false);
@@ -271,11 +275,12 @@ public class RegController_V1 implements IRegController {
         return commController.sendResponse();
     }
 
+/*
     //TODO - Shmulit: need to implement resending of email or SMS
     public Object resendAuth(int cmid){
         return verification.resendAuth(cmid);
     }
-
+*/
     public Object getWaitingForDoctor(int doctorCmid) {
         //Pull from the db the list of patient that are pending the doctor's confirmation
         ArrayList<String> listOfPatients = dbController.getWaitingPatientsCMID(doctorCmid);
