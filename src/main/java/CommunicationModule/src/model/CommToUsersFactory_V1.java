@@ -14,7 +14,7 @@ public class CommToUsersFactory_V1 implements ICommToUsersFactory {
         //If we communicate to EMS or Doctor website
         if (null == target || target.get(0).equals("0"))
         {
-            return new CommToUsers_V1(data);
+            return new CommToUsers_V1(data, target);
         }
         //If we initiate comm to GIS (or other serverr)
         else if(initiatedComm) {
