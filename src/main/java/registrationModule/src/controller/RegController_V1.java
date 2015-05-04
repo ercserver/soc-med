@@ -187,6 +187,7 @@ public class RegController_V1 implements IRegController {
     public Object responeByDoctor(HashMap<String, String> data) {
         HashMap<Integer,HashMap<String,String>> response =
                 new HashMap<Integer,HashMap<String,String>>();//TODO - SHMULIK THIS VARIABLE IS NEVER USED
+
         int cmid = Integer.parseInt(data.get("community_member_id"));
         String reason = data.get("reason");
         String password = data.get("password");

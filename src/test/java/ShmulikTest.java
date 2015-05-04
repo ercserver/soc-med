@@ -34,9 +34,9 @@ public class ShmulikTest {
         h = v2.getUserByCmid(1002);
         RegController_V1 v = new RegController_V1();
         v2.changeStatusToVerifyDetailAndSendToApp(1002,h);*/
-        v2.proccesOfOkMember(1002);
+        //v2.proccesOfOkMember(1002);
         //v2.convertCodeToDefaultCallerSettings("0");
-
+        //v2.checkCondForResendMail(details,, cmid)
 
 
 //        test3();
