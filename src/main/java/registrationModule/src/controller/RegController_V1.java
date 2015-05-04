@@ -29,10 +29,9 @@ public class RegController_V1 implements IRegController {
 
     public Object getRegDetails(HashMap<String,String> request) {
         //generate data to send
-        HashMap<Integer,HashMap<String,String>> dataToSend = new HashMap<Integer,HashMap<String,String>>();
-        HashMap<String,String> data = registrator.regDetailsRequest(request);
-        ArrayList<String> sendTo = sendTo(data);
-        dataToSend.put(1, data);
+        HashMap<Integer,HashMap<String,String>> dataToSend =
+                dbController.getRegistrationFields(Integer.parseInt(request.get("userType")));
+        ArrayList<String> sendTo = sendTo(request);
         //determine how to send the data
         commController.setCommToUsers(dataToSend, sendTo, false);
         //send the data
@@ -104,7 +103,7 @@ public class RegController_V1 implements IRegController {
         message += "Please correct the above fields and re-submit the registrations form.";
         return message;
     }
-
+    //TODO - Sendto always returns one string (or null)...An ArrayList here is probably a bad implementation =\
     private ArrayList<String> sendTo(HashMap<String,String> data){
         String regID = data.get("reg_id");
         ArrayList<String> sendTo = null;
