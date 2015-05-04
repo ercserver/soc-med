@@ -16,7 +16,7 @@ public class CommToUsersFactory_V1 implements ICommToUsersFactory {
         {
             return new CommToUsers_V1(data);
         }
-        //If we initiate comm to GIS (or other server)
+        //If we initiate comm to GIS (or other serverr)
         else if(initiatedComm) {
             return new InitiatedHTTPCommunication_V1(data,target);
         }
