@@ -334,17 +334,20 @@ public class RegVerify_V2 implements IRegVerify_model {
 
     public HashMap<String, String> convertCodeToDefaultCallerSettings(String code) {
         HashMap<String,String> defalut = new HashMap<String,String>();
-        defalut.put("default_caller", "'" + code + "'");
+        defalut.put("column_name","'default_caller'");
+        defalut.put("enum_code", "'" + code + "'");
         defalut.put("table_name","'DefaultCallerSettings'");
-        HashMap<Integer, HashMap<String, String>> response =
+        HashMap<Integer, HashMap<String, String>> data =
                 dbController.getFromEnum(defalut);
-        /*
-        System.out.println(response);
-        for (Map.Entry<Integer,HashMap<String,String>> objs : response.entrySet()){
+
+        //System.out.println(response);
+        for (Map.Entry<Integer,HashMap<String,String>> objs : data.entrySet()){
+            HashMap<String,String> response = new HashMap<String,String>();
             HashMap<String,String> obj = objs.getValue();
-            return obj;
+            response.put("default_caller",obj.get("enum_value"));
+            return response;
         }
-        */
+
         return null;
     }
 
