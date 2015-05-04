@@ -192,20 +192,19 @@ public class RegVerify_V2 implements IRegVerify_model {
         HashMap<String,String> response = new HashMap<String, String>();
         response.put("RequestID", "Active");
 
-        HashMap<String, String> a = getFrequency("'location_frequency'");
-        HashMap<String, String> b = getFrequency("'connect_server_frequency'");
-        HashMap<String, String> c = getFrequency("'times_to_conect_to_serve'");
-
-        HashMap<String, String> d = getDefaultInEmergency(getState(cmid));
-
-
-        response.putAll(getFrequency("'location_frequency'"));
-        response.putAll(getFrequency("'connect_server_frequency'"));
-        response.putAll(getFrequency("'times_to_conect_to_serve'"));
-
-        response.putAll(getDefaultInEmergency(getState(cmid)));
-
         responseToPatient.put(1, response);
+        responseToPatient.put(2,getFrequency("'location_frequency'"));
+        responseToPatient.put(3,getFrequency("'connect_server_frequency'"));
+        responseToPatient.put(4,getFrequency("'times_to_conect_to_serve'"));
+
+        responseToPatient.put(5, getDefaultInEmergency(getState(cmid)));
+
+        System.out.println(responseToPatient.get(1));
+        System.out.println(responseToPatient.get(2));
+        System.out.println(responseToPatient.get(3));
+        System.out.println(responseToPatient.get(4));
+        System.out.println(responseToPatient.get(5));
+
         return responseToPatient;
     }
 
