@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Created by NAOR on 05/04/2015.
+ * Created by NAOR on 05/04/2015..
  */
 public class InitiatedHTTPCommunication_V1 extends CommToUsers_V1 {
 
