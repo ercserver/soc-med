@@ -29,4 +29,5 @@ public interface IDbController  extends IDbInit, IDbComm {
     void initializeAndConnect();
     void deleteUser(int cmid);
     int getUserType(String cmid);
+    HashMap<Integer,HashMap<String,String>> getRegIDsOfUser(int cmid);
 }
