@@ -576,7 +576,7 @@ public class DbComm_V1 implements IDbComm_model {
         return null;
     }
 
-    private void updateTable(String tableName, HashMap<String,String> whereConds,
+    public void updateTable(String tableName, HashMap<String,String> whereConds,
                              String columnToUpdate, Object newValue)
     {
         // Create the where clause

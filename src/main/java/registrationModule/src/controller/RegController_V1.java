@@ -287,7 +287,7 @@ public class RegController_V1 implements IRegController {
                     //if the user's email in the db isn't the same as specified in the request
                     if (!details.get("email_address").equals(email)) {
                         //change in the db
-                        updateUserMail(email);
+                        updateUserMail(email, cmid);
                         //change in the curr func
                         details.put("email_address",email);
                     }
@@ -390,10 +390,14 @@ public class RegController_V1 implements IRegController {
         return responseToPatient;
     }
 
-    private void updateUserMail(String mail) {
+    private void updateUserMail(String mail, int cmid) {
 
         HashMap<String, String> member = new HashMap<String, String>();
-        member.put("P_CommunityMembers.email_address", "'" + mail + "'");
+        member.put("email_address", "'" + mail + "'");
+        member.put("community_member_id", Integer.toString(cmid));
         dbController.updateUserDetails(member);
+        member.remove("email_address");
+        dbController.updateTable("MembersLoginDetails", member, "email_address", "'" + mail + "'");
+
     }
 }

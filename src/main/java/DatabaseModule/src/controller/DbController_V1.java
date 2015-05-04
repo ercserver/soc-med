@@ -129,4 +129,10 @@ public class DbController_V1 implements IDbController {
             }
         }
     }
+
+    public void updateTable(String tableName, HashMap<String,String> whereConds,
+                            String columnToUpdate, Object newValue)
+    {
+        DB_communicator.updateTable(tableName, whereConds, columnToUpdate, newValue);
+    }
 }
