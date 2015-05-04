@@ -16,7 +16,6 @@ public class DbInit_V1 implements IDbInit_model {
     static final private String PASS = "saaccount";
     private static Connection connection = null;
     private static Statement statement = null;
-    private static String SCHEMA = "Ohad";
 
     public  void initializeAndConnect()
     {
@@ -309,7 +308,7 @@ public class DbInit_V1 implements IDbInit_model {
             createMedicalPersonnelDBOrganizationTypes();
             createMedicalPersonnelDBSpecifalization();
             createMedicalPesonnelDBOrganizations();
-            createMedicalPesonnelDBMedicalPersonnel();
+            //createMedicalPesonnelDBMedicalPersonnel();
             createMedicalPersonnelDBCertification();
             createMedicalPesonnelDBPositions();
             createMedicalPesonnelDBAffiliation();
@@ -434,8 +433,8 @@ public class DbInit_V1 implements IDbInit_model {
                         "(certification_internal_id INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
                         " certification_external_id INTEGER not NULL, " +
                         " medical_personnel_id INTEGER not NULL FOREIGN KEY REFERENCES MP_MedicalPersonnel(medical_personnel_id), " +
-                        " c_date_from DATE not NULL DEFAULT current_timestamp, " +
-                        " c_date_to DATE , " +
+                        " date_from DATE not NULL DEFAULT current_timestamp, " +
+                        " date_to DATE , " +
                         " specialization_id INTEGER not NULL FOREIGN KEY REFERENCES MP_Specialization(specialization_id))");
             }
         }
@@ -469,20 +468,6 @@ public class DbInit_V1 implements IDbInit_model {
             {
                 statement.executeUpdate("CREATE TABLE MP_MedicalPersonnel " +
                         "(medical_personnel_id INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
-                        " external_id VARCHAR(25) not NULL, " +
-                        " external_id_type INTEGER not NULL, " +  //enum:0 for id, 1 for passport num
-                        " first_name VARCHAR(50) not NULL, " +
-                        " last_name VARCHAR(50) not NULL, " +
-                        " birthday_date DATE not NULL, " +
-                        " gender INTEGER not NULL, " +  //enum:0 for male, 1 for female
-                        " state VARCHAR(50) not NULL, " +
-                        " city VARCHAR(50) not NULL, " +
-                        " street VARCHAR(50) not NULL, " +
-                        " house_number INTEGER not NULL, " +
-                        " zip_code INTEGER, " +
-                        " home_phone_number VARCHAR(50), " +
-                        " mobile_phone_number VARCHAR(50) not NULL, " +
-                        " email_address VARCHAR(100) not NULL, " +
                         " community_member_id INTEGER not NULL FOREIGN KEY REFERENCES P_CommunityMembers(community_member_id))");
             }
         }
@@ -515,12 +500,12 @@ public class DbInit_V1 implements IDbInit_model {
             if(!rs.next())
             {
                 statement.executeUpdate("CREATE TABLE MP_Affiliation " +
-                        "(type_history_num INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
+                        "(affiliation_num INTEGER not NULL IDENTITY(1000,1) PRIMARY KEY, " +
                         " organization_id INTEGER not NULL FOREIGN KEY REFERENCES MP_Organizations(organization_id), " +
                         " medical_personnel_id INTEGER not NULL FOREIGN KEY REFERENCES MP_MedicalPersonnel(medical_personnel_id), " +
                         " position_num INTEGER not NULL FOREIGN KEY REFERENCES MP_Positions(position_num), " +
-                        " a_date_from DATETime not NULL DEFAULT current_timestamp, " +
-                        " a_date_to DATETime)");
+                        " date_from DATETime not NULL DEFAULT current_timestamp, " +
+                        " date_to DATETime)");
             }
         }
         // There was a fault with the connection to the server or with SQL

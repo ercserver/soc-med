@@ -1,3 +1,4 @@
+/*
 import DatabaseModule.src.model.DbComm_V1;
 import DatabaseModule.src.model.DbInit_V1;
 import org.json.JSONArray;
@@ -7,9 +8,14 @@ import registrationModule.src.model.RegVerify_V2;
 
 import java.util.HashMap;
 
+*/
+
+import registrationModule.src.model.RegVerify_V2;
+
 /**
  * Created by User on 16/04/2015.
  */
+
 public class ShmulikTest {
     public static void main(String[] args) {
         HashMap<String,String> h = new HashMap<String,String>();
@@ -23,3 +29,4 @@ public class ShmulikTest {
         //v.resendMail(1002);
     }
 }
+

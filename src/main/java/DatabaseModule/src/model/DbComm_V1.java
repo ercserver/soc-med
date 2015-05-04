@@ -278,16 +278,31 @@ public class DbComm_V1 implements IDbComm_model {
                 // for patient user-gets his doctor's license
                 if(userType == 0)
                 {
-                    rs = statement.executeQuery("SELECT DISTINCT * FROM " + "P_CommunityMembers INNER JOIN "
-                            + "P_Patients ON P_CommunityMembers.community_member_id=P_Patients.community_member_id "
-                            + "INNER JOIN P_Supervision ON P_Patients.patient_id=P_Supervision.patient_id "
-                            + "INNER JOIN P_Doctors ON P_Supervision.doctor_id=P_Doctors.doctor_id " +
-                            "INNER JOIN MembersLoginDetails ON P_CommunityMembers.community_member_id=MembersLoginDetails.community_member_id " +
-                            "WHERE " + conditions + " AND P_Supervision.date_to IS NULL");
-                    if((rs.next()) && (rs.getObject("doc_license_number") != null))
-                        user.put("doc_license_number", rs.getObject("doc_license_number").toString());
-                    else
-                        user.put("doc_license_number", "null");
+                    rs = statement.executeQuery("SELECT DISTINCT P_Doctors.doc_license_number as sup,doc1.doc_license_number as pre,doc2.doc_license_number as dia FROM P_CommunityMembers INNER JOIN \n" +
+                            "P_Patients ON P_CommunityMembers.community_member_id=P_Patients.community_member_id \n" +
+                            "INNER JOIN P_Supervision ON P_Patients.patient_id=P_Supervision.patient_id\n" +
+                            "  INNER JOIN P_Prescriptions ON P_Patients.patient_id=P_Prescriptions.patient_id\n" +
+                            "  INNER JOIN P_Diagnosis ON P_Patients.patient_id=P_Diagnosis.patient_id\n" +
+                            "  INNER JOIN P_Doctors ON P_Supervision.doctor_id=P_Doctors.doctor_id\n" +
+                            "  INNER JOIN P_Doctors as doc1 ON P_Prescriptions.doctor_id=doc1.doctor_id\n" +
+                            "  INNER JOIN P_Doctors as doc2 ON P_Diagnosis.doctor_id=doc2.doctor_id\n" +
+                            "  INNER JOIN MembersLoginDetails ON P_CommunityMembers.community_member_id=MembersLoginDetails.community_member_id \n" +
+                            "WHERE " + conditions + " and P_Supervision.date_to is null");
+                    if(rs.next())
+                    {
+                        if(rs.getObject("sup") != null)
+                        user.put("P_supervision.doc_license_number", rs.getObject("sup").toString());
+                        else
+                            user.put("P_supervision.doc_license_number", "null");
+                        if(rs.getObject("pre") != null)
+                            user.put("P_prescriptions.doc_license_number", rs.getObject("pre").toString());
+                        else
+                            user.put("P_prescriptions.doc_license_number", "null");
+                        if(rs.getObject("dia") != null)
+                            user.put("P_diagnosis.doc_license_number", rs.getObject("dia").toString());
+                        else
+                            user.put("P_diagnosis.doc_license_number", "null");
+                    }
                 }
                 return user;
             }
@@ -612,8 +627,201 @@ public class DbComm_V1 implements IDbComm_model {
         return (res.size() != 0);
     }
 
+
     public int addNewCommunityMember(HashMap<String,String> details) {
-        return 0;
+        /* - I'm assuming the fields 'doctor_id' (from p_doctors) will
+             be in the form 'TABLENAME.doctor_id' to prevent ambiguity.
+             e.g. p_supervision.doctor_id
+
+           - Because of the multiple occurrences of the field 'date_to' and
+             mainly because the lack of actual meaning of it, regarding the registration
+             process, a simple 'date_to' is expected
+
+           - output: the createn cmid
+         */
+        int cmid = -1;
+        try {
+            // Validate connection
+            if (!(connection != null && !connection.isClosed() && connection.isValid(1)))
+                connect();
+
+            // Insert basic details and get the new cmid
+            PreparedStatement stmt = connection.prepareStatement("insert into P_CommunityMembers (external_id, external_id_type, first_name, last_name,\n" +
+                    "birth_date, gender, state, city, street, house_number, zip_code, home_phone_number, mobile_phone_number," +
+                    "email_address) VALUES " +
+                    "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+            stmt.setString(1, details.get("external_id"));
+            stmt.setString(2, details.get("external_id_type"));
+            stmt.setString(3, details.get("first_name"));
+            stmt.setString(4, details.get("last_name"));
+            stmt.setString(5, details.get("birth_date"));
+            stmt.setString(6, details.get("gender"));
+            stmt.setString(7, details.get("state"));
+            stmt.setString(8, details.get("city"));
+            stmt.setString(9, details.get("street"));
+            stmt.setString(10, details.get("house_number"));
+            stmt.setString(11, details.get("zip_code"));
+            stmt.setString(12, details.get("home_phone_number"));
+            stmt.setString(13, details.get("mobile_phone_number"));
+            stmt.setString(14, details.get("email_address"));
+
+            stmt.executeUpdate();
+
+            // Get the new primary key
+            ResultSet rs = stmt.getGeneratedKeys();
+
+            if (rs.next()) {
+                cmid = rs.getInt(1);
+            } else{
+                // There was a problem inserting the new member
+                return -1;
+            }
+            stmt.close();
+
+            // Insert login details
+            stmt = connection.prepareStatement("INSERT INTO MembersLoginDetails (community_member_id, password, email_address)" +
+                    " VALUES (?,?,?)");
+            stmt.setInt(1, cmid);
+            stmt.setString(2, details.get("password"));
+            stmt.setString(3, details.get("email_address"));
+            stmt.executeUpdate();
+            stmt.close();
+
+            // Insert contact info
+            stmt = connection.prepareStatement("INSERT INTO P_EmergencyContact (community_member_id, contact_phone) VALUES (?,?)");
+            stmt.setInt(1, cmid);
+            stmt.setString(2, details.get("contact_phone"));
+            stmt.executeQuery();
+            stmt.close();
+
+            // Insert reg_id
+            stmt = connection.prepareStatement("INSERT INTO RegIDs (reg_id, community_member_id) VALUES (?,?)");
+            stmt.setString(1, details.get("reg_id"));
+            stmt.setInt(2, cmid);
+            stmt.executeQuery();
+            stmt.close();
+
+            // Insert availability hours
+            stmt = connection.prepareStatement(" INSERT INTO Availability (hour_from, minutes_from, hour_to, minutes_to)" +
+                    " VALUES (?,?,?,?)");
+            stmt.setInt(1, Integer.parseInt(details.get("hour_from")));
+            stmt.setInt(2, Integer.parseInt(details.get("minutes_from")));
+            stmt.setInt(3, Integer.parseInt(details.get("hour_to")));
+            stmt.setInt(4, Integer.parseInt(details.get("minutes_to")));
+            stmt.executeQuery();
+            stmt.close();
+
+
+            /* Insert the details based on the user type */
+            int userType = Integer.parseInt(details.get("user_type"));
+
+            // Insert to type log
+            stmt = connection.prepareStatement("INSERT INTO P_TypeLog (user_type, community_member_id, date_to) VALUES (?,?,?)");
+
+            stmt.setInt(1, Integer.parseInt(details.get("user_type")));
+            stmt.setInt(2, cmid);
+            stmt.setString(3, details.get("date_to"));
+
+            stmt.executeUpdate();
+            stmt.close();
+
+
+            switch(userType){
+                case 0:
+                    // Patient
+                    stmt = connection.prepareStatement("INSERT INTO p_patients (community_member_id) VALUES (?)"
+                            ,  Statement.RETURN_GENERATED_KEYS);
+                    stmt.setInt(1, cmid);
+                    stmt.executeUpdate();
+                    // Get the new patient id
+                    rs = stmt.getGeneratedKeys();
+                    int patientID;
+                    if (rs.next()) {
+                        patientID = rs.getInt(1);
+                    } else{
+                        // There was a problem inserting the new member
+                        return -1;
+                    }
+                    stmt.close();
+
+                    // Supervision
+                    stmt = connection.prepareStatement("INSERT INTO P_Supervision (doctor_id, patient_id, date_to) " +
+                            "VALUES (?,?,?)");
+                    stmt.setInt(1, Integer.parseInt(details.get("p_supervision.doctor_id")));
+                    stmt.setInt(2, patientID);
+                    stmt.setString(3, details.get("date_to"));
+                    stmt.executeUpdate();
+                    stmt.close();
+
+                    stmt = connection.prepareStatement("INSERT INTO P_Prescriptions (medication_num, dosage," +
+                            "medical_condition_id, doctor_id, date_to, patient_id) VALUES (?,?,?,?,?,?)");
+                    stmt.setInt(1, Integer.parseInt(details.get("medication_num")));
+                    stmt.setFloat(2, Float.parseFloat(details.get("dosage")));
+                    stmt.setInt(3, Integer.parseInt(details.get("medical_condition_id")));
+                    stmt.setInt(4, Integer.parseInt(details.get("p_prescriptions.doctor_id")));
+                    stmt.setString(5, details.get("date_to"));
+                    stmt.setInt(6, patientID);
+                    stmt.executeUpdate();
+                    stmt.close();
+
+                    stmt = connection.prepareStatement("INSERT INTO P_Diagnosis (patient_id, medical_condition_id," +
+                            "doctor_id, date_to) VALUES (?,?,?,?)");
+                    stmt.setInt(1, patientID);
+                    stmt.setInt(2, Integer.parseInt(details.get("medical_condition_id")));
+                    stmt.setInt(3, Integer.parseInt(details.get("p_diagnosis.doctor_id")));
+                    stmt.setString(4, details.get("date_to"));
+                    stmt.executeUpdate();
+                    stmt.close();
+
+                    break;
+
+                default:
+                    // Doctor or EMS
+                    stmt = connection.prepareStatement("INSERT INTO P_Doctors (first_name, last_name, doc_license_number," +
+                            "community_member_id) VALUES (?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+                    stmt.setString(1, details.get("first_name"));
+                    stmt.setString(2, details.get("last_name"));
+                    stmt.setInt(3, Integer.parseInt(details.get("doc_license_number")));
+                    stmt.setInt(4, cmid);
+                    stmt.executeUpdate();
+                    rs = stmt.getGeneratedKeys();
+                    int doctorID;
+                    if (rs.next()) {
+                        doctorID = rs.getInt(1);
+                    } else{
+                        // There was a problem inserting the new member
+                        return -1;
+                    }
+                    stmt.close();
+
+                    stmt = connection.prepareStatement("INSERT INTO MP_Affiliation (organization_id, medical_personnel_id," +
+                            "position_num, date_to) VALUES (?,?,?,?)");
+                    stmt.setInt(1, Integer.parseInt(details.get("organization_id")));
+                    stmt.setInt(2, doctorID);
+                    stmt.setInt(3, Integer.parseInt(details.get("position_num")));
+                    stmt.setString(4, details.get("date_to"));
+                    stmt.executeUpdate();
+                    stmt.close();
+
+                    stmt = connection.prepareStatement("INSERT INTO MP_Certification (certification_external_id," +
+                            "medical_personnel_id, date_to, specialization_id) VALUES (?,?,?,?)");
+                    stmt.setInt(1, Integer.parseInt(details.get("certification_external_id")));
+                    stmt.setInt(2, doctorID);
+                    stmt.setString(3, details.get("date_to"));
+                    stmt.setInt(4, Integer.parseInt(details.get("specialization_id")));
+                    stmt.executeUpdate();
+                    stmt.close();
+
+                    break;
+
+
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return cmid;
+
     }
 
     // expected format of the state:'state-name'

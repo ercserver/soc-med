@@ -1,3 +1,5 @@
+import DatabaseModule.src.model.DbComm_V1;
+
 import java.util.HashMap;
 
 /**
@@ -5,9 +7,11 @@ import java.util.HashMap;
  */
 public class ohadTest {
     public static void main(String[] args) {
-        HashMap<String, String> map = new HashMap<String, String>();
-        map.put("name", "Acamol");
-        System.out.print(map.toString());
+        DbComm_V1 db = new DbComm_V1();
+        HashMap<String, String> det = new HashMap<String, String>();
+        det.put("user_type", "0");
+
+        db.addNewCommunityMember(det);
 
     }
 }

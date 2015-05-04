@@ -3,7 +3,6 @@ package CommunicationModule.src.model;
 import org.json.JSONArray;
 import org.jsoup.*;
 
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,8 +11,6 @@ import java.util.HashMap;
  * Created by NAOR on 05/04/2015.
  */
 public class InitiatedHTTPCommunication_V1 extends CommToUsers_V1 {
-
-
 
     private String communicateToURL = "www.Gis.com";
     private String username = "ImSoCool";
@@ -37,7 +34,6 @@ public class InitiatedHTTPCommunication_V1 extends CommToUsers_V1 {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return null;
     }
 }

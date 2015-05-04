@@ -41,7 +41,6 @@ public class CommToMail_V1 extends CommOfficial_V1  {
                         return new PasswordAuthentication(username, password);
                     }
                 });
-
         try{
             Message msg = new MimeMessage(session);
             msg.setFrom(new InternetAddress(username, "ERC server"));
@@ -57,7 +56,5 @@ public class CommToMail_V1 extends CommOfficial_V1  {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-
     }
-
 }

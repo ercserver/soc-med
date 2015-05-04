@@ -3,7 +3,6 @@ package CommunicationModule.src.controller;
 import CommunicationModule.src.api.*;
 import CommunicationModule.src.model.*;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -15,15 +14,9 @@ public class CommController_V1 implements ICommController {
     private final int commToUsersVersion = 1;
     private final int commOfficialVersion = 1;
 
-
     //holding the implementations chosen for the interface (composition)
     private ICommToUsers_model commToUsers = null;
     private ICommOfficial_model commOfficial = null;
-
-    //Default C'tor
-    public CommController_V1() {}
-
-
 
     public Object sendResponse() {
         if(null != commToUsers) {
@@ -34,7 +27,6 @@ public class CommController_V1 implements ICommController {
             return null;
         }
     }
-
 
     public void sendMessage()  {
         if (null != commOfficial) {

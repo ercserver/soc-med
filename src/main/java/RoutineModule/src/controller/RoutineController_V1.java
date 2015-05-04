@@ -1,11 +1,7 @@
 package RoutineModule.src.controller;
 
 import CommunicationModule.src.api.ICommController;
-import CommunicationModule.src.model.CommToUsersFactory_V1;
-import CommunicationModule.src.model.CommToUsers_V1;
-import RoutineModule.src.api.ILocation_model;
 import RoutineModule.src.api.IRoutineController;
-import RoutineModule.src.api.IUpdates;
 import RoutineModule.src.api.IUpdates_model;
 import Utilities.ModelsFactory;
 
