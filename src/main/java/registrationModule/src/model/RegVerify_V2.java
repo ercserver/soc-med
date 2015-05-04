@@ -1,7 +1,5 @@
 package registrationModule.src.model;
 
-import CommunicationModule.src.model.CommToUsersFactory_V1;
-import CommunicationModule.src.model.CommToUsers_V1;
 import DatabaseModule.src.api.IDbController;
 import registrationModule.src.api.IRegVerify_model;
 import Utilities.ModelsFactory;
@@ -149,27 +147,6 @@ public class RegVerify_V2 implements IRegVerify_model {
         HashMap<String, String> details = dbController.getUserByParameter(member);
         return details;
     }
-
-
-
-
-
-
-    public ArrayList<String> generateMailForVerificationEmail(HashMap<String, String> details){
-        String firstName = details.get("first_name");
-        String lastName = details.get("last_name");
-        String emailAddress = details.get("email_address");
-        String emailMessage = "Dear " + firstName + "  " + lastName + ",\n";
-        String subject = "Confirm your email for Socmed App";
-
-        ArrayList<String> emailDetails = new ArrayList<String>();
-        emailDetails.add(emailAddress);
-        emailDetails.add(emailMessage);
-        emailDetails.add(subject);
-
-        return emailDetails;
-    }
-
 
     public boolean checkCondForResendMail(HashMap<String, String> details, String email, int cmid) {
         if (details.get("status_num").equals("verifying email"))

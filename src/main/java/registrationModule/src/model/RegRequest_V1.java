@@ -4,7 +4,6 @@ import DatabaseModule.src.api.IDbController;
 import registrationModule.src.api.IRegRequest_model;
 import registrationModule.src.utilities.ModelsFactory;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
