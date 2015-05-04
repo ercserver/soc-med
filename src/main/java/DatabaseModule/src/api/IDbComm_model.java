@@ -28,4 +28,5 @@ public interface IDbComm_model {
     getRowsFromTable(HashMap<String,String> whereConditions, String tableName);
     void deleteUser(int cmid);
     int getUserType(String cmid);
+    HashMap<Integer,HashMap<String,String>> getRegIDsOfUser(int cmid);
 }

@@ -152,10 +152,17 @@ public class RegController_V1 implements IRegController {
     private void changeStatusToVerifyDetailAndSendToApp(int cmid, String code,
                                                         ArrayList<String> target,
                                                         HashMap<String, String> data) {
-        if(verification.ifTypeISPatientOrGuardian(code)) {
-            commController.setCommToUsers(verification.changeStatusToVerifyDetailAndSendToApp(cmid, data),
-                    target, false);
-            commController.sendResponse();
+        String status = verification.getStatus(data);
+        if (status.equals("verifying email"))
+        {
+            dbController.updateStatus(cmid, "'verifying email'", "'verifying details'");
+            if (verification.ifTypeISPatientOrGuardian(code)) {
+                HashMap<Integer, HashMap<String, String>> send =
+                        verification.changeStatusToVerifyDetailAndSendToApp(cmid, data);
+                commController.setCommToUsers(send,
+                        target, false);
+                commController.sendResponse();
+            }
         }
     }
 
@@ -211,10 +218,6 @@ public class RegController_V1 implements IRegController {
     }
 
     private boolean checkCmidAndPassword(String password, int cmid) {
-        /*
-        HashMap<String,String> member = new HashMap<String,String>();
-        member.put("P_CommunityMembers.community_member_id",new Integer(cmid).toString());
-        HashMap<String,String> data = dbController.getUserByParameter(member);*/
         HashMap<String,String> data = verification.getUserByCmid(cmid);
          String email = data.get("email_address");
         data = dbController.getLoginDetails("'" +email + "'");
@@ -256,8 +259,7 @@ public class RegController_V1 implements IRegController {
     }
 
     //TODO - Shmulik: need to implement resending of email or SMS
-    public Object resendAuth(HashMap<String, String> data)
-    {
+    public Object resendAuth(HashMap<String, String> data) {
         //verify cmid and password
         int cmid = Integer.parseInt(data.get("community_member_id"));
         String password = data.get("password");

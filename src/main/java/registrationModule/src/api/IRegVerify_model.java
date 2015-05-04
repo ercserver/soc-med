@@ -40,5 +40,5 @@ public interface IRegVerify_model {
 
     HashMap<String,String> generateDataForAuth(HashMap<String, String> filledForm, int authMethod);//*
     HashMap<String, String> generateDataForAuthD(String access, String message, String subject, int authMethod);
-
+    String getStatus(HashMap<String, String> details);
 }
