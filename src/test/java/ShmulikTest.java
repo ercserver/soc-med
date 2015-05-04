@@ -10,9 +10,15 @@ import java.util.HashMap;
 
 */
 
+import CommunicationModule.src.api.ICommController;
+import DatabaseModule.src.api.IDbController;
+import registrationModule.src.api.IRegRequest_model;
+import registrationModule.src.api.IRegVerify_model;
 import registrationModule.src.controller.RegController_V1;
 import registrationModule.src.model.RegVerify_V2;
+import registrationModule.src.utilities.ModelsFactory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -21,16 +27,19 @@ import java.util.HashMap;
 
 public class ShmulikTest {
     public static void main(String[] args) {
-/*
+
+
         RegVerify_V2 v2 = new RegVerify_V2();
-        HashMap<String,String> h = new HashMap<String,String>();
+        /*HashMap<String,String> h = new HashMap<String,String>();
         h = v2.getUserByCmid(1002);
-        h.put("reg_id", "acasvvsdgsdgs");
         RegController_V1 v = new RegController_V1();
-        v2.changeStatusToVerifyDetailAndSendToApp(1002,h);
-        //v.verifyDetail(h);
-*/
-        test3();
+        v2.changeStatusToVerifyDetailAndSendToApp(1002,h);*/
+        //v2.proccesOfOkMember(1002);
+        v2.convertCodeToDefaultCallerSettings("0");
+
+
+
+//        test3();
 
     }
 

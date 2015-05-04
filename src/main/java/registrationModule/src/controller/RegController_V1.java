@@ -114,7 +114,10 @@ public class RegController_V1 implements IRegController {
         return sendTo;
     }
 
-    //do
+
+
+
+
     public Object verifyDetail(HashMap<String, String> data) {
         int cmid = Integer.parseInt(data.get("community_member_id"));
         String password = data.get("password");
@@ -192,7 +195,7 @@ public class RegController_V1 implements IRegController {
         target.add(regid);
         if (checkCmidAndPassword(password, cmid)) {
             if (reason == null) {
-                dbController.updateStatus(cmid, "'verifying_details'", "'active'");
+                dbController.updateStatus(cmid, "'verifying_details'", "'Active'");
                 if (verification.ifTypeISPatientOrGuardian(regid)) {
                     response =  verification.proccesOfOkMember(cmid);
                     commController.setCommToUsers(response, target, false);
@@ -257,6 +260,7 @@ public class RegController_V1 implements IRegController {
         }
         return commController.sendResponse();
     }
+
 
     //TODO - Shmulik: need to implement resending of email or SMS
     public Object resendAuth(HashMap<String, String> data) {
