@@ -97,6 +97,11 @@ public class DbController_V1 implements IDbController {
         return DB_communicator.getRowsFromTable(whereConditions, tableName);
     }
 
+    public HashMap<Integer,HashMap<String,String>> getRegIDsOfUser(int cmid)
+    {
+        return DB_communicator.getRegIDsOfUser(cmid);
+    }
+
     public void deleteUser(int cmid){DB_communicator.deleteUser(cmid);}
 
     public int getUserType(String cmid){return DB_communicator.getUserType(cmid);}
@@ -123,5 +128,11 @@ public class DbController_V1 implements IDbController {
                 return null;
             }
         }
+    }
+
+    public void updateTable(String tableName, HashMap<String,String> whereConds,
+                            String columnToUpdate, Object newValue)
+    {
+        DB_communicator.updateTable(tableName, whereConds, columnToUpdate, newValue);
     }
 }

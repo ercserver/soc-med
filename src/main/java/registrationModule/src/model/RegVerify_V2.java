@@ -27,9 +27,9 @@ public class RegVerify_V2 implements IRegVerify_model {
 
         HashMap<Integer, HashMap<String, String>> responseToPatient =
                 new HashMap<Integer, HashMap<String, String>>();
-        if (!statusIsEqualTo("verifying details",data))
+        String status = getStatus(data);
+        if (status.equals("verifying details"))
         {
-            dbController.updateStatus(cmid, "'verifying email'", "'verifying details'");
             HashMap<String, String> dataToPatient = new HashMap<String, String>();
             dataToPatient.put("RequestID", "wait");
             responseToPatient.put(1, dataToPatient);
@@ -88,10 +88,10 @@ public class RegVerify_V2 implements IRegVerify_model {
     }
 
     public boolean ifTypeISPatientOrGuardian(String code) {
-        if (code.equals("patient") || code.equals("guardian"))
-            return true;
-        else
+        if (code.equals("0"))
             return false;
+        else
+            return true;
     }
 
     private HashMap<String,String> filterDataForVerification(HashMap<String, String> data)
@@ -137,6 +137,13 @@ public class RegVerify_V2 implements IRegVerify_model {
         HashMap<String, String> member = new HashMap<String, String>();
         member.put("P_CommunityMembers.community_member_id", new Integer(cmid).toString());
         HashMap<String, String> details = dbController.getUserByParameter(member);
+        HashMap<Integer, HashMap<String, String>> reg_id = dbController.getRegIDsOfUser(cmid);
+        String reg = "";
+        for (Map.Entry<Integer,HashMap<String,String>> objs : reg_id.entrySet()){
+            HashMap<String,String> obj = objs.getValue();
+            reg = obj.get("reg_id");
+        }
+        details.put("reg_id",reg);
         return details;
     }
 
@@ -147,6 +154,23 @@ public class RegVerify_V2 implements IRegVerify_model {
         HashMap<String, String> details = dbController.getUserByParameter(member);
         return details;
     }
+
+    public String getStatus(HashMap<String, String> details)
+    {
+        String status_num = details.get("status_num");
+        HashMap<String,String> whereConditions = new HashMap<String, String>();
+        whereConditions.put("status_num", "'" + status_num + "'");
+        HashMap<Integer, HashMap<String, String>> data
+                = dbController.getRowsFromTable(whereConditions, "P_Statuses");
+
+        for (Map.Entry<Integer,HashMap<String,String>> objs : data.entrySet()){
+            HashMap<String,String> obj = objs.getValue();
+            return obj.get("status_name");
+         }
+        return null;
+
+    }
+
 
     public boolean checkCondForResendMail(HashMap<String, String> details, String email, int cmid) {
         if (details.get("status_num").equals("verifying email"))
@@ -168,10 +192,16 @@ public class RegVerify_V2 implements IRegVerify_model {
         HashMap<String,String> response = new HashMap<String, String>();
         response.put("RequestID", "Active");
 
+        HashMap<String, String> a = getFrequency("'location_frequency'");
+        HashMap<String, String> b = getFrequency("'connect_server_frequency'");
+        HashMap<String, String> c = getFrequency("'times_to_conect_to_serve'");
 
-        response.putAll(getFrequency("LocationFrequency"));
-        response.putAll(getFrequency("ConnectServerFrequency"));
-        response.putAll(getFrequency("TimesToConectToServe"));
+        HashMap<String, String> d = getDefaultInEmergency(getState(cmid));
+
+
+        response.putAll(getFrequency("'location_frequency'"));
+        response.putAll(getFrequency("'connect_server_frequency'"));
+        response.putAll(getFrequency("'times_to_conect_to_serve'"));
 
         response.putAll(getDefaultInEmergency(getState(cmid)));
 
@@ -286,7 +316,7 @@ public class RegVerify_V2 implements IRegVerify_model {
         HashMap<String,String> member = new HashMap<String,String>();
         member.put("P_CommunityMembers.community_member_id",new Integer(cmid).toString());
         HashMap<String,String> details = dbController.getUserByParameter(member);
-        return details.get("State");
+        return details.get("state");
     }
 
     private HashMap<String, String> getDefaultInEmergency(String state) {
@@ -294,19 +324,45 @@ public class RegVerify_V2 implements IRegVerify_model {
                 = dbController.getDefaultInEmergency(state);
         for (Map.Entry<Integer,HashMap<String,String>> objs : defult.entrySet()){
             HashMap<String,String> obj = objs.getValue();
-            return obj;
+            String code = obj.get("default_caller");
+            HashMap<String,String> response = convertCodeToDefaultCallerSettings(code);
+            return response;
+
         }
         return null;
     }
 
+    public HashMap<String, String> convertCodeToDefaultCallerSettings(String code) {
+        HashMap<String,String> defalut = new HashMap<String,String>();
+        defalut.put("default_caller", "'" + code + "'");
+        defalut.put("table_name","'DefaultCallerSettings'");
+        HashMap<Integer, HashMap<String, String>> response =
+                dbController.getFromEnum(defalut);
+        /*
+        System.out.println(response);
+        for (Map.Entry<Integer,HashMap<String,String>> objs : response.entrySet()){
+            HashMap<String,String> obj = objs.getValue();
+            return obj;
+        }
+        */
+        return null;
+    }
+
     private HashMap<String,String> getFrequency(String code) {
+        HashMap<String,String> response = new HashMap<String,String>();
+
         HashMap<String,String> kindOfFrequency = new HashMap<String,String>();
         kindOfFrequency.put("name",code);
         HashMap<Integer,HashMap<String,String>> freq
                 = dbController.getFrequency(kindOfFrequency);
+        if (freq == null)
+            return null;
         for (Map.Entry<Integer,HashMap<String,String>> objs : freq.entrySet()){
             HashMap<String,String> obj = objs.getValue();
-            return obj;
+
+            response.put("name",obj.get("name"));
+            response.put("frequency",obj.get("frequency"));
+            return response;
         }
         return null;
     }

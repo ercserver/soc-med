@@ -114,7 +114,10 @@ public class RegController_V1 implements IRegController {
         return sendTo;
     }
 
-    //do
+
+
+
+
     public Object verifyDetail(HashMap<String, String> data) {
         int cmid = Integer.parseInt(data.get("community_member_id"));
         String password = data.get("password");
@@ -152,10 +155,17 @@ public class RegController_V1 implements IRegController {
     private void changeStatusToVerifyDetailAndSendToApp(int cmid, String code,
                                                         ArrayList<String> target,
                                                         HashMap<String, String> data) {
-        if(verification.ifTypeISPatientOrGuardian(code)) {
-            commController.setCommToUsers(verification.changeStatusToVerifyDetailAndSendToApp(cmid, data),
-                    target, false);
-            commController.sendResponse();
+        String status = verification.getStatus(data);
+        if (status.equals("verifying email"))
+        {
+            dbController.updateStatus(cmid, "'verifying email'", "'verifying details'");
+            if (verification.ifTypeISPatientOrGuardian(code)) {
+                HashMap<Integer, HashMap<String, String>> send =
+                        verification.changeStatusToVerifyDetailAndSendToApp(cmid, data);
+                commController.setCommToUsers(send,
+                        target, false);
+                commController.sendResponse();
+            }
         }
     }
 
@@ -185,7 +195,7 @@ public class RegController_V1 implements IRegController {
         target.add(regid);
         if (checkCmidAndPassword(password, cmid)) {
             if (reason == null) {
-                dbController.updateStatus(cmid, "'verifying_details'", "'active'");
+                dbController.updateStatus(cmid, "'verifying_details'", "'Active'");
                 if (verification.ifTypeISPatientOrGuardian(regid)) {
                     response =  verification.proccesOfOkMember(cmid);
                     commController.setCommToUsers(response, target, false);
@@ -211,10 +221,6 @@ public class RegController_V1 implements IRegController {
     }
 
     private boolean checkCmidAndPassword(String password, int cmid) {
-        /*
-        HashMap<String,String> member = new HashMap<String,String>();
-        member.put("P_CommunityMembers.community_member_id",new Integer(cmid).toString());
-        HashMap<String,String> data = dbController.getUserByParameter(member);*/
         HashMap<String,String> data = verification.getUserByCmid(cmid);
          String email = data.get("email_address");
         data = dbController.getLoginDetails("'" +email + "'");
@@ -255,9 +261,9 @@ public class RegController_V1 implements IRegController {
         return commController.sendResponse();
     }
 
+
     //TODO - Shmulik: need to implement resending of email or SMS
-    public Object resendAuth(HashMap<String, String> data)
-    {
+    public Object resendAuth(HashMap<String, String> data) {
         //verify cmid and password
         int cmid = Integer.parseInt(data.get("community_member_id"));
         String password = data.get("password");
@@ -281,7 +287,7 @@ public class RegController_V1 implements IRegController {
                     //if the user's email in the db isn't the same as specified in the request
                     if (!details.get("email_address").equals(email)) {
                         //change in the db
-                        updateUserMail(email);
+                        updateUserMail(email, cmid);
                         //change in the curr func
                         details.put("email_address",email);
                     }
@@ -384,10 +390,14 @@ public class RegController_V1 implements IRegController {
         return responseToPatient;
     }
 
-    private void updateUserMail(String mail) {
+    private void updateUserMail(String mail, int cmid) {
 
         HashMap<String, String> member = new HashMap<String, String>();
-        member.put("P_CommunityMembers.email_address", "'" + mail + "'");
+        member.put("email_address", "'" + mail + "'");
+        member.put("community_member_id", Integer.toString(cmid));
         dbController.updateUserDetails(member);
+        member.remove("email_address");
+        dbController.updateTable("MembersLoginDetails", member, "email_address", "'" + mail + "'");
+
     }
 }
