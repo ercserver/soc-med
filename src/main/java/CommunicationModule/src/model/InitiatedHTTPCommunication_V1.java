@@ -17,7 +17,8 @@ public class InitiatedHTTPCommunication_V1 extends CommToUsers_V1 {
     private String password = "MyPWisCoolAlso";
 
     public InitiatedHTTPCommunication_V1(HashMap<Integer,HashMap<String,String>> data, ArrayList<String> target) {
-        super(data,target);
+        super(data);
+        targets = target;
         /*TODO - Is this needed? Or do we assume we don't need to send the details here. If we do - perhaps HashMap rather than ArrayList?
         communicateToURL = target.get(0);
         username = target.get(1);
