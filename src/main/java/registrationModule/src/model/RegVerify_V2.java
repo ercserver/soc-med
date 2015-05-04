@@ -343,7 +343,8 @@ public class RegVerify_V2 implements IRegVerify_model {
         for (Map.Entry<Integer,HashMap<String,String>> objs : data.entrySet()){
             HashMap<String,String> response = new HashMap<String,String>();
             HashMap<String,String> obj = objs.getValue();
-            response.put("default_caller",obj.get("enum_value"));
+            response.put("name","default_caller");
+            response.put("frequency",obj.get("enum_value")); // ???
             return response;
         }
 
