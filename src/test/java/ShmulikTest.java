@@ -21,7 +21,7 @@ import java.util.HashMap;
 
 public class ShmulikTest {
     public static void main(String[] args) {
-
+/*
         RegVerify_V2 v2 = new RegVerify_V2();
         HashMap<String,String> h = new HashMap<String,String>();
         h = v2.getUserByCmid(1002);
@@ -29,11 +29,19 @@ public class ShmulikTest {
         RegController_V1 v = new RegController_V1();
         v2.changeStatusToVerifyDetailAndSendToApp(1002,h);
         //v.verifyDetail(h);
-
+*/
+        test3();
 
     }
 
-    public void test2()
+    private static void test3() {
+
+        RegVerify_V2 v2 = new  RegVerify_V2();
+        HashMap<String, String> s = v2.getUserByCmid(1002);
+        System.out.println(s);
+    }
+
+    public static void test2()
     {
         HashMap<String,String> details = new HashMap<String,String>();
         details.put("status_num","1002");
