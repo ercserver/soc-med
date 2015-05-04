@@ -39,12 +39,12 @@ public class RoutineController_V1 implements IRoutineController {
         HashMap<Integer,HashMap<String,String>> fields = updates.getFieldsForUpdate(data);
         //Todo-maby need to insert requestID....
         ArrayList<String> target = new ArrayList<String>();
-        // Sign in of doctor/ems
+        // Request update of doctor/ems
         if(data.get("reg_id") == "0")
         {
             commController.setCommToUsers(fields, null, false);
         }
-        // Sign-in of patient
+        // Request update of patient
         else
         {
             target.add(data.get("reg_id"));
