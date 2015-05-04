@@ -16,6 +16,9 @@ public class CommToUsers_V1 implements ICommToUsers_model {
     JSONArray objToSend = null;
     ArrayList<String> targets = null;
 
+    public CommToUsers_V1(HashMap<Integer, HashMap<String, String>> data) {
+    }
+
     public JSONArray sendResponse () {
         return objToSend;
     }
