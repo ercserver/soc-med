@@ -12,9 +12,9 @@ import java.util.HashMap;
 public class CommToUsersFactory_V1 implements ICommToUsersFactory {
     public CommToUsers_V1 createComm(HashMap<Integer,HashMap<String,String>> data,ArrayList<String> target,boolean initiatedComm) {
         //If we communicate to EMS or Doctor website
-        if (null == target)
+        if (null == target || target.get(0).equals("0"))
         {
-            return new CommToUsers_V1(data,target);
+            return new CommToUsers_V1(data);
         }
         //If we initiate comm to GIS (or other server)
         else if(initiatedComm) {
